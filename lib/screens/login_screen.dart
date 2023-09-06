@@ -9,8 +9,8 @@ class InputsScreen extends StatelessWidget {
     final GlobalKey<FormState> myFormKey = GlobalKey<FormState>();
 
     final Map<String, String> frmValues = {
-      'user': 'jperez',
-      'password': '12345',
+      // 'user': 'jperez',
+      // 'password': '12345',
     };
 
     return Scaffold(
