@@ -8,10 +8,11 @@ class InputsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final GlobalKey<FormState> myFormKey = GlobalKey<FormState>();
 
-    final Map<String, String> frmValues = {
+    /* final Map<String, String> frmValues = {
       'user': 'jperez',
       'password': '12345',
-    };
+    };*/
+    final Map<String, String> frmValues = {};
 
     return Scaffold(
         appBar: AppBar(
