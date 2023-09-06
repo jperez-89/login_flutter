@@ -4,7 +4,7 @@ class InputsWidget extends StatelessWidget {
   final String? labelText;
   final String? hintText;
   final IconData? icon;
-  final int? maxLenth;
+  final int? minLength;
   final TextInputType? inputType;
   final bool obscureText;
   final String property;
@@ -15,7 +15,7 @@ class InputsWidget extends StatelessWidget {
     this.labelText,
     this.hintText,
     this.icon,
-    this.maxLenth,
+    this.minLength,
     this.inputType,
     this.obscureText = false,
     required this.property,
@@ -32,7 +32,7 @@ class InputsWidget extends StatelessWidget {
           frmValues[property] = value, // Almacena lo ingresado en el form
       validator: (value) {
         if (value == null) return 'Campo requerido';
-        return value.length < maxLenth! ? 'Minimo $maxLenth letras' : null;
+        return value.length < minLength! ? 'Minimo $minLength letras' : null;
       },
       autovalidateMode: AutovalidateMode.onUserInteraction,
       decoration: InputDecoration(

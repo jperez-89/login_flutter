@@ -27,7 +27,7 @@ class InputsScreen extends StatelessWidget {
                   InputsWidget(
                     labelText: 'User',
                     icon: Icons.group_rounded,
-                    maxLenth: 5,
+                    minLength: 5,
                     property: 'user',
                     frmValues: frmValues,
                   ),
@@ -36,7 +36,7 @@ class InputsScreen extends StatelessWidget {
                   ),
                   InputsWidget(
                     labelText: 'Password',
-                    maxLenth: 5,
+                    minLength: 5,
                     obscureText: true,
                     icon: Icons.lock,
                     property: 'password',
@@ -72,7 +72,7 @@ class InputsScreen extends StatelessWidget {
                                       borderRadius: BorderRadius.circular(8)),
                                   title: const Text(
                                     'Error',
-                                    textAlign: TextAlign.start,
+                                    textAlign: TextAlign.center,
                                   ), // Titulo de la card
                                   content: const Column(
                                     mainAxisSize: MainAxisSize
