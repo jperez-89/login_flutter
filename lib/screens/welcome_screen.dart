@@ -16,7 +16,7 @@ class WelcomeScreenState extends State<WelcomeScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: colorAppBar,
-        title: const Text('Welcome to Paradise'),
+        title: const Text('Welcome to Paradice'),
       ),
       body: Center(
         child: ElevatedButton(
