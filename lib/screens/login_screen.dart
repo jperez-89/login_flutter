@@ -28,7 +28,7 @@ class InputsScreen extends StatelessWidget {
                     labelText: 'User',
                     icon: Icons.group_rounded,
                     maxLenth: 5,
-                    frmProperty: 'user',
+                    property: 'user',
                     frmValues: frmValues,
                   ),
                   const SizedBox(
@@ -39,7 +39,7 @@ class InputsScreen extends StatelessWidget {
                     maxLenth: 5,
                     obscureText: true,
                     icon: Icons.lock,
-                    frmProperty: 'password',
+                    property: 'password',
                     frmValues: frmValues,
                   ),
                   const SizedBox(

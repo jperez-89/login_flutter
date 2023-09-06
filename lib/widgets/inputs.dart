@@ -7,7 +7,7 @@ class InputsWidget extends StatelessWidget {
   final int? maxLenth;
   final TextInputType? inputType;
   final bool obscureText;
-  final String frmProperty;
+  final String property;
   final Map<String, dynamic> frmValues;
 
   const InputsWidget({
@@ -18,7 +18,7 @@ class InputsWidget extends StatelessWidget {
     this.maxLenth,
     this.inputType,
     this.obscureText = false,
-    required this.frmProperty,
+    required this.property,
     required this.frmValues,
   });
 
@@ -29,7 +29,7 @@ class InputsWidget extends StatelessWidget {
       textCapitalization: TextCapitalization.words,
       obscureText: obscureText,
       onChanged: (value) =>
-          frmValues[frmProperty] = value, // Almacena lo ingresado en el form
+          frmValues[property] = value, // Almacena lo ingresado en el form
       validator: (value) {
         if (value == null) return 'Campo requerido';
         return value.length < maxLenth! ? 'Minimo $maxLenth letras' : null;
