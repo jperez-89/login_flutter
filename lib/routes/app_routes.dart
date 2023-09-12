@@ -3,28 +3,32 @@ import 'package:login_flutter/models/menu_option.dart';
 import '../screens/screen.dart';
 
 class AppRoutes {
-  static const initialRoute = 'inputs';
+  static const initialRoute = 'login';
 
 // Crear un listado de menu
   static final menuOptions = <MenuOption>[
     MenuOption(
-        route: 'inputs',
+        route: 'login',
         icon: Icons.input_outlined,
-        nameRoute: 'Inputs',
-        screen: const InputsScreen()),
+        nameRoute: 'Login',
+        screen: const LoginScreen()),
     MenuOption(
         route: 'welcome',
         icon: Icons.play_circle_fill_outlined,
         nameRoute: 'Welcome',
         screen: const WelcomeScreen()),
+    MenuOption(
+        route: 'dashboard',
+        icon: Icons.play_circle_fill_outlined,
+        nameRoute: 'Pega Dashboard',
+        screen: const DashboardPegaScreen()),
   ];
 
 // Definiendo rutas de manera dinamica
   static Map<String, Widget Function(BuildContext)> getAppRoutes() {
     Map<String, Widget Function(BuildContext)> appRoutes = {};
 
-    appRoutes
-        .addAll({'inputs': (BuildContext context) => const InputsScreen()});
+    appRoutes.addAll({'login': (BuildContext context) => const LoginScreen()});
 
     for (final option in menuOptions) {
       appRoutes.addAll({option.route: (BuildContext context) => option.screen});
@@ -33,6 +37,6 @@ class AppRoutes {
   }
 
   static Route<dynamic> onGenerateRoute(RouteSettings settings) {
-    return MaterialPageRoute(builder: (context) => const InputsScreen());
+    return MaterialPageRoute(builder: (context) => const LoginScreen());
   }
 }

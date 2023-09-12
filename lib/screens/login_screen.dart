@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
+// import 'package:login_flutter/models/pega_conection.dart';
+import 'package:login_flutter/models/actions/user_actions.dart';
+import '../models/services/endpoints.dart';
 import '../widgets/widgets.dart';
 
-class InputsScreen extends StatelessWidget {
-  const InputsScreen({super.key});
+class LoginScreen extends StatelessWidget {
+  const LoginScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     final GlobalKey<FormState> myFormKey = GlobalKey<FormState>();
 
-    final Map<String, String> frmValues = {
-      // 'user': 'jperez',
-      // 'password': '12345',
-    };
+    final Map<String, String> frmValues = {};
 
     return Scaffold(
         appBar: AppBar(
@@ -53,14 +53,9 @@ class InputsScreen extends StatelessWidget {
 
                         // Validar que el formulario no tenga campos vacios al dar click en el boton guardar
                         if (!myFormKey.currentState!.validate()) {
-                          // print('Frm no valido');
                           return;
-                        } else if (frmValues['user'] == 'jperez' &&
-                            frmValues['password'] == '12345') {
-                          // Impimir valores del form si no hay errores
-                          // print(frmValues);
-                          Navigator.pushNamed(context, 'welcome');
-                        } else {
+                        } else if (frmValues['user'] == '' &&
+                            frmValues['password'] == '') {
                           showDialog(
                               barrierDismissible:
                                   false, // Permite cerrar el modal cuando se hace clikc afuera
@@ -78,7 +73,7 @@ class InputsScreen extends StatelessWidget {
                                     mainAxisSize: MainAxisSize
                                         .min, // Ajusta la card al texto mas pequenho
                                     children: [
-                                      Text('Usuario o contraseña inválidos'),
+                                      Text('Comlete todos los campos'),
                                     ],
                                   ),
                                   actions: [
@@ -88,12 +83,102 @@ class InputsScreen extends StatelessWidget {
                                   ],
                                 );
                               });
+                        } else {
+                          if (isOAuth()) {
+                            // print(isOAuth());
+                          } else {
+                            UserActions()
+                                .login(frmValues['user'].toString(),
+                                    frmValues['password'].toString())
+                                .then((value) {
+                              if (value.statusCode == 401) {
+                                showAdaptiveDialog(
+                                    barrierDismissible:
+                                        false, // Permite cerrar el modal cuando se hace clikc afuera
+                                    context: context,
+                                    builder: (context) {
+                                      return AlertDialog(
+                                        elevation: 5,
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(8)),
+                                        title: const Text(
+                                          'Error',
+                                          textAlign: TextAlign.center,
+                                        ), // Titulo de la card
+                                        content: const Column(
+                                          mainAxisSize: MainAxisSize
+                                              .min, // Ajusta la card al texto mas pequenho
+                                          children: [
+                                            Text(
+                                                'Usuario o contraseña inválidos'),
+                                          ],
+                                        ),
+                                        actions: [
+                                          TextButton(
+                                              onPressed: () =>
+                                                  Navigator.pop(context),
+                                              child: const Text('Ok'))
+                                        ],
+                                      );
+                                    });
+                              } else if (value.statusCode == 200) {
+                                Navigator.pushNamed(context, 'dashboard');
+                              }
+                            });
+
+                            // final String url =
+                            //     '${endpoints['PEGAURL']}/api/v1/authenticate';
+
+                            // PegaConection()
+                            //     .conexion(url, frmValues['user'].toString(),
+                            //         frmValues['password'].toString())
+                            //     .then((value) {
+                            //   if (value.statusCode != 200) {
+                            //     showDialog(
+                            //         barrierDismissible:
+                            //             false, // Permite cerrar el modal cuando se hace clikc afuera
+                            //         context: context,
+                            //         builder: (context) {
+                            //           return AlertDialog(
+                            //             elevation: 5,
+                            //             shape: RoundedRectangleBorder(
+                            //                 borderRadius:
+                            //                     BorderRadius.circular(8)),
+                            //             title: const Text(
+                            //               'Error',
+                            //               textAlign: TextAlign.center,
+                            //             ), // Titulo de la card
+                            //             content: const Column(
+                            //               mainAxisSize: MainAxisSize
+                            //                   .min, // Ajusta la card al texto mas pequenho
+                            //               children: [
+                            //                 Text(
+                            //                     'Usuario o contraseña inválidos'),
+                            //               ],
+                            //             ),
+                            //             actions: [
+                            //               TextButton(
+                            //                   onPressed: () =>
+                            //                       Navigator.pop(context),
+                            //                   child: const Text('Ok'))
+                            //             ],
+                            //           );
+                            //         });
+                            //   } else {
+                            //     Navigator.pushNamed(context, 'dashboard');
+                            //   }
+                            // }); // Then
+                          }
                         }
                       },
                       child: const SizedBox(
                         width: double.infinity,
                         child: Center(
-                          child: Text('Login'),
+                          child: Text(
+                            'Login',
+                            style: TextStyle(fontSize: 18),
+                          ),
                         ),
                       ))
                 ],
@@ -101,5 +186,9 @@ class InputsScreen extends StatelessWidget {
             ),
           ),
         ));
+  }
+
+  isOAuth() {
+    return endpoints['use_OAuth'];
   }
 }

@@ -7,6 +7,8 @@ void main() {
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
+  static const Color primaryColor = Colors.blue;
+  static const Color appBarColor = Colors.blue;
 
   @override
   Widget build(BuildContext context) {
@@ -18,25 +20,28 @@ class MyApp extends StatelessWidget {
         routes: AppRoutes
             .getAppRoutes(), // Se optienen las rutas por elmetodo dinamico
         theme: ThemeData(
-          primaryColor: Colors.teal[400],
+          primaryColor: primaryColor,
           appBarTheme: const AppBarTheme(
-            color: Colors.teal,
+            color: appBarColor,
             elevation: 0,
           ),
           textButtonTheme: TextButtonThemeData(
-            style: TextButton.styleFrom(foregroundColor: Colors.teal),
+            style: TextButton.styleFrom(
+              foregroundColor: primaryColor,
+            ),
           ),
           elevatedButtonTheme: ElevatedButtonThemeData(
             style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.teal,
-                shape: const StadiumBorder(),
-                elevation: 0),
+              backgroundColor: primaryColor,
+              shape: const StadiumBorder(),
+              elevation: 0,
+            ),
           ),
           inputDecorationTheme: const InputDecorationTheme(
-            floatingLabelStyle: TextStyle(color: Colors.teal),
-            prefixIconColor: Colors.teal,
+            floatingLabelStyle: TextStyle(color: primaryColor),
+            prefixIconColor: primaryColor,
             focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.teal),
+              borderSide: BorderSide(color: primaryColor),
             ),
           ),
         ));
