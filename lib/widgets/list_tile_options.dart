@@ -1,0 +1,44 @@
+import 'package:flutter/material.dart';
+import 'package:login_flutter/theme/app_theme.dart';
+
+class ListTileOptionsWidget extends StatelessWidget {
+  final List<dynamic> list;
+
+  const ListTileOptionsWidget({
+    super.key,
+    required this.list,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    // return ListTile(
+    //   title: Text(list[0]['name']),
+    //   // title: const Text('options'),
+    //   trailing: const Icon(
+    //     Icons.arrow_circle_right_outlined,
+    //     color: AppTheme.primaryColor,
+    //   ),
+    //   onTap: () {
+    //     // final game = options[i];
+    //     // print(game);
+    //   },
+    // );
+
+    return ListView.separated(
+      itemCount: 1,
+      separatorBuilder: (_, __) => const Divider(),
+      itemBuilder: (context, i) => ListTile(
+        title: Text(list[i]['name']),
+        // title: const Text('options'),
+        trailing: const Icon(
+          Icons.arrow_circle_right_outlined,
+          color: AppTheme.primaryColor,
+        ),
+        onTap: () {
+          // final game = options[i];
+          // print(game);
+        },
+      ),
+    );
+  }
+}

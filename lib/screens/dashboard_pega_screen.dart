@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:login_flutter/models/services/endpoints.dart';
-import 'package:login_flutter/models/services/pega_conection.dart';
-import 'package:login_flutter/models/actions/case_actions.dart';
+import 'package:login_flutter/widgets/drawer.dart';
 
 class DashboardPegaScreen extends StatefulWidget {
   const DashboardPegaScreen({Key? key}) : super(key: key);
@@ -11,57 +9,36 @@ class DashboardPegaScreen extends StatefulWidget {
 }
 
 class _DashboardPegaScreenState extends State<DashboardPegaScreen> {
-  late String body = '';
-
-  void getCaseType() {
-    CaseActions().getCaseType().then((value) {
-      print(value);
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
-    String urlAssignments =
-        '${endpoints['PEGAURL'] + endpoints['VERSION'] + endpoints['ASSIGNMENTS']}';
-
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Dashboard'),
-        actions: [
+        drawer: const DrawerWidget(),
+        appBar: AppBar(title: const Text('Dashboard'), actions: [
           Container(
               margin: const EdgeInsets.only(right: 10),
               child: ElevatedButton(
-                onPressed: () {
-                  getCaseType();
-                },
-                child: CircleAvatar(
-                  backgroundColor: Colors.blue[900],
-                  child: const Text('I'),
-                ),
-              ))
-        ],
-      ),
-      body: Center(
-        child: Column(
-          children: [
-            TextButton(
-                onPressed: () {
-                  PegaConection()
-                      .conexion(urlAssignments, 'InterpreterOP', 'hyopJK77@')
-                      .then((value) {
-                    body = value.body;
-                    setState(() {});
-                  });
-                },
-                child: const Text('Ver Assignments')),
-            Expanded(
-              child: SingleChildScrollView(
-                child: Text(body),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+                  onPressed: () {
+                    // getCaseType();
+                  },
+                  child: const CircleAvatar(
+                    child: Text('I'),
+                  )))
+        ]),
+        body: const Center(
+            child: Column(children: [
+          // TextButton(
+          //     onPressed: () {
+          //       PegaConection()
+          //           .conexion(urlAssignments, 'InterpreterOP', 'hyopJK77@')
+          //           .then((value) {
+          //         body = value.body;
+          //         setState(() {});
+          //       });
+          //     },
+          //     child: const Text('Ver Assignments')),
+          Expanded(
+            child: Text('Hola'),
+          )
+        ])));
   }
 }

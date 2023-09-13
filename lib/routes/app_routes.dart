@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:login_flutter/models/menu_option.dart';
-import '../screens/screen.dart';
+import 'package:login_flutter/screens/screen.dart';
 
 class AppRoutes {
-  static const initialRoute = 'login';
+  static const initialRoute = 'dashboard';
 
 // Crear un listado de menu
   static final menuOptions = <MenuOption>[
@@ -22,6 +22,16 @@ class AppRoutes {
         icon: Icons.play_circle_fill_outlined,
         nameRoute: 'Pega Dashboard',
         screen: const DashboardPegaScreen()),
+    MenuOption(
+        route: 'Interprete',
+        icon: Icons.play_circle_fill_outlined,
+        nameRoute: 'New Interpreter Asignment',
+        screen: const NewInterpreterAsignment()),
+    MenuOption(
+        route: 'RentalCar',
+        icon: Icons.play_circle_fill_outlined,
+        nameRoute: 'New Rent Car Asignment',
+        screen: const NewRentCarAsignment()),
   ];
 
 // Definiendo rutas de manera dinamica

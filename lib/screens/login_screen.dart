@@ -15,7 +15,8 @@ class LoginScreen extends StatelessWidget {
 
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Login'),
+          // leading: const Icon(Icons.home_rounded),
+          title: const Center(child: Text('Login')),
         ),
         body: SingleChildScrollView(
           child: Padding(
