@@ -64,6 +64,8 @@ const Map<String, dynamic> endpoints = {
   'PAGES': "/pages",
   'DATA': "/data",
   'REFRESH': "/refresh",
+  'STATIC':
+      "https://w0tx92av.pegace.net/prweb/api/v1/assignments/ASSIGN-WORKLIST%20CF-FW-INTERPRE-WORK%20R-7!PERSONALDATA/actions/PersonalData",
   // V2 endpoints
   'NAVIGATION_STEPS': "/navigation_steps"
 };
