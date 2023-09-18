@@ -18,7 +18,7 @@ class PegaScreen extends StatelessWidget {
                 onPressed: () {
                   PegaConection()
                       .conexion('asa', 'as', 'sa')
-                      .then((value) => print(value));
+                      .then((value) => value);
                 },
                 child: const Text('Auth')),
           ],
