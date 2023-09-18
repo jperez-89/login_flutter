@@ -29,7 +29,7 @@ class AppTheme {
       style: ElevatedButton.styleFrom(
           backgroundColor: primaryColor,
           shape: const StadiumBorder(),
-          elevation: 0),
+          elevation: 1),
     ),
 
     // Input Decoration Theme
