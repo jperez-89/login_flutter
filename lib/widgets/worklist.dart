@@ -50,7 +50,20 @@ class _WorklistWidgetState extends State<WorklistWidget> {
             )
           : PaginatedDataTable(
               columnSpacing: 25,
-              header: const Text('WorkList'),
+              header: Row(
+                children: [
+                  const Text('WorkList'),
+                  const SizedBox(
+                    width: 200,
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      getWorkList();
+                    },
+                    child: const Icon(Icons.refresh_rounded),
+                  ),
+                ],
+              ),
               rowsPerPage: rowsPerPage,
               showFirstLastButtons: true,
               showCheckboxColumn: false,
