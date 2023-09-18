@@ -39,7 +39,7 @@ class FormBuilder {
     return Form(key: myFormKey, child: Column(children: childs));
   }
 
-/********  BORRAR ESTA MADRE O SACARLO A  OTRO LADO *************** */
+  /// ******  BORRAR ESTA MADRE O SACARLO A  OTRO LADO ***************
   ElevatedButton getSaveButton(GlobalKey<FormState> myFormKey) {
     return ElevatedButton(
         onPressed: () {
@@ -50,7 +50,7 @@ class FormBuilder {
         child: const Text("Guardar"));
   }
 
-/*********** BORRAR ESTA MADRE O SACARLO A  OTRO LADO ************ */
+  /// ********* BORRAR ESTA MADRE O SACARLO A  OTRO LADO ************
 
   CustomCaption createCaption(Map<String, dynamic> caption) {
     return CustomCaption(value: caption["value"], fontSize: 20);
@@ -66,7 +66,7 @@ class FormBuilder {
       maxLength: getMaxLenght(pxTextInput),
       toolTip: getToolTip(pxTextInput),
       property: getFieldID(pxTextInput),
-      frmValues: {},
+      frmValues: const {},
     );
   }
 
