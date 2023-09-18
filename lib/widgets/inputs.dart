@@ -32,25 +32,42 @@ class InputsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Tooltip(
-      message: toolTip,
-      child: TextFormField(
-        keyboardType: inputType,
-        textCapitalization: TextCapitalization.words,
-        obscureText: obscureText ?? false,
-        onChanged: (value) =>
-            frmValues![property] = value, // Almacena lo ingresado en el form
-        validator: (value) {
-          if (value == null) return 'Campo requerido';
-          return value.length < minLength! ? 'Minimo $minLength letras' : null;
-        },
-        autovalidateMode: AutovalidateMode.onUserInteraction,
-        decoration: InputDecoration(
-          labelText: labelText,
-          hintText: hintText,
-          prefixIcon: Icon(icon),
-        ),
+    return TextFormField(
+      keyboardType: inputType,
+      textCapitalization: TextCapitalization.words,
+      obscureText: obscureText ?? false,
+      onChanged: (value) =>
+          frmValues![property] = value, // Almacena lo ingresado en el form
+      validator: (value) {
+        if (value == null) return 'Campo requerido';
+        return value.length < minLength! ? 'Minimo $minLength letras' : null;
+      },
+      autovalidateMode: AutovalidateMode.onUserInteraction,
+      decoration: InputDecoration(
+        labelText: labelText,
+        hintText: hintText,
+        prefixIcon: Icon(icon),
       ),
     );
+    // return Tooltip(
+    //   message: toolTip,
+    //   child: TextFormField(
+    //     keyboardType: inputType,
+    //     textCapitalization: TextCapitalization.words,
+    //     obscureText: obscureText ?? false,
+    //     onChanged: (value) =>
+    //         frmValues![property] = value, // Almacena lo ingresado en el form
+    //     validator: (value) {
+    //       if (value == null) return 'Campo requerido';
+    //       return value.length < minLength! ? 'Minimo $minLength letras' : null;
+    //     },
+    //     autovalidateMode: AutovalidateMode.onUserInteraction,
+    //     decoration: InputDecoration(
+    //       labelText: labelText,
+    //       hintText: hintText,
+    //       prefixIcon: Icon(icon),
+    //     ),
+    //   ),
+    // );
   }
 }
