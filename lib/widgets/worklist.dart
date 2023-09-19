@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:login_flutter/models/actions/work_list_actions.dart';
+import 'package:login_flutter/widgets/form_builder.dart';
 
 class WorklistWidget extends StatefulWidget {
   const WorklistWidget({Key? key}) : super(key: key);
@@ -13,6 +14,7 @@ class _WorklistWidgetState extends State<WorklistWidget> {
   List<dynamic> workList = [];
   int rowsPerPage = 10;
   bool _load = false;
+  bool _service = true;
 
   void getWorkList() async {
     setState(() {
@@ -20,15 +22,19 @@ class _WorklistWidgetState extends State<WorklistWidget> {
     });
 
     await WorkList().getWorkList().then((value) {
-      Map<String, dynamic> json = jsonDecode(value);
+      if (value.statusCode == 503) {
+        setState(() {
+          _load = false;
+          _service = false;
+        });
+      } else {
+        Map<String, dynamic> json = jsonDecode(value.body);
 
-      setState(() {
-        workList = json['pxResults'];
-      });
-    });
-
-    setState(() {
-      _load = false;
+        setState(() {
+          workList = json['pxResults'];
+          _load = false;
+        });
+      }
     });
   }
 
@@ -41,47 +47,63 @@ class _WorklistWidgetState extends State<WorklistWidget> {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      padding: const EdgeInsets.only(left: 8, right: 8, top: 10),
-      child: _load
-          ? Container(
-              alignment: Alignment.center,
-              margin: const EdgeInsets.only(top: 300),
-              child: const CircularProgressIndicator.adaptive(),
-            )
-          : PaginatedDataTable(
-              columnSpacing: 25,
-              header: Row(
-                children: [
-                  const Text('WorkList'),
-                  const SizedBox(
-                    width: 200,
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      getWorkList();
+        padding: const EdgeInsets.only(left: 3, right: 3, top: 10),
+        child: _load
+            ? Container(
+                alignment: Alignment.center,
+                margin: const EdgeInsets.only(top: 300),
+                child: const CircularProgressIndicator.adaptive(),
+              )
+            : _service
+                ? PaginatedDataTable(
+                    columnSpacing: 25,
+                    rowsPerPage: rowsPerPage,
+                    availableRowsPerPage: const [6, 8, 10, 15, 20, 25],
+                    onRowsPerPageChanged: (value) {
+                      setState(() {
+                        rowsPerPage = value ?? rowsPerPage;
+                      });
                     },
-                    child: const Icon(Icons.refresh_rounded),
-                  ),
-                ],
-              ),
-              rowsPerPage: rowsPerPage,
-              showFirstLastButtons: true,
-              showCheckboxColumn: false,
-              columns: const [
-                DataColumn(label: Text('Case')),
-                DataColumn(label: Text('Status')),
-                DataColumn(label: Text('Category')),
-                DataColumn(label: Text('Urgency')),
-                DataColumn(label: Text('Create Date')),
-              ],
-              source: _DataSource(workList, context),
-            ),
-    );
+                    showFirstLastButtons: true,
+                    showCheckboxColumn: false,
+                    header: const Row(
+                      children: [
+                        Text('WorkList'),
+                      ],
+                    ),
+                    actions: [
+                      ElevatedButton(
+                        onPressed: () {
+                          getWorkList();
+                        },
+                        child: const Icon(Icons.refresh_rounded),
+                      ),
+                    ],
+                    columns: const [
+                      DataColumn(label: Text('Case')),
+                      DataColumn(label: Text('Status')),
+                      DataColumn(label: Text('Category')),
+                      DataColumn(label: Text('Urgency')),
+                      DataColumn(label: Text('Create Date')),
+                    ],
+                    source: _DataSource(workList, context),
+                  )
+                : const Center(
+                    child: Text(
+                      'Servicio no disponible',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ));
   }
 }
 
 class _Row {
   _Row(
+    this.pzInsKey,
     this.cases,
     this.status,
     this.category,
@@ -89,6 +111,7 @@ class _Row {
     this.date,
   );
 
+  String pzInsKey;
   final String cases;
   final String status;
   final String category;
@@ -112,35 +135,38 @@ class _DataSource extends DataTableSource {
     assert(index >= 0);
     // if (index >= _rows.length) return null;
     final row = _rows[index];
+
     return DataRow.byIndex(
       index: index,
-      selected: row.selected,
+      // selected: row.selected,
       onSelectChanged: (value) {
-        showDialog(
-            barrierDismissible:
-                false, // Permite cerrar el modal cuando se hace clikc afuera
+        showAdaptiveDialog(
+            // Permite cerrar el modal cuando se hace clikc afuera
+            barrierDismissible: true,
             context: context,
             builder: (context) {
               return AlertDialog(
-                elevation: 5,
+                elevation: 1,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8)),
-                title: const Text(
-                  'Case',
+                title: Text(
+                  'Case ${row.cases}',
                   textAlign: TextAlign.center,
-                ), // Titulo de la card
-                content: Column(
-                  mainAxisSize:
-                      MainAxisSize.min, // Ajusta la card al texto mas pequenho
-                  children: [
-                    Text(row.cases),
-                  ],
                 ),
-                actions: [
-                  TextButton(
-                      onPressed: () => Navigator.pop(context),
-                      child: const Text('Ok'))
-                ],
+                content: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      FormBuilderWidget(
+                        pzInsKey: row.pzInsKey,
+                      )
+                    ],
+                  ),
+                ),
+                // actions: [
+                //   TextButton(
+                //       onPressed: () => Navigator.pop(context),
+                //       child: const Text('Ok'))
+                // ],
               );
             });
 
@@ -164,8 +190,11 @@ class _DataSource extends DataTableSource {
 
   getRows(List list) {
     for (var i = 0; i < list.length; i++) {
+      // String pxRef = list[i]['pxRefObjectKey'];
+      // String pzInsKey = list[i]['pzInsKey'];
       _rows += <_Row>[
         _Row(
+          list[i]['pzInsKey'],
           list[i]['pxRefObjectInsName'],
           list[i]['pxAssignmentStatus'] ?? 'New',
           list[i]['pyLabel'],

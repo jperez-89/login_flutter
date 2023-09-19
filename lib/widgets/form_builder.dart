@@ -3,7 +3,9 @@ import 'package:login_flutter/models/actions/assignment_actions.dart';
 import 'package:login_flutter/widgets/widgets.dart';
 
 class FormBuilderWidget extends StatefulWidget {
-  const FormBuilderWidget({Key? key}) : super(key: key);
+  final String? pzInsKey;
+
+  const FormBuilderWidget({Key? key, this.pzInsKey}) : super(key: key);
 
   @override
   State<FormBuilderWidget> createState() => _FormBuilderWidgetState();
@@ -12,18 +14,39 @@ class FormBuilderWidget extends StatefulWidget {
 class _FormBuilderWidgetState extends State<FormBuilderWidget> {
   GlobalKey<FormState> myFormKey = GlobalKey<FormState>();
   List components = [];
+  bool _load = false;
+
+  void getAssiggnment() async {
+    setState(() {
+      _load = true;
+    });
+
+    await AssignmentActions().getAssignment(widget.pzInsKey!).then((value) {
+      setState(() {
+        components = value;
+      });
+    });
+
+    setState(() {
+      _load = false;
+    });
+  }
+
   @override
   void initState() {
-    AssignmentActions().getAssignment().then((value) {
-      components = value;
-      setState(() {});
-    });
+    getAssiggnment();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return FormBuilder().buildForm(components, myFormKey);
+    return _load
+        ? Container(
+            alignment: Alignment.center,
+            margin: const EdgeInsets.only(top: 100),
+            child: const CircularProgressIndicator.adaptive(),
+          )
+        : FormBuilder().buildForm(components, myFormKey);
   }
 }
 

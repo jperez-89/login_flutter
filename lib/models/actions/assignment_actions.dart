@@ -5,8 +5,8 @@ import 'package:login_flutter/models/services/assignment_services.dart';
 class AssignmentActions {
   List componentes = [];
 
-  getAssignment() {
-    return AssignmentService().getAssignment().then((value) {
+  getAssignment(String pzInsKey) {
+    return AssignmentService().getAssignment(pzInsKey).then((value) {
       Map<String, dynamic> json = jsonDecode(value.body);
       extractComponents(json["view"]["groups"] ?? []);
       return componentes;

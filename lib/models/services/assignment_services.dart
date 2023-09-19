@@ -3,7 +3,7 @@ import 'package:login_flutter/models/services/endpoints.dart';
 import 'package:login_flutter/models/services/service.dart';
 
 class AssignmentService {
-  Future getAssignment() async {
+  Future getAssignment(String pzInsKey) async {
     String user = 'InterpreterOP';
     String pass = 'hyopJK77@';
 
@@ -23,13 +23,22 @@ class AssignmentService {
         'authorization': basicAuth
       };
 
-      // final httpPackageUrl = Uri.parse('${endpoints['PEGAURL'] + endpoints['VERSION'] + endpoints['CASETYPES']}');
-      final httpPackageUrl = Uri.parse('${endpoints['STATIC']}');
+      final httpPackcageUrl = Uri.parse(
+          '${endpoints['PEGAURL'] + endpoints['VERSION'] + endpoints['ASSIGNMENTS']}/$pzInsKey');
 
-      final httpPackageResponse = await get(httpPackageUrl, headers: headers);
+      final httpPackageResponse = await get(httpPackcageUrl, headers: headers);
 
-      //return httpPackageResponse;
-      return httpPackageResponse;
+      Map<String, dynamic> json = jsonDecode(httpPackageResponse.body);
+
+      String actionsID = json['actions'][0]['ID'];
+
+      final httpPackageUrl = Uri.parse(
+          '${endpoints['PEGAURL'] + endpoints['VERSION'] + endpoints['ASSIGNMENTS']}/$pzInsKey${endpoints['ACTIONS']}/$actionsID');
+
+      final httpPackageResponseData =
+          await get(httpPackageUrl, headers: headers);
+
+      return httpPackageResponseData;
     }
   }
 }
