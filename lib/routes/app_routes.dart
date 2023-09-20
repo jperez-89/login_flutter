@@ -32,6 +32,11 @@ class AppRoutes {
         icon: Icons.play_circle_fill_outlined,
         nameRoute: 'New Rent Car Asignment',
         screen: const NewRentCarAsignment()),
+    MenuOption(
+        route: 'NewCase',
+        icon: Icons.play_circle_fill_outlined,
+        nameRoute: 'NewCase',
+        screen: const NewInterpreterAsignment()),
   ];
 
 // Definiendo rutas de manera dinamica

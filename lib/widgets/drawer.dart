@@ -17,7 +17,6 @@ class _DrawerWidgetState extends State<DrawerWidget> {
     await CaseActions().getCaseType().then((value) {
       Map<String, dynamic> json = jsonDecode(value);
       lst = json['caseTypes'];
-
       setState(() {});
     });
   }
@@ -69,9 +68,13 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                   title: Text(lst[i]['name']),
                   trailing: const Icon(Icons.arrow_circle_right_outlined),
                   onTap: () {
-                    const String x = "dsdd";
-                    Navigator.pushNamed(context, '${lst[i]['name']}',
-                        arguments: x);
+                    //Navigator.pushNamed(context, '${lst[i]['name']}');
+
+                    Navigator.pushNamed(context, 'NewCase', arguments: {
+                      "Title": '${lst[i]['name']}',
+                      "caseTypeID": '${lst[i]['ID']}',
+                      "content": ""
+                    });
                   },
                 );
               },
