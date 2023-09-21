@@ -2,21 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:login_flutter/models/actions/case_actions.dart';
 import 'package:login_flutter/widgets/widgets.dart';
 
-class NewInterpreterAsignment extends StatefulWidget {
-  const NewInterpreterAsignment({Key? key}) : super(key: key);
+class NewAssignmentScreen extends StatefulWidget {
+  const NewAssignmentScreen({super.key});
 
   @override
-  State<NewInterpreterAsignment> createState() =>
-      _NewInterpreterAsignmentState();
+  State<NewAssignmentScreen> createState() => _NewAssignmentScreenState();
 }
 
-class _NewInterpreterAsignmentState extends State<NewInterpreterAsignment> {
+class _NewAssignmentScreenState extends State<NewAssignmentScreen> {
   late final String caseTypeID;
+  late final String name;
   String assignmentId = '';
   String pzInsKey = '';
 
   createCase(Map classID) async {
     caseTypeID = classID['classID'].toString();
+    name = classID['name'].toString();
 
     await CaseActions().createCase(caseTypeID).then((value) {
       setState(() {
@@ -38,11 +39,11 @@ class _NewInterpreterAsignmentState extends State<NewInterpreterAsignment> {
 
     return Scaffold(
       appBar: AppBar(
-        title: pzInsKey != '' ? Text('Case $assignmentId') : const Text(''),
+        title: pzInsKey != '' ? Text('$name $assignmentId') : const Text(''),
       ),
       body: Center(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(18),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
           child: pzInsKey != ''
               ? Column(
                   children: [
@@ -52,11 +53,6 @@ class _NewInterpreterAsignmentState extends State<NewInterpreterAsignment> {
               : const Column(
                   children: [CircularProgressIndicator.adaptive()],
                 ),
-          //  Container(
-          //     alignment: Alignment.center,
-          //     margin: const EdgeInsets.only(top: 300),
-          //     child: const CircularProgressIndicator.adaptive(),
-          //   ),
         ),
       ),
     );

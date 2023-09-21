@@ -32,7 +32,7 @@ class CaseService {
     }
   }
 
-  Future getCase(String caseTypeID, String content) async {
+  Future createCase(String caseTypeID) async {
     String user = 'InterpreterOP';
     String pass = 'hyopJK77@';
 
@@ -46,17 +46,39 @@ class CaseService {
     } else {
       String basicAuth = 'Basic ${base64Encode(utf8.encode('$user:$pass'))}';
 
-      final Map<String, String> headers = {
-        'content-type': 'application/json',
-        'accept': 'application/json',
-        'authorization': basicAuth,
-        // 'caseTypeID': caseTypeID,
-        // 'content': content
-      };
-      final httpPackageUrl = Uri.parse(
-          '${endpoints['PEGAURL'] + endpoints['VERSION'] + endpoints['CASES']}?caseTypeID=$caseTypeID&content=$content');
+      final httpPackcageUrl = Uri.parse(
+          '${endpoints['PEGAURL'] + endpoints['VERSION'] + endpoints['CASES']}');
 
-      final httpPackageResponse = await post(httpPackageUrl, headers: headers);
+      final Map<String, String> headersData = {
+        'content-type': 'text/plain',
+        'authorization': basicAuth
+      };
+
+      final String bodyData = '{"caseTypeID": "$caseTypeID", "content": "" }';
+
+      final httpPackageResponse = await post(
+        httpPackcageUrl,
+        headers: headersData,
+        body: bodyData,
+      );
+
+      // final httpPackcageUrl = Uri.parse(
+      //     '${endpoints['PEGAURL'] + endpoints['VERSION'] + endpoints['CASES']}?caseTypeID=$caseTypeID&content=""');
+
+      // final Map<String, String> headersData = {
+      //   'content-type': 'application/json',
+      //   // 'X-Requested-With': 'XMLHttpRequest',
+      //   // 'content-type': 'application/x-www-form-urlencoded"',
+      //   // 'content-type': 'text/plain',
+      //   'accept': '*/*',
+      //   'authorization': basicAuth
+      // };
+
+      // final httpPackageResponse =
+      //     await post(httpPackcageUrl, headers: headersData);
+
+      // print(httpPackageResponse.statusCode);
+      // print(httpPackageResponse.body);
 
       return httpPackageResponse;
     }

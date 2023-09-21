@@ -25,6 +25,7 @@ class AssignmentService {
 
       final httpPackcageUrl = Uri.parse(
           '${endpoints['PEGAURL'] + endpoints['VERSION'] + endpoints['ASSIGNMENTS']}/$pzInsKey');
+      // print(httpPackcageUrl);
 
       final httpPackageResponse = await get(httpPackcageUrl, headers: headers);
 
