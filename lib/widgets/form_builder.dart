@@ -3,9 +3,9 @@ import 'package:login_flutter/models/actions/assignment_actions.dart';
 import 'package:login_flutter/widgets/widgets.dart';
 
 class FormBuilderWidget extends StatefulWidget {
-  final String? pzInsKey;
+  final String pzInsKey;
 
-  const FormBuilderWidget({Key? key, this.pzInsKey}) : super(key: key);
+  const FormBuilderWidget({Key? key, required this.pzInsKey}) : super(key: key);
 
   @override
   State<FormBuilderWidget> createState() => _FormBuilderWidgetState();
@@ -16,17 +16,20 @@ class _FormBuilderWidgetState extends State<FormBuilderWidget> {
   List components = [];
   bool _load = false;
 
-  void getAssiggnment() async {
+  // Obtenemos los campos del formulario del assignment
+  void getAssiggnment(String pzInsKey) async {
+    // Mostramos loader
     setState(() {
       _load = true;
     });
 
-    await AssignmentActions().getAssignment(widget.pzInsKey!).then((value) {
+    await AssignmentActions().getAssignment(pzInsKey).then((value) {
       setState(() {
         components = value;
       });
     });
 
+    // Ocultamos loader
     setState(() {
       _load = false;
     });
@@ -34,7 +37,7 @@ class _FormBuilderWidgetState extends State<FormBuilderWidget> {
 
   @override
   void initState() {
-    getAssiggnment();
+    getAssiggnment(widget.pzInsKey);
     super.initState();
   }
 

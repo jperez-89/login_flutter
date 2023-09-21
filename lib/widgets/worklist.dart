@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'dart:async';
 import 'dart:convert';
 import 'package:login_flutter/models/actions/work_list_actions.dart';
+import 'package:login_flutter/theme/app_theme.dart';
 import 'package:login_flutter/widgets/form_builder.dart';
 
 class WorklistWidget extends StatefulWidget {
@@ -16,6 +18,7 @@ class _WorklistWidgetState extends State<WorklistWidget> {
   bool _load = false;
   bool _service = true;
 
+  // Obtiene la lista de assignments
   void getWorkList() async {
     setState(() {
       _load = true;
@@ -38,66 +41,87 @@ class _WorklistWidgetState extends State<WorklistWidget> {
     });
   }
 
+//  Refresca la lista de assignment cada 1 minuto
+  void refreshWorkList() {
+    Timer.periodic(const Duration(minutes: 1), (timer) async {
+      await WorkList().getWorkList().then((value) {
+        if (value.statusCode == 503) {
+          _load = false;
+          _service = false;
+          setState(() {});
+        } else {
+          Map<String, dynamic> json = jsonDecode(value.body);
+
+          workList = json['pxResults'];
+          _load = false;
+          setState(() {});
+        }
+      });
+    });
+  }
+
   @override
   void initState() {
     getWorkList();
+    refreshWorkList();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-        padding: const EdgeInsets.only(left: 3, right: 3, top: 10),
-        child: _load
-            ? Container(
-                alignment: Alignment.center,
-                margin: const EdgeInsets.only(top: 300),
-                child: const CircularProgressIndicator.adaptive(),
-              )
-            : _service
-                ? PaginatedDataTable(
-                    columnSpacing: 25,
-                    rowsPerPage: rowsPerPage,
-                    availableRowsPerPage: const [6, 8, 10, 15, 20, 25],
-                    onRowsPerPageChanged: (value) {
-                      setState(() {
-                        rowsPerPage = value ?? rowsPerPage;
-                      });
-                    },
-                    showFirstLastButtons: true,
-                    showCheckboxColumn: false,
-                    header: const Row(
-                      children: [
-                        Text('WorkList'),
-                      ],
-                    ),
-                    actions: [
-                      ElevatedButton(
-                        onPressed: () {
-                          getWorkList();
-                        },
-                        child: const Icon(Icons.refresh_rounded),
-                      ),
+      padding: const EdgeInsets.only(left: 3, right: 3, top: 10),
+      child: _load
+          ? Container(
+              alignment: Alignment.center,
+              margin: const EdgeInsets.only(top: 300),
+              child: const CircularProgressIndicator.adaptive(),
+            )
+          : _service
+              ? PaginatedDataTable(
+                  columnSpacing: 25,
+                  rowsPerPage: rowsPerPage,
+                  availableRowsPerPage: const [6, 8, 10, 15, 20, 25],
+                  onRowsPerPageChanged: (value) {
+                    setState(() {
+                      rowsPerPage = value ?? rowsPerPage;
+                    });
+                  },
+                  showFirstLastButtons: true,
+                  showCheckboxColumn: false,
+                  header: const Row(
+                    children: [
+                      Text('WorkList'),
                     ],
-                    columns: const [
-                      DataColumn(label: Text('Case')),
-                      DataColumn(label: Text('Status')),
-                      DataColumn(label: Text('Category')),
-                      DataColumn(label: Text('Urgency')),
-                      DataColumn(label: Text('Create Date')),
-                    ],
-                    source: _DataSource(workList, context),
-                  )
-                : const Center(
-                    child: Text(
-                      'Servicio no disponible',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w500,
-                      ),
+                  ),
+                  actions: [
+                    ElevatedButton(
+                      onPressed: () {
+                        getWorkList();
+                      },
+                      child: const Icon(Icons.refresh_rounded),
                     ),
-                  ));
+                  ],
+                  columns: const [
+                    DataColumn(label: Text('Case')),
+                    DataColumn(label: Text('Status')),
+                    DataColumn(label: Text('Category')),
+                    DataColumn(label: Text('Urgency')),
+                    DataColumn(label: Text('Create Date')),
+                  ],
+                  source: _DataSource(workList, context),
+                )
+              : const Center(
+                  child: Text(
+                    'Servicio no disponible',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+    );
   }
 }
 
@@ -133,20 +157,20 @@ class _DataSource extends DataTableSource {
   @override
   DataRow getRow(int index) {
     assert(index >= 0);
-    // if (index >= _rows.length) return null;
     final row = _rows[index];
 
     return DataRow.byIndex(
       index: index,
       // selected: row.selected,
       onSelectChanged: (value) {
-        showAdaptiveDialog(
+        showDialog(
+            // showAdaptiveDialog(
             // Permite cerrar el modal cuando se hace clikc afuera
             barrierDismissible: true,
             context: context,
             builder: (context) {
               return AlertDialog(
-                elevation: 1,
+                elevation: 10,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8)),
                 title: Text(
@@ -154,14 +178,13 @@ class _DataSource extends DataTableSource {
                   textAlign: TextAlign.center,
                 ),
                 content: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      FormBuilderWidget(
-                        pzInsKey: row.pzInsKey,
-                      )
-                    ],
+                  child: FormBuilderWidget(
+                    pzInsKey: row.pzInsKey,
                   ),
                 ),
+                alignment: Alignment.center,
+
+                /** ----------ACCIONES DE ALERT DIALOG ----------- */
                 // actions: [
                 //   TextButton(
                 //       onPressed: () => Navigator.pop(context),

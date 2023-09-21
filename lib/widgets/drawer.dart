@@ -69,9 +69,9 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                   title: Text(lst[i]['name']),
                   trailing: const Icon(Icons.arrow_circle_right_outlined),
                   onTap: () {
-                    const String x = "dsdd";
-                    Navigator.pushNamed(context, '${lst[i]['name']}',
-                        arguments: x);
+                    String classID = lst[i]['ID'];
+                    Navigator.pushNamed(context, 'newAssigment',
+                        arguments: {"classID": classID});
                   },
                 );
               },
