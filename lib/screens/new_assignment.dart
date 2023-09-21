@@ -11,11 +11,13 @@ class NewAssignmentScreen extends StatefulWidget {
 
 class _NewAssignmentScreenState extends State<NewAssignmentScreen> {
   late final String caseTypeID;
+  late final String name;
   String assignmentId = '';
   String pzInsKey = '';
 
   createCase(Map classID) async {
     caseTypeID = classID['classID'].toString();
+    name = classID['name'].toString();
 
     await CaseActions().createCase(caseTypeID).then((value) {
       setState(() {
@@ -37,8 +39,7 @@ class _NewAssignmentScreenState extends State<NewAssignmentScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title:
-            pzInsKey != '' ? Text('Assignment $assignmentId') : const Text(''),
+        title: pzInsKey != '' ? Text('$name $assignmentId') : const Text(''),
       ),
       body: Center(
         child: SingleChildScrollView(
