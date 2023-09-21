@@ -1,0 +1,41 @@
+import 'package:flutter/material.dart';
+
+class CustomRadioButton extends StatefulWidget {
+  final String value;
+  final String groupValue;
+  final void Function(String?) onchange;
+  final Size size;
+  final int maxElementInRow;
+  final String orientation;
+
+  const CustomRadioButton({
+    super.key,
+    required this.value,
+    required this.groupValue,
+    required this.onchange,
+    required this.size,
+    required this.maxElementInRow,
+    required this.orientation,
+  });
+
+  @override
+  State<CustomRadioButton> createState() => _CustomRadioButtonState();
+}
+
+class _CustomRadioButtonState extends State<CustomRadioButton> {
+  @override
+  Widget build(BuildContext context) {
+    return ConstrainedBox(
+        constraints: (widget.orientation == "vertical")
+            ? BoxConstraints(
+                maxHeight: (widget.size.height / widget.maxElementInRow))
+            : BoxConstraints(
+                maxWidth: (widget.size.width / widget.maxElementInRow)),
+        child: RadioListTile(
+          value: widget.value,
+          title: Text(widget.value),
+          groupValue: widget.groupValue,
+          onChanged: widget.onchange,
+        ));
+  }
+}
