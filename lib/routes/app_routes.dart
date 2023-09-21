@@ -23,16 +23,6 @@ class AppRoutes {
         nameRoute: 'Pega Dashboard',
         screen: const DashboardPegaScreen()),
     MenuOption(
-        route: 'Interprete',
-        icon: Icons.play_circle_fill_outlined,
-        nameRoute: 'New Interpreter Asignment',
-        screen: const NewInterpreterAsignment()),
-    MenuOption(
-        route: 'RentalCar',
-        icon: Icons.play_circle_fill_outlined,
-        nameRoute: 'New Rent Car Asignment',
-        screen: const NewRentCarAsignment()),
-    MenuOption(
         route: 'newAssigment',
         icon: Icons.play_circle_fill_outlined,
         nameRoute: 'New Assignment',
