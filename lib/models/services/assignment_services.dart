@@ -33,13 +33,19 @@ class AssignmentService {
 
       String actionsID = json['actions'][0]['ID'];
 
+      Map<String, dynamic> actionButtons =
+          json['actionButtons']["secondary"][1];
+
       final httpPackageUrl = Uri.parse(
           '${endpoints['PEGAURL'] + endpoints['VERSION'] + endpoints['ASSIGNMENTS']}/$pzInsKey${endpoints['ACTIONS']}/$actionsID');
 
       final httpPackageResponseData =
           await get(httpPackageUrl, headers: headers);
 
-      return httpPackageResponseData;
+      return {
+        "components": httpPackageResponseData,
+        "actionButtons": actionButtons
+      };
     }
   }
 }

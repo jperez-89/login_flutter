@@ -25,7 +25,7 @@ class _FormBuilderWidgetState extends State<FormBuilderWidget> {
 
     await AssignmentActions().getAssignment(pzInsKey).then((value) {
       setState(() {
-        components = value;
+        components = value["components"];
       });
     });
 
@@ -107,6 +107,23 @@ class FormBuilder {
     );
   }
 
+  /*InputsWidget createCustomInput(
+      Map<String, dynamic> pxTextInput, String keyboardType) {
+        Map<String,TextInputType> inputType
+    return InputsWidget(
+      labelText: getFieldLabel(pxTextInput),
+      obscureText:
+          false, //temporal no recuerdo donde estaba este valor en el json
+      textAlign: getTextAlign(pxTextInput),
+      readOnly: isReadOnly(pxTextInput),
+      maxLength: getMaxLenght(pxTextInput),
+      toolTip: getToolTip(pxTextInput),
+      property: getFieldID(pxTextInput),
+      frmValues: const {},
+      inputType: ,
+    );
+  }*/
+
   InputsWidget createPxTextInput(Map<String, dynamic> pxTextInput) {
     return InputsWidget(
       labelText: getFieldLabel(pxTextInput),
@@ -121,10 +138,41 @@ class FormBuilder {
     );
   }
 
+  InputsWidget createPxInteger(Map<String, dynamic> pxTextInput) {
+    return InputsWidget(
+      labelText: getFieldLabel(pxTextInput),
+      obscureText:
+          false, //temporal no recuerdo donde estaba este valor en el json
+      textAlign: getTextAlign(pxTextInput),
+      readOnly: isReadOnly(pxTextInput),
+      maxLength: getMaxLenght(pxTextInput),
+      toolTip: getToolTip(pxTextInput),
+      property: getFieldID(pxTextInput),
+      frmValues: const {},
+      inputType: TextInputType.number,
+    );
+  }
+
+  InputsWidget createPxEmail(Map<String, dynamic> pxTextInput) {
+    return InputsWidget(
+      labelText: getFieldLabel(pxTextInput),
+      obscureText:
+          false, //temporal no recuerdo donde estaba este valor en el json
+      textAlign: getTextAlign(pxTextInput),
+      readOnly: isReadOnly(pxTextInput),
+      maxLength: getMaxLenght(pxTextInput),
+      toolTip: getToolTip(pxTextInput),
+      property: getFieldID(pxTextInput),
+      frmValues: const {},
+      inputType: TextInputType.emailAddress,
+    );
+  }
+
   CustomDatePicker createPxDateTime(Map<String, dynamic> pxDateTime) {
     return CustomDatePicker(
       label: getFieldLabel(pxDateTime),
-      textAlign: getTextAlign(pxDateTime),
+      //textAlign: getTextAlign(pxDateTime),
+      textAlign: TextAlign.right,
       enabled: !isDisabled(pxDateTime),
       useFutureDateRange: useFutureDateRange(pxDateTime),
       usePastDateRange: usePastDateRange(pxDateTime),
@@ -252,7 +300,17 @@ class FormBuilder {
         widget = createPxDropDown(component["field"]);
         break;
       case "pxRadioButtons":
-        widget = createPxRadioButtom(component["field"]);
+        // widget = createPxRadioButtom(component["field"]);
+        widget = createPxDropDown(component["field"]);
+        break;
+      case "pxInteger":
+        widget = createPxInteger(component["field"]);
+        break;
+      case "pxPhone":
+        widget = createPxInteger(component["field"]);
+        break;
+      case "pxEmail":
+        widget = createPxEmail(component["field"]);
         break;
       default:
         widget = Text("Widget aun no soportado: $typeComponent");

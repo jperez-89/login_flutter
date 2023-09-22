@@ -6,9 +6,12 @@ class AssignmentActions {
 
   getAssignment(String pzInsKey) {
     return AssignmentService().getAssignment(pzInsKey).then((value) {
-      Map<String, dynamic> json = jsonDecode(value.body);
+      Map<String, dynamic> json = jsonDecode(value["components"].body);
       extractComponents(json["view"]["groups"] ?? []);
-      return componentes;
+      return {
+        "components": componentes,
+        "actionButtons": value["actionButtons"]
+      };
     });
   }
 
