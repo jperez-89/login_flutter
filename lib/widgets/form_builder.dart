@@ -98,9 +98,7 @@ class FormBuilder {
           groupValue = value!;
         },
         size: size,
-        maxElementInRow: (orientation == "horizontal" && maxElementInRow < 4)
-            ? maxElementInRow
-            : 4,
+        maxElementInRow: maxElementInRow,
         orientation: orientation,
       ));
     }

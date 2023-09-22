@@ -26,11 +26,12 @@ class _CustomRadioButtonState extends State<CustomRadioButton> {
   @override
   Widget build(BuildContext context) {
     return ConstrainedBox(
-        constraints: (widget.orientation == "vertical")
-            ? BoxConstraints(
-                maxHeight: (widget.size.height / widget.maxElementInRow))
-            : BoxConstraints(
-                maxWidth: (widget.size.width / widget.maxElementInRow)),
+        constraints: (widget.orientation == "horizontal")
+            ? (widget.maxElementInRow < 4)
+                ? BoxConstraints(
+                    maxWidth: (widget.size.width / widget.maxElementInRow))
+                : BoxConstraints(maxWidth: (widget.size.width / 4))
+            : const BoxConstraints(),
         child: RadioListTile(
           value: widget.value,
           title: Text(widget.value),
