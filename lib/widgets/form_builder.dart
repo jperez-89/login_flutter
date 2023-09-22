@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:login_flutter/models/actions/assignment_actions.dart';
 import 'package:login_flutter/widgets/widgets.dart';
@@ -54,8 +56,11 @@ class _FormBuilderWidgetState extends State<FormBuilderWidget> {
 }
 
 class FormBuilder {
+  final Map<String, String> frmValues = {};
   final BuildContext context;
-  const FormBuilder({required this.context});
+
+  FormBuilder({required this.context});
+
   Widget buildForm(List components, GlobalKey<FormState> myFormKey) {
     List<Widget> childs = [];
     if (components.isNotEmpty) {
@@ -72,13 +77,43 @@ class FormBuilder {
     return ElevatedButton(
         onPressed: () {
           if (!myFormKey.currentState!.validate()) {
+            showMessage('Error', 'Complete todos los campos');
             return;
+          } else {
+            print(frmValues);
           }
         },
         child: const Text("Guardar"));
   }
 
-  /// ********* BORRAR ESTA MADRE O SACARLO A  OTRO LADO ************
+  void showMessage(String title, String message) {
+    showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            elevation: 5,
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            title: Text(
+              title,
+              textAlign: TextAlign.center,
+            ), // Titulo de la card
+            content: Column(
+              mainAxisSize:
+                  MainAxisSize.min, // Ajusta la card al texto mas pequenho
+              children: [
+                Text(message),
+              ],
+            ),
+            actions: [
+              TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Ok'))
+            ],
+          );
+        });
+  }
 
   CustomCaption createCaption(Map<String, dynamic> caption) {
     return CustomCaption(value: caption["value"], fontSize: 20);
@@ -119,7 +154,7 @@ class FormBuilder {
       maxLength: getMaxLenght(pxTextInput),
       toolTip: getToolTip(pxTextInput),
       property: getFieldID(pxTextInput),
-      frmValues: const {},
+      frmValues: frmValues,
       inputType: ,
     );
   }*/
@@ -127,28 +162,24 @@ class FormBuilder {
   InputsWidget createPxTextInput(Map<String, dynamic> pxTextInput) {
     return InputsWidget(
       labelText: getFieldLabel(pxTextInput),
-      obscureText:
-          false, //temporal no recuerdo donde estaba este valor en el json
       textAlign: getTextAlign(pxTextInput),
       readOnly: isReadOnly(pxTextInput),
       maxLength: getMaxLenght(pxTextInput),
       toolTip: getToolTip(pxTextInput),
       property: getFieldID(pxTextInput),
-      frmValues: const {},
+      frmValues: frmValues,
     );
   }
 
   InputsWidget createPxInteger(Map<String, dynamic> pxTextInput) {
     return InputsWidget(
       labelText: getFieldLabel(pxTextInput),
-      obscureText:
-          false, //temporal no recuerdo donde estaba este valor en el json
       textAlign: getTextAlign(pxTextInput),
       readOnly: isReadOnly(pxTextInput),
       maxLength: getMaxLenght(pxTextInput),
       toolTip: getToolTip(pxTextInput),
       property: getFieldID(pxTextInput),
-      frmValues: const {},
+      frmValues: frmValues,
       inputType: TextInputType.number,
     );
   }
@@ -156,14 +187,12 @@ class FormBuilder {
   InputsWidget createPxEmail(Map<String, dynamic> pxTextInput) {
     return InputsWidget(
       labelText: getFieldLabel(pxTextInput),
-      obscureText:
-          false, //temporal no recuerdo donde estaba este valor en el json
       textAlign: getTextAlign(pxTextInput),
       readOnly: isReadOnly(pxTextInput),
       maxLength: getMaxLenght(pxTextInput),
       toolTip: getToolTip(pxTextInput),
       property: getFieldID(pxTextInput),
-      frmValues: const {},
+      frmValues: frmValues,
       inputType: TextInputType.emailAddress,
     );
   }
@@ -171,14 +200,15 @@ class FormBuilder {
   CustomDatePicker createPxDateTime(Map<String, dynamic> pxDateTime) {
     return CustomDatePicker(
       label: getFieldLabel(pxDateTime),
-      //textAlign: getTextAlign(pxDateTime),
-      textAlign: TextAlign.right,
+      textAlign: TextAlign.left,
       enabled: !isDisabled(pxDateTime),
       useFutureDateRange: useFutureDateRange(pxDateTime),
       usePastDateRange: usePastDateRange(pxDateTime),
       futureDateRange: getFutureDateRange(pxDateTime),
       pastDateRange: getPastDateRange(pxDateTime),
       toolTip: getToolTip(pxDateTime),
+      property: getFieldID(pxDateTime),
+      frmValues: frmValues,
     );
   }
 
@@ -190,6 +220,8 @@ class FormBuilder {
     return CustomDropdown(
       label: getFieldLabel(pxDropdown),
       menuItem: menuItems,
+      property: getFieldID(pxDropdown),
+      frmValues: frmValues,
     );
   }
 
@@ -315,6 +347,9 @@ class FormBuilder {
       default:
         widget = Text("Widget aun no soportado: $typeComponent");
     }
-    return widget;
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: widget,
+    );
   }
 }

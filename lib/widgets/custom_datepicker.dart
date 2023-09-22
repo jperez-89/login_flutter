@@ -9,6 +9,8 @@ class CustomDatePicker extends StatefulWidget {
   final bool usePastDateRange;
   final int futureDateRange;
   final int pastDateRange;
+  final Map<String, dynamic> frmValues;
+  final String property;
 
   const CustomDatePicker(
       {super.key,
@@ -19,14 +21,17 @@ class CustomDatePicker extends StatefulWidget {
       this.futureDateRange = 10,
       this.pastDateRange = 10,
       this.useFutureDateRange = false,
-      this.usePastDateRange = false});
+      this.usePastDateRange = false,
+      required this.frmValues,
+      required this.property});
 
   @override
   State<CustomDatePicker> createState() => _CustomDatePickerState();
 }
 
 class _CustomDatePickerState extends State<CustomDatePicker> {
-  static DateTime fecha = DateTime.now();
+  // static DateTime fecha = DateTime.now();
+  String fecha = '';
 
   void _showDatePicker() {
     FocusScope.of(context).unfocus();
@@ -39,21 +44,27 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
                 getLastDate(widget.useFutureDateRange, widget.futureDateRange)))
         .then((value) {
       setState(() {
-        fecha = value!;
+        fecha = getFecha(value!);
+        widget.frmValues[widget.property] = fecha;
       });
     });
   }
 
   int getFristDate(bool usePastDays, int pastDateRange) {
-    return (usePastDays) ? fecha.year - pastDateRange : 10;
+    return (usePastDays) ? DateTime.now().year - pastDateRange : 10;
   }
 
   int getLastDate(bool useFutureDays, int futureDateRange) {
-    return (useFutureDays) ? fecha.year + futureDateRange : 10;
+    return (useFutureDays) ? DateTime.now().year + futureDateRange : 10;
   }
 
-  String getFecha() {
-    return "${fecha.day}/${fecha.month}/${fecha.year}";
+  String getFecha(DateTime fecha) {
+    /** REVISAR COMO PEGA GUARDA LAS FECHAS EN LA BASE DE DATOS */
+    widget.frmValues[widget.property] =
+        "${fecha.day}/${fecha.month}/${fecha.year}";
+
+    return widget.frmValues[widget.property];
+    // return "${fecha.day}/${fecha.month}/${fecha.year}";
   }
 
   @override
@@ -63,7 +74,8 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
       child: TextFormField(
         autofocus: false,
         keyboardType: TextInputType.none,
-        controller: TextEditingController(text: getFecha()),
+        // controller: TextEditingController(text: getFecha()),
+        controller: TextEditingController(text: fecha),
         onTap: _showDatePicker,
         decoration: InputDecoration(labelText: widget.label),
         enabled: widget.enabled,

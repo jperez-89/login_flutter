@@ -3,7 +3,15 @@ import 'package:flutter/material.dart';
 class CustomDropdown extends StatelessWidget {
   final List<DropdownMenuItem> menuItem;
   final String label;
-  const CustomDropdown({Key? key, required this.menuItem, required this.label})
+  final String property;
+  final Map<String, dynamic> frmValues;
+
+  const CustomDropdown(
+      {Key? key,
+      required this.menuItem,
+      required this.label,
+      required this.property,
+      required this.frmValues})
       : super(key: key);
 
   @override
@@ -11,7 +19,9 @@ class CustomDropdown extends StatelessWidget {
     return DropdownButtonFormField(
       decoration: InputDecoration(labelText: label),
       items: menuItem,
-      onChanged: (value) {},
+      onChanged: (value) {
+        frmValues[property] = value;
+      },
     );
   }
 }
