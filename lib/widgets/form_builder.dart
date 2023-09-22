@@ -188,6 +188,10 @@ class FormBuilder {
     return component["control"];
   }
 
+  String getInputType(Map<String, dynamic> component) {
+    return component["control"]["type"];
+  }
+
   Map<String, dynamic> getModes(Map<String, dynamic> component, int index) {
     List<dynamic> modes = getControl(component)["modes"];
     return (index <= modes.length)
@@ -207,10 +211,8 @@ class FormBuilder {
 
   Widget? createWidgets(Map<String, dynamic> component) {
     Widget widget;
-    String typeComponent = (isCaption(component))
-        ? "caption"
-        : component["field"]["control"][
-            "type"]; //*********************actualizar esta linea con los getControl()************
+    String typeComponent =
+        isCaption(component) ? "caption" : getInputType(component["field"]);
     switch (typeComponent) {
       case "pxTextInput":
         widget = createPxTextInput(component["field"]);
