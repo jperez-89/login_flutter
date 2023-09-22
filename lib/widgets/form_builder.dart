@@ -49,12 +49,13 @@ class _FormBuilderWidgetState extends State<FormBuilderWidget> {
             margin: const EdgeInsets.only(top: 100),
             child: const CircularProgressIndicator.adaptive(),
           )
-        : FormBuilder().buildForm(components, myFormKey);
-    // return FormBuilder().buildForm(components, myFormKey);
+        : FormBuilder(context: context).buildForm(components, myFormKey);
   }
 }
 
 class FormBuilder {
+  final BuildContext context;
+  const FormBuilder({required this.context});
   Widget buildForm(List components, GlobalKey<FormState> myFormKey) {
     List<Widget> childs = [];
     if (components.isNotEmpty) {
@@ -81,6 +82,29 @@ class FormBuilder {
 
   CustomCaption createCaption(Map<String, dynamic> caption) {
     return CustomCaption(value: caption["value"], fontSize: 20);
+  }
+
+  Wrap createPxRadioButtom(Map<String, dynamic> pxRadioButton) {
+    final size = MediaQuery.of(context).size;
+    String groupValue = "";
+    List radioButtons = [];
+    int maxElementInRow = getModes(pxRadioButton, 0)["options"].length;
+    String orientation = getModes(pxRadioButton, 0)["orientation"];
+    for (var option in getModes(pxRadioButton, 0)["options"]) {
+      radioButtons.add(CustomRadioButton(
+        value: option["value"],
+        groupValue: groupValue,
+        onchange: (value) {
+          groupValue = value!;
+        },
+        size: size,
+        maxElementInRow: maxElementInRow,
+        orientation: orientation,
+      ));
+    }
+    return Wrap(
+      children: [...radioButtons],
+    );
   }
 
   InputsWidget createPxTextInput(Map<String, dynamic> pxTextInput) {
@@ -124,7 +148,8 @@ class FormBuilder {
 /* ************************************ PREGUNTAR CUAL TOOLTIP TOMAR **************************** */
   String getToolTip(Map<String, dynamic> pxTextInput) {
     /* ************************************ PREGUNTAR CUAL TOOLTIP TOMAR **************************** */
-    return pxTextInput["control"]["modes"][0]["tooltip"];
+    //return pxTextInput["control"]["modes"][0]["tooltip"];
+    return getModes(pxTextInput, 0)["tooltip"];
   }
 
 /* ************************************ PREGUNTAR CUAL TOOLTIP TOMAR **************************** */
@@ -212,8 +237,11 @@ class FormBuilder {
   Widget? createWidgets(Map<String, dynamic> component) {
     Widget widget;
     String typeComponent =
-        isCaption(component) ? "caption" : getInputType(component["field"]);
+        (isCaption(component)) ? "caption" : getInputType(component["field"]);
     switch (typeComponent) {
+      case "caption":
+        widget = createCaption(component["caption"]);
+        break;
       case "pxTextInput":
         widget = createPxTextInput(component["field"]);
         break;
@@ -223,8 +251,8 @@ class FormBuilder {
       case "pxDropdown":
         widget = createPxDropDown(component["field"]);
         break;
-      case "caption":
-        widget = createCaption(component["caption"]);
+      case "pxRadioButtons":
+        widget = createPxRadioButtom(component["field"]);
         break;
       default:
         widget = Text("Widget aun no soportado: $typeComponent");
