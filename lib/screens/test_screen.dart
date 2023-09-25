@@ -11,6 +11,13 @@ class TestScreen extends StatefulWidget {
 
 class _TestScreenState extends State<TestScreen> {
   String groupValue = "";
+  List<String> opcionesAutoComplete = [
+    "bryan",
+    "es",
+    "muy",
+    "genial",
+    "uyuyu bajura"
+  ];
   Wrap generarRadioButtons() {
     final size = MediaQuery.of(context).size;
     List radioButtons = [];
@@ -39,7 +46,23 @@ class _TestScreenState extends State<TestScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(children: [generarRadioButtons()]),
+      body: Center(
+          child:
+              //generarRadioButtons()
+              Autocomplete<String>(
+        optionsBuilder: (textEditingValue) {
+          if (textEditingValue.text == "") {
+            //return const Iterable<String>.empty();
+            return [];
+          }
+          return opcionesAutoComplete.where((String item) {
+            return item.contains(textEditingValue.text.toLowerCase());
+          });
+        },
+        onSelected: (String item) {
+          print("Se seleccionó $item");
+        },
+      )),
     );
   }
 }

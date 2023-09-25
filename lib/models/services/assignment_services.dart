@@ -23,11 +23,10 @@ class AssignmentService {
         'authorization': basicAuth
       };
 
-      final httpPackcageUrl = Uri.parse(
+      final urlAssignment = Uri.parse(
           '${endpoints['PEGAURL'] + endpoints['VERSION'] + endpoints['ASSIGNMENTS']}/$pzInsKey');
-      // print(httpPackcageUrl);
 
-      final httpPackageResponse = await get(httpPackcageUrl, headers: headers);
+      final httpPackageResponse = await get(urlAssignment, headers: headers);
 
       Map<String, dynamic> json = jsonDecode(httpPackageResponse.body);
 
@@ -36,11 +35,12 @@ class AssignmentService {
       Map<String, dynamic> actionButtons =
           json['actionButtons']["secondary"][1];
 
-      final httpPackageUrl = Uri.parse(
+      final urlAssignmentActionID = Uri.parse(
           '${endpoints['PEGAURL'] + endpoints['VERSION'] + endpoints['ASSIGNMENTS']}/$pzInsKey${endpoints['ACTIONS']}/$actionsID');
+      print(urlAssignmentActionID);
 
       final httpPackageResponseData =
-          await get(httpPackageUrl, headers: headers);
+          await get(urlAssignmentActionID, headers: headers);
 
       return {
         "components": httpPackageResponseData,

@@ -115,6 +115,8 @@ class FormBuilder {
         });
   }
 
+  /********* CREATORS  ******* */
+
   CustomCaption createCaption(Map<String, dynamic> caption) {
     return CustomCaption(value: caption["value"], fontSize: 20);
   }
@@ -142,22 +144,28 @@ class FormBuilder {
     );
   }
 
-  /*InputsWidget createCustomInput(
+  InputsWidget createCustomInput(
       Map<String, dynamic> pxTextInput, String keyboardType) {
-        Map<String,TextInputType> inputType
+    Map<String, TextInputType> inputType = {
+      "TEXT": TextInputType.text,
+      "EMAIL": TextInputType.emailAddress,
+      "NUMBER": TextInputType.number,
+      "PHONE": TextInputType.phone,
+      "STREET": TextInputType.streetAddress,
+      "URL": TextInputType.url,
+      "NONE": TextInputType.none,
+    };
     return InputsWidget(
       labelText: getFieldLabel(pxTextInput),
-      obscureText:
-          false, //temporal no recuerdo donde estaba este valor en el json
       textAlign: getTextAlign(pxTextInput),
       readOnly: isReadOnly(pxTextInput),
       maxLength: getMaxLenght(pxTextInput),
       toolTip: getToolTip(pxTextInput),
       property: getFieldID(pxTextInput),
       frmValues: frmValues,
-      inputType: ,
+      inputType: inputType[keyboardType],
     );
-  }*/
+  }
 
   InputsWidget createPxTextInput(Map<String, dynamic> pxTextInput) {
     return InputsWidget(
@@ -225,14 +233,17 @@ class FormBuilder {
     );
   }
 
-/* ************************************ PREGUNTAR CUAL TOOLTIP TOMAR **************************** */
+  DropdownMenuItem createMenuItem(Map<String, dynamic> item) {
+    return DropdownMenuItem(value: item["value"], child: Text(item["key"]));
+  }
+
+  /********* END CREATORS  ******* */
+/***** FIELD ATTRIBUTES ********** */
+
   String getToolTip(Map<String, dynamic> pxTextInput) {
-    /* ************************************ PREGUNTAR CUAL TOOLTIP TOMAR **************************** */
-    //return pxTextInput["control"]["modes"][0]["tooltip"];
     return getModes(pxTextInput, 0)["tooltip"];
   }
 
-/* ************************************ PREGUNTAR CUAL TOOLTIP TOMAR **************************** */
   String getFieldID(Map<String, dynamic> component) {
     return component["fieldID"];
   }
@@ -308,9 +319,7 @@ class FormBuilder {
           };
   }
 
-  DropdownMenuItem createMenuItem(Map<String, dynamic> item) {
-    return DropdownMenuItem(value: item["value"], child: Text(item["key"]));
-  }
+/***** END FIELD ATTRIBUTES ********** */
 
 /* ************* SWITCH ******************/
 
@@ -322,9 +331,6 @@ class FormBuilder {
       case "caption":
         widget = createCaption(component["caption"]);
         break;
-      case "pxTextInput":
-        widget = createPxTextInput(component["field"]);
-        break;
       case "pxDateTime":
         widget = createPxDateTime(component["field"]);
         break;
@@ -335,14 +341,21 @@ class FormBuilder {
         // widget = createPxRadioButtom(component["field"]);
         widget = createPxDropDown(component["field"]);
         break;
+      case "pxTextInput":
+        //widget = createPxTextInput(component["field"]);
+        widget = createCustomInput(component["field"], "TEXT");
+        break;
       case "pxInteger":
-        widget = createPxInteger(component["field"]);
+        //widget = createPxInteger(component["field"]);
+        widget = createCustomInput(component["field"], "NUMBER");
         break;
       case "pxPhone":
-        widget = createPxInteger(component["field"]);
+        //widget = createPxInteger(component["field"]);
+        widget = createCustomInput(component["field"], "PHONE");
         break;
       case "pxEmail":
-        widget = createPxEmail(component["field"]);
+        // widget = createPxEmail(component["field"]);
+        widget = createCustomInput(component["field"], "EMAIL");
         break;
       default:
         widget = Text("Widget aun no soportado: $typeComponent");
