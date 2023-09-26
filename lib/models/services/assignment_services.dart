@@ -37,7 +37,7 @@ class AssignmentService {
 
       final urlAssignmentActionID = Uri.parse(
           '${endpoints['PEGAURL'] + endpoints['VERSION'] + endpoints['ASSIGNMENTS']}/$pzInsKey${endpoints['ACTIONS']}/$actionsID');
-      print(urlAssignmentActionID);
+      //print(urlAssignmentActionID);
 
       final httpPackageResponseData =
           await get(urlAssignmentActionID, headers: headers);

@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:login_flutter/models/actions/assignment_actions.dart';
 import 'package:login_flutter/widgets/widgets.dart';
@@ -121,22 +119,32 @@ class FormBuilder {
     return CustomCaption(value: caption["value"], fontSize: 20);
   }
 
+  CustomAutoComplete createPxAutoComplete(Map<String, dynamic> pxAutoComplete) {
+    return CustomAutoComplete(
+        options: getModes(pxAutoComplete, 0)["options"],
+        property: getFieldID(pxAutoComplete),
+        frmValues: frmValues);
+  }
+
   Wrap createPxRadioButtom(Map<String, dynamic> pxRadioButton) {
+    /** SE REEMPLAZÓ POR LOS DROPDOWN */
     final size = MediaQuery.of(context).size;
-    String groupValue = "";
     List radioButtons = [];
     int maxElementInRow = getModes(pxRadioButton, 0)["options"].length;
     String orientation = getModes(pxRadioButton, 0)["orientation"];
+    if (!frmValues.containsKey(getFieldID(pxRadioButton))) {
+      frmValues[getFieldID(pxRadioButton)] = "";
+    }
+
     for (var option in getModes(pxRadioButton, 0)["options"]) {
       radioButtons.add(CustomRadioButton(
         value: option["value"],
-        groupValue: groupValue,
-        onchange: (value) {
-          groupValue = value!;
-        },
+        //groupValue: frmValues[getFieldID(pxRadioButton)]!,
         size: size,
         maxElementInRow: maxElementInRow,
         orientation: orientation,
+        property: getFieldID(pxRadioButton),
+        frmValues: frmValues,
       ));
     }
     return Wrap(
@@ -282,9 +290,8 @@ class FormBuilder {
     return getModes(component, 0)["usePastDateRange"];
   }
 
-  bool isCaption(Map<String, dynamic> component) {
-    return (component.keys.toString().replaceAll(RegExp(r'[()]'), '') ==
-        "caption");
+  bool isVisible(Map<String, dynamic> component) {
+    return component["visible"];
   }
 
   TextAlign getTextAlign(Map<String, dynamic> component) {
@@ -304,7 +311,20 @@ class FormBuilder {
     return component["control"];
   }
 
-  String getInputType(Map<String, dynamic> component) {
+  String getComponentType(Map<String, dynamic> component) {
+    String type = component.keys.first;
+    switch (type) {
+      case "field":
+        type = (isVisible(component[type]))
+            ? getFieldType(component[type])
+            : "visible false";
+        break;
+      default:
+    }
+    return type;
+  }
+
+  String getFieldType(Map<String, dynamic> component) {
     return component["control"]["type"];
   }
 
@@ -325,9 +345,15 @@ class FormBuilder {
 
   Widget? createWidgets(Map<String, dynamic> component) {
     Widget widget;
-    String typeComponent =
-        (isCaption(component)) ? "caption" : getInputType(component["field"]);
+    String typeComponent = getComponentType(component);
+
     switch (typeComponent) {
+      case "visible false":
+        widget = Container(
+          width: 0,
+          height: 0,
+        );
+        break;
       case "caption":
         widget = createCaption(component["caption"]);
         break;
@@ -338,7 +364,7 @@ class FormBuilder {
         widget = createPxDropDown(component["field"]);
         break;
       case "pxRadioButtons":
-        // widget = createPxRadioButtom(component["field"]);
+        //widget = createPxRadioButtom(component["field"]);
         widget = createPxDropDown(component["field"]);
         break;
       case "pxTextInput":
@@ -356,6 +382,10 @@ class FormBuilder {
       case "pxEmail":
         // widget = createPxEmail(component["field"]);
         widget = createCustomInput(component["field"], "EMAIL");
+        break;
+      case "pxAutoComplete":
+        // widget = createPxEmail(component["field"]);
+        widget = createPxAutoComplete(component["field"]);
         break;
       default:
         widget = Text("Widget aun no soportado: $typeComponent");
