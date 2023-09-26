@@ -93,36 +93,10 @@ class LoginScreen extends StatelessWidget {
                                     frmValues['password'].toString())
                                 .then((value) {
                               if (value.statusCode == 401) {
-                                showAdaptiveDialog(
-                                    barrierDismissible:
-                                        false, // Permite cerrar el modal cuando se hace clikc afuera
-                                    context: context,
-                                    builder: (context) {
-                                      return AlertDialog(
-                                        elevation: 5,
-                                        shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(8)),
-                                        title: const Text(
-                                          'Error',
-                                          textAlign: TextAlign.center,
-                                        ), // Titulo de la card
-                                        content: const Column(
-                                          mainAxisSize: MainAxisSize
-                                              .min, // Ajusta la card al texto mas pequenho
-                                          children: [
-                                            Text(
-                                                'Usuario o contraseña inválidos'),
-                                          ],
-                                        ),
-                                        actions: [
-                                          TextButton(
-                                              onPressed: () =>
-                                                  Navigator.pop(context),
-                                              child: const Text('Ok'))
-                                        ],
-                                      );
-                                    });
+                                showMessage(
+                                    context, 'Usuario o contraseña inválidos');
+                              } else if (value.statusCode == 503) {
+                                showMessage(context, 'Servicio no disponible');
                               } else if (value.statusCode == 200) {
                                 Navigator.pushNamed(context, 'dashboard');
                               }
@@ -191,5 +165,35 @@ class LoginScreen extends StatelessWidget {
 
   isOAuth() {
     return endpoints['use_OAuth'];
+  }
+
+  showMessage(context, message) {
+    showAdaptiveDialog(
+        barrierDismissible:
+            false, // Permite cerrar el modal cuando se hace clikc afuera
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            elevation: 5,
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            title: const Text(
+              'Error',
+              textAlign: TextAlign.center,
+            ), // Titulo de la card
+            content: Column(
+              mainAxisSize:
+                  MainAxisSize.min, // Ajusta la card al texto mas pequenho
+              children: [
+                Text(message),
+              ],
+            ),
+            actions: [
+              TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Ok'))
+            ],
+          );
+        });
   }
 }
