@@ -1,40 +1,16 @@
 import 'package:flutter/material.dart';
-import 'dart:convert';
-import 'package:login_flutter/models/actions/case_actions.dart';
 import 'package:login_flutter/theme/app_theme.dart';
 
 class DrawerWidget extends StatefulWidget {
-  const DrawerWidget({Key? key}) : super(key: key);
+  final List<dynamic> lst;
+  final bool service;
+  const DrawerWidget({super.key, required this.lst, required this.service});
 
   @override
   State<DrawerWidget> createState() => _DrawerWidgetState();
 }
 
 class _DrawerWidgetState extends State<DrawerWidget> {
-  List<dynamic> lst = [];
-  bool service = true;
-
-  getCaseType() async {
-    await CaseActions().getCaseType().then((value) {
-      if (value.statusCode == 200) {
-        Map<String, dynamic> json = jsonDecode(value.body);
-        setState(() {
-          lst = json['caseTypes'];
-        });
-      } else if (value.statusCode == 503) {
-        setState(() {
-          service = false;
-        });
-      }
-    });
-  }
-
-  @override
-  void initState() {
-    getCaseType();
-    super.initState();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -69,16 +45,16 @@ class _DrawerWidgetState extends State<DrawerWidget> {
           Expanded(
             child: ListView.separated(
               padding: EdgeInsets.zero,
-              itemCount: service ? lst.length : 1,
+              itemCount: widget.service ? widget.lst.length : 1,
               separatorBuilder: (_, __) => const Divider(thickness: 1),
               itemBuilder: (context, int i) {
-                return service
+                return widget.service
                     ? ListTile(
-                        title: Text(lst[i]['name']),
+                        title: Text(widget.lst[i]['name']),
                         trailing: const Icon(Icons.arrow_circle_right_outlined),
                         onTap: () {
-                          String classID = lst[i]['ID'];
-                          String name = lst[i]['name'];
+                          String classID = widget.lst[i]['ID'];
+                          String name = widget.lst[i]['name'];
                           Navigator.pushNamed(context, 'newAssigment',
                               arguments: {
                                 'option': 'newCase',
