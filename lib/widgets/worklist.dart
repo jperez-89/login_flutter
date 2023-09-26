@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'package:login_flutter/models/actions/work_list_actions.dart';
-import 'package:login_flutter/widgets/form_builder.dart';
 
 class WorklistWidget extends StatefulWidget {
   const WorklistWidget({Key? key}) : super(key: key);
@@ -42,7 +41,7 @@ class _WorklistWidgetState extends State<WorklistWidget> {
 
 //  Refresca la lista de assignment cada 1 minuto
   void refreshWorkList() {
-    Timer.periodic(const Duration(minutes: 1), (timer) async {
+    Timer.periodic(const Duration(minutes: 10), (timer) async {
       await WorkList().getWorkList().then((value) {
         if (value.statusCode == 503) {
           _load = false;
@@ -147,6 +146,7 @@ class _DataSource extends DataTableSource {
   final List workList;
   final BuildContext context;
   List<_Row> _rows = [];
+  final Map<String, String> frmValues = {};
   // int _selectedCount = 0;
 
   _DataSource(this.workList, this.context) {
@@ -162,35 +162,11 @@ class _DataSource extends DataTableSource {
       index: index,
       // selected: row.selected,
       onSelectChanged: (value) {
-        showDialog(
-            // showAdaptiveDialog(
-            // Permite cerrar el modal cuando se hace clikc afuera
-            barrierDismissible: true,
-            context: context,
-            builder: (context) {
-              return AlertDialog(
-                elevation: 10,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8)),
-                title: Text(
-                  'Case ${row.cases}',
-                  textAlign: TextAlign.center,
-                ),
-                content: SingleChildScrollView(
-                  child: FormBuilderWidget(
-                    pzInsKey: row.pzInsKey,
-                  ),
-                ),
-                alignment: Alignment.center,
-
-                /** ----------ACCIONES DE ALERT DIALOG ----------- */
-                // actions: [
-                //   TextButton(
-                //       onPressed: () => Navigator.pop(context),
-                //       child: const Text('Ok'))
-                // ],
-              );
-            });
+        Navigator.pushNamed(context, 'newAssigment', arguments: {
+          'option': 'getView',
+          'assignmentId': row.cases,
+          'pzInsKey': row.pzInsKey,
+        });
 
         /**** ESTE METODO OCUPA DE LA COLUMNA DE CHECKBOX PARA MARCAR 1 O TODAS LAS FILAS *********/
         // if (row.selected != value) {

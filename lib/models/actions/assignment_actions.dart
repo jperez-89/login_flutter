@@ -7,27 +7,38 @@ class AssignmentActions {
   getAssignment(String pzInsKey) {
     return AssignmentService().getAssignment(pzInsKey).then((value) {
       Map<String, dynamic> json = jsonDecode(value["components"].body);
+
       extractComponents(json["view"]["groups"] ?? []);
       return {
         "components": componentes,
-        "actionButtons": value["actionButtons"]
+        "actionID": value["actionsID"],
+        'caseID': value["caseID"]
       };
     });
   }
 
   void extractComponents(List<dynamic> respuesta) {
     for (var i = 0; i < respuesta.length; i++) {
-      pelarCebolla(respuesta[i]);
+      getFields(respuesta[i]);
     }
   }
 
-  void pelarCebolla(Map<String, dynamic> cebolla) {
-    if (cebolla.containsKey("layout")) {
-      if (cebolla["layout"].containsKey("groups")) {
-        extractComponents(cebolla["layout"]["groups"]);
+  void getFields(Map<String, dynamic> fields) {
+    if (fields.containsKey("layout")) {
+      if (fields["layout"].containsKey("groups")) {
+        extractComponents(fields["layout"]["groups"]);
       }
     } else {
-      componentes.add(cebolla);
+      componentes.add(fields);
     }
+  }
+
+  saveAssignment(
+      String assignmentID, String actionID, Map<String, String> body) {
+    return AssignmentService()
+        .saveAssignment(assignmentID, actionID, body)
+        .then((value) {
+      return value;
+    });
   }
 }

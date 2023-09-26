@@ -68,7 +68,7 @@ class CaseService {
       // final Map<String, String> headersData = {
       //   'content-type': 'application/json',
       //   // 'X-Requested-With': 'XMLHttpRequest',
-      //   // 'content-type': 'application/x-www-form-urlencoded"',
+      //   // 'content-type': 'application/x-www-form-urlencoded',
       //   // 'content-type': 'text/plain',
       //   'accept': '*/*',
       //   'authorization': basicAuth
@@ -79,6 +79,34 @@ class CaseService {
 
       // print(httpPackageResponse.statusCode);
       // print(httpPackageResponse.body);
+
+      return httpPackageResponse;
+    }
+  }
+
+  Future getCase(String caseID) async {
+    String user = 'InterpreterOP';
+    String pass = 'hyopJK77@';
+
+    if (endpoints['use_OAuth']) {
+      // return authLogin().then((token) => {
+      //   if (token) {
+      //     userService.setToken(token);
+      //     // Route to workarea as well if popup (callback only happens on popup scenario
+      //   }
+      // });
+    } else {
+      String basicAuth = 'Basic ${base64Encode(utf8.encode('$user:$pass'))}';
+
+      final Map<String, String> headers = {
+        'accept': '*/*',
+        'Authorization': basicAuth
+      };
+
+      final httpPackageUrl = Uri.parse(
+          '${endpoints['PEGAURL'] + endpoints['VERSION'] + endpoints['CASES']}/$caseID');
+
+      final httpPackageResponse = await get(httpPackageUrl, headers: headers);
 
       return httpPackageResponse;
     }

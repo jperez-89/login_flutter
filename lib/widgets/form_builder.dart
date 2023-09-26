@@ -1,7 +1,6 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:login_flutter/models/actions/assignment_actions.dart';
+import 'package:login_flutter/theme/app_theme.dart';
 import 'package:login_flutter/widgets/widgets.dart';
 
 class FormBuilderWidget extends StatefulWidget {
@@ -16,25 +15,27 @@ class FormBuilderWidget extends StatefulWidget {
 class _FormBuilderWidgetState extends State<FormBuilderWidget> {
   GlobalKey<FormState> myFormKey = GlobalKey<FormState>();
   List components = [];
-  bool _load = false;
+  String actionID = ''; // Map actionID = {};
+  // bool _load = false;
 
   // Obtenemos los campos del formulario del assignment
-  void getAssiggnment(String pzInsKey) async {
+  getAssiggnment(String pzInsKey) async {
     // Mostramos loader
-    setState(() {
-      _load = true;
-    });
+    // setState(() {
+    //   _load = true;
+    // });
 
     await AssignmentActions().getAssignment(pzInsKey).then((value) {
       setState(() {
         components = value["components"];
+        actionID = value["actionID"];
       });
     });
 
     // Ocultamos loader
-    setState(() {
-      _load = false;
-    });
+    // setState(() {
+    //   _load = false;
+    // });
   }
 
   @override
@@ -45,13 +46,16 @@ class _FormBuilderWidgetState extends State<FormBuilderWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return _load
-        ? Container(
-            alignment: Alignment.center,
-            margin: const EdgeInsets.only(top: 100),
-            child: const CircularProgressIndicator.adaptive(),
-          )
-        : FormBuilder(context: context).buildForm(components, myFormKey);
+    return FormBuilder(context: context)
+        .buildForm(components, myFormKey, widget.pzInsKey, actionID);
+    // return _load
+    //     ? Container(
+    //         alignment: Alignment.center,
+    //         margin: const EdgeInsets.only(top: 100),
+    //         child: const CircularProgressIndicator.adaptive(),
+    //       )
+    //     : FormBuilder(context: context)
+    //         .buildForm(components, myFormKey, widget.pzInsKey, actionID);
   }
 }
 
@@ -61,29 +65,55 @@ class FormBuilder {
 
   FormBuilder({required this.context});
 
-  Widget buildForm(List components, GlobalKey<FormState> myFormKey) {
+  Widget buildForm(List components, GlobalKey<FormState> myFormKey,
+      String assignmentID, String actionID) {
     List<Widget> childs = [];
+
     if (components.isNotEmpty) {
       for (var component in components) {
         childs.add(createWidgets(component) ?? const Text("vacio"));
       }
-      childs.add(getSaveButton(myFormKey));
+      childs.add(getSaveButton(myFormKey, assignmentID, actionID));
     }
-    return Form(key: myFormKey, child: Column(children: childs));
+
+    return Card(
+      shadowColor: AppTheme.black,
+      margin: const EdgeInsets.all(0),
+      elevation: 10,
+      child: Form(key: myFormKey, child: Column(children: childs)),
+    );
   }
 
-  /// ******  BORRAR ESTA MADRE O SACARLO A  OTRO LADO ***************
-  ElevatedButton getSaveButton(GlobalKey<FormState> myFormKey) {
-    return ElevatedButton(
-        onPressed: () {
-          if (!myFormKey.currentState!.validate()) {
-            showMessage('Error', 'Complete todos los campos');
-            return;
-          } else {
-            print(frmValues);
-          }
-        },
-        child: const Text("Guardar"));
+  getSaveButton(
+      GlobalKey<FormState> myFormKey, String assignmentID, String actionID) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        ElevatedButton(
+            style: const ButtonStyle(
+                backgroundColor:
+                    MaterialStatePropertyAll(AppTheme.secondaryColor)),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: const Text('Cancel')),
+        ElevatedButton(
+            onPressed: () {
+              if (!myFormKey.currentState!.validate()) {
+                showMessage('Error', 'Complete todos los campos');
+                return;
+              } else {
+                Navigator.pushNamed(context, 'newAssigment', arguments: {
+                  'option': 'saveData',
+                  'assignmentID': assignmentID,
+                  'actionID': actionID,
+                  'data': frmValues
+                });
+              }
+            },
+            child: const Text('Submit')),
+      ],
+    );
   }
 
   void showMessage(String title, String message) {
@@ -116,7 +146,7 @@ class FormBuilder {
   }
 
   CustomCaption createCaption(Map<String, dynamic> caption) {
-    return CustomCaption(value: caption["value"], fontSize: 20);
+    return CustomCaption(value: caption["value"], fontSize: 18);
   }
 
   Wrap createPxRadioButtom(Map<String, dynamic> pxRadioButton) {
@@ -348,7 +378,7 @@ class FormBuilder {
         widget = Text("Widget aun no soportado: $typeComponent");
     }
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      padding: const EdgeInsets.symmetric(vertical: 7.0, horizontal: 15),
       child: widget,
     );
   }

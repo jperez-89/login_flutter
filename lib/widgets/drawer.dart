@@ -12,13 +12,20 @@ class DrawerWidget extends StatefulWidget {
 
 class _DrawerWidgetState extends State<DrawerWidget> {
   List<dynamic> lst = [];
+  bool service = true;
 
   getCaseType() async {
     await CaseActions().getCaseType().then((value) {
-      Map<String, dynamic> json = jsonDecode(value);
-      lst = json['caseTypes'];
-
-      setState(() {});
+      if (value.statusCode == 200) {
+        Map<String, dynamic> json = jsonDecode(value.body);
+        setState(() {
+          lst = json['caseTypes'];
+        });
+      } else if (value.statusCode == 503) {
+        setState(() {
+          service = false;
+        });
+      }
     });
   }
 
@@ -62,19 +69,27 @@ class _DrawerWidgetState extends State<DrawerWidget> {
           Expanded(
             child: ListView.separated(
               padding: EdgeInsets.zero,
-              itemCount: lst.length,
+              itemCount: service ? lst.length : 1,
               separatorBuilder: (_, __) => const Divider(thickness: 1),
               itemBuilder: (context, int i) {
-                return ListTile(
-                  title: Text(lst[i]['name']),
-                  trailing: const Icon(Icons.arrow_circle_right_outlined),
-                  onTap: () {
-                    String classID = lst[i]['ID'];
-                    String name = lst[i]['name'];
-                    Navigator.pushNamed(context, 'newAssigment',
-                        arguments: {"classID": classID, "name": name});
-                  },
-                );
+                return service
+                    ? ListTile(
+                        title: Text(lst[i]['name']),
+                        trailing: const Icon(Icons.arrow_circle_right_outlined),
+                        onTap: () {
+                          String classID = lst[i]['ID'];
+                          String name = lst[i]['name'];
+                          Navigator.pushNamed(context, 'newAssigment',
+                              arguments: {
+                                'option': 'newCase',
+                                "classID": classID,
+                                "name": name
+                              });
+                        },
+                      )
+                    : const ListTile(
+                        title: Text('Servicio no disponible'),
+                      );
               },
             ),
           )
