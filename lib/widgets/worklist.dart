@@ -102,6 +102,7 @@ class _WorklistWidgetState extends State<WorklistWidget> {
                   ],
                   columns: const [
                     DataColumn(label: Text('Case')),
+                    DataColumn(label: Text('Stage')),
                     DataColumn(label: Text('Status')),
                     DataColumn(label: Text('Category')),
                     DataColumn(label: Text('Urgency')),
@@ -126,6 +127,7 @@ class _WorklistWidgetState extends State<WorklistWidget> {
 class _Row {
   _Row(
     this.pzInsKey,
+    this.stage,
     this.cases,
     this.status,
     this.category,
@@ -133,13 +135,14 @@ class _Row {
     this.date,
   );
 
-  String pzInsKey;
   final String cases;
+  final String stage;
   final String status;
   final String category;
   final String urgency;
   final String date;
-  bool selected = false;
+  String pzInsKey;
+  // bool selected = false;
 }
 
 class _DataSource extends DataTableSource {
@@ -178,6 +181,7 @@ class _DataSource extends DataTableSource {
       },
       cells: [
         DataCell(Text(row.cases)),
+        DataCell(Text(row.stage)),
         DataCell(Text(row.status)),
         DataCell(Text(row.category)),
         DataCell(Text(row.urgency.toString())),
@@ -193,6 +197,7 @@ class _DataSource extends DataTableSource {
       _rows += <_Row>[
         _Row(
           list[i]['pzInsKey'],
+          list[i]['pxTaskLabel'],
           list[i]['pxRefObjectInsName'],
           list[i]['pxAssignmentStatus'] ?? 'New',
           list[i]['pyLabel'],
