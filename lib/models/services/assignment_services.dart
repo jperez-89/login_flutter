@@ -23,10 +23,17 @@ class AssignmentService {
         'authorization': basicAuth
       };
 
+<<<<<<< HEAD
       final url1 = Uri.parse(
           '${endpoints['PEGAURL'] + endpoints['VERSION'] + endpoints['ASSIGNMENTS']}/$pzInsKey');
 
       final httpPackageResponse = await get(url1, headers: headers);
+=======
+      final urlAssignment = Uri.parse(
+          '${endpoints['PEGAURL'] + endpoints['VERSION'] + endpoints['ASSIGNMENTS']}/$pzInsKey');
+
+      final httpPackageResponse = await get(urlAssignment, headers: headers);
+>>>>>>> 93eef08a9ba9371cd788cce6ef5e8b0acdb350d1
 
       Map<String, dynamic> json = jsonDecode(httpPackageResponse.body);
 
@@ -35,10 +42,23 @@ class AssignmentService {
 
       String actionsID = json['actions'][0]['ID'];
 
+<<<<<<< HEAD
       final url2 = Uri.parse(
-          '${endpoints['PEGAURL'] + endpoints['VERSION'] + endpoints['ASSIGNMENTS']}/$pzInsKey${endpoints['ACTIONS']}/$actionsID');
+=======
+      Map<String, dynamic> actionButtons =
+          json['actionButtons']["secondary"][1];
 
+      final urlAssignmentActionID = Uri.parse(
+>>>>>>> 93eef08a9ba9371cd788cce6ef5e8b0acdb350d1
+          '${endpoints['PEGAURL'] + endpoints['VERSION'] + endpoints['ASSIGNMENTS']}/$pzInsKey${endpoints['ACTIONS']}/$actionsID');
+      //print(urlAssignmentActionID);
+
+<<<<<<< HEAD
       final httpPackageResponseData = await get(url2, headers: headers);
+=======
+      final httpPackageResponseData =
+          await get(urlAssignmentActionID, headers: headers);
+>>>>>>> 93eef08a9ba9371cd788cce6ef5e8b0acdb350d1
 
       return {
         "components": httpPackageResponseData,
