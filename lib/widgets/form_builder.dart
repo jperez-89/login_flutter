@@ -145,8 +145,7 @@ class FormBuilder {
         });
   }
 
-  /********* CREATORS  ******* */
-
+  /// ******* CREATORS  *******
   CustomCaption createCaption(Map<String, dynamic> caption) {
     return CustomCaption(value: caption["value"], fontSize: 18);
   }
@@ -276,10 +275,9 @@ class FormBuilder {
   DropdownMenuItem createMenuItem(Map<String, dynamic> item) {
     return DropdownMenuItem(value: item["value"], child: Text(item["key"]));
   }
-
   /********* END CREATORS  ******* */
-/***** FIELD ATTRIBUTES ********** */
 
+  /// *** FIELD ATTRIBUTES **********
   String getToolTip(Map<String, dynamic> pxTextInput) {
     return getModes(pxTextInput, 0)["tooltip"];
   }
@@ -371,17 +369,16 @@ class FormBuilder {
           };
   }
 
-/***** END FIELD ATTRIBUTES ********** */
+  /// *** END FIELD ATTRIBUTES **********
 
 /* ************* SWITCH ******************/
-
   Widget? createWidgets(Map<String, dynamic> component) {
     Widget widget;
     String typeComponent = getComponentType(component);
 
     switch (typeComponent) {
       case "visible false":
-        widget = Container(
+        widget = const SizedBox(
           width: 0,
           height: 0,
         );
