@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'package:login_flutter/models/actions/work_list_actions.dart';
-import 'package:login_flutter/widgets/form_builder.dart';
 
 class WorklistWidget extends StatefulWidget {
   const WorklistWidget({Key? key}) : super(key: key);
@@ -12,7 +11,7 @@ class WorklistWidget extends StatefulWidget {
 }
 
 class _WorklistWidgetState extends State<WorklistWidget> {
-  List<dynamic> workList = [];
+  List<dynamic> workList = [], workListBackUp = [];
   int rowsPerPage = 10;
   bool _load = false;
   bool _service = true;
@@ -34,6 +33,7 @@ class _WorklistWidgetState extends State<WorklistWidget> {
 
         setState(() {
           workList = json['pxResults'];
+          workListBackUp = json['pxResults'];
           _load = false;
         });
       }
@@ -42,7 +42,7 @@ class _WorklistWidgetState extends State<WorklistWidget> {
 
 //  Refresca la lista de assignment cada 1 minuto
   void refreshWorkList() {
-    Timer.periodic(const Duration(minutes: 1), (timer) async {
+    Timer.periodic(const Duration(minutes: 10), (timer) async {
       await WorkList().getWorkList().then((value) {
         if (value.statusCode == 503) {
           _load = false;
@@ -66,6 +66,8 @@ class _WorklistWidgetState extends State<WorklistWidget> {
     super.initState();
   }
 
+  final controller = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -88,10 +90,33 @@ class _WorklistWidgetState extends State<WorklistWidget> {
                   },
                   showFirstLastButtons: true,
                   showCheckboxColumn: false,
-                  header: const Row(
-                    children: [
-                      Text('WorkList'),
-                    ],
+                  header: Container(
+                    padding: EdgeInsets.zero,
+                    decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey),
+                        borderRadius: BorderRadius.circular(15)),
+                    child: TextField(
+                      controller: controller,
+                      decoration: const InputDecoration(
+                          border: InputBorder.none,
+                          hintText: 'Search',
+                          contentPadding: EdgeInsets.symmetric(horizontal: 10)),
+                      onChanged: (value) {
+                        if (value != '') {
+                          setState(() {
+                            workList = workList
+                                .where((element) =>
+                                    element['pxRefObjectInsName']
+                                        .contains(value))
+                                .toList();
+                          });
+                        } else {
+                          setState(() {
+                            workList = workListBackUp;
+                          });
+                        }
+                      },
+                    ),
                   ),
                   actions: [
                     ElevatedButton(
@@ -103,6 +128,7 @@ class _WorklistWidgetState extends State<WorklistWidget> {
                   ],
                   columns: const [
                     DataColumn(label: Text('Case')),
+                    DataColumn(label: Text('Stage')),
                     DataColumn(label: Text('Status')),
                     DataColumn(label: Text('Category')),
                     DataColumn(label: Text('Urgency')),
@@ -127,6 +153,7 @@ class _WorklistWidgetState extends State<WorklistWidget> {
 class _Row {
   _Row(
     this.pzInsKey,
+    this.stage,
     this.cases,
     this.status,
     this.category,
@@ -134,19 +161,21 @@ class _Row {
     this.date,
   );
 
-  String pzInsKey;
   final String cases;
+  final String stage;
   final String status;
   final String category;
   final String urgency;
   final String date;
-  bool selected = false;
+  String pzInsKey;
+  // bool selected = false;
 }
 
 class _DataSource extends DataTableSource {
   final List workList;
   final BuildContext context;
   List<_Row> _rows = [];
+  final Map<String, String> frmValues = {};
   // int _selectedCount = 0;
 
   _DataSource(this.workList, this.context) {
@@ -162,35 +191,11 @@ class _DataSource extends DataTableSource {
       index: index,
       // selected: row.selected,
       onSelectChanged: (value) {
-        showDialog(
-            // showAdaptiveDialog(
-            // Permite cerrar el modal cuando se hace clikc afuera
-            barrierDismissible: true,
-            context: context,
-            builder: (context) {
-              return AlertDialog(
-                elevation: 10,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8)),
-                title: Text(
-                  'Case ${row.cases}',
-                  textAlign: TextAlign.center,
-                ),
-                content: SingleChildScrollView(
-                  child: FormBuilderWidget(
-                    pzInsKey: row.pzInsKey,
-                  ),
-                ),
-                alignment: Alignment.center,
-
-                /** ----------ACCIONES DE ALERT DIALOG ----------- */
-                // actions: [
-                //   TextButton(
-                //       onPressed: () => Navigator.pop(context),
-                //       child: const Text('Ok'))
-                // ],
-              );
-            });
+        Navigator.pushNamed(context, 'newAssigment', arguments: {
+          'option': 'getView',
+          'assignmentId': row.cases,
+          'pzInsKey': row.pzInsKey,
+        });
 
         /**** ESTE METODO OCUPA DE LA COLUMNA DE CHECKBOX PARA MARCAR 1 O TODAS LAS FILAS *********/
         // if (row.selected != value) {
@@ -202,6 +207,7 @@ class _DataSource extends DataTableSource {
       },
       cells: [
         DataCell(Text(row.cases)),
+        DataCell(Text(row.stage)),
         DataCell(Text(row.status)),
         DataCell(Text(row.category)),
         DataCell(Text(row.urgency.toString())),
@@ -217,6 +223,7 @@ class _DataSource extends DataTableSource {
       _rows += <_Row>[
         _Row(
           list[i]['pzInsKey'],
+          list[i]['pxTaskLabel'],
           list[i]['pxRefObjectInsName'],
           list[i]['pxAssignmentStatus'] ?? 'New',
           list[i]['pyLabel'],

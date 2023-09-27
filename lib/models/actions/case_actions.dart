@@ -4,7 +4,7 @@ import 'package:login_flutter/models/services/case_service.dart';
 class CaseActions {
   getCaseType() async {
     return await CaseService().getCaseType().then((value) {
-      return value.body;
+      return value;
     });
   }
 
@@ -15,6 +15,12 @@ class CaseActions {
 
         return json;
       }
+    });
+  }
+
+  refreshCase(String caseID) async {
+    return await CaseService().getCase(caseID).then((value) {
+      return value;
     });
   }
 }

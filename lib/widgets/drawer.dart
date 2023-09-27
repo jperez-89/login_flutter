@@ -1,33 +1,16 @@
 import 'package:flutter/material.dart';
-import 'dart:convert';
-import 'package:login_flutter/models/actions/case_actions.dart';
 import 'package:login_flutter/theme/app_theme.dart';
 
 class DrawerWidget extends StatefulWidget {
-  const DrawerWidget({Key? key}) : super(key: key);
+  final List<dynamic> lst;
+  final bool service;
+  const DrawerWidget({super.key, required this.lst, required this.service});
 
   @override
   State<DrawerWidget> createState() => _DrawerWidgetState();
 }
 
 class _DrawerWidgetState extends State<DrawerWidget> {
-  List<dynamic> lst = [];
-
-  getCaseType() async {
-    await CaseActions().getCaseType().then((value) {
-      Map<String, dynamic> json = jsonDecode(value);
-      lst = json['caseTypes'];
-
-      setState(() {});
-    });
-  }
-
-  @override
-  void initState() {
-    getCaseType();
-    super.initState();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -62,19 +45,27 @@ class _DrawerWidgetState extends State<DrawerWidget> {
           Expanded(
             child: ListView.separated(
               padding: EdgeInsets.zero,
-              itemCount: lst.length,
+              itemCount: widget.service ? widget.lst.length : 1,
               separatorBuilder: (_, __) => const Divider(thickness: 1),
               itemBuilder: (context, int i) {
-                return ListTile(
-                  title: Text(lst[i]['name']),
-                  trailing: const Icon(Icons.arrow_circle_right_outlined),
-                  onTap: () {
-                    String classID = lst[i]['ID'];
-                    String name = lst[i]['name'];
-                    Navigator.pushNamed(context, 'newAssigment',
-                        arguments: {"classID": classID, "name": name});
-                  },
-                );
+                return widget.service
+                    ? ListTile(
+                        title: Text(widget.lst[i]['name']),
+                        trailing: const Icon(Icons.arrow_circle_right_outlined),
+                        onTap: () {
+                          String classID = widget.lst[i]['ID'];
+                          String name = widget.lst[i]['name'];
+                          Navigator.pushNamed(context, 'newAssigment',
+                              arguments: {
+                                'option': 'newCase',
+                                "classID": classID,
+                                "name": name
+                              });
+                        },
+                      )
+                    : const ListTile(
+                        title: Text('Servicio no disponible'),
+                      );
               },
             ),
           )
