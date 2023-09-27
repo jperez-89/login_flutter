@@ -14,6 +14,7 @@ class InputsWidget extends StatelessWidget {
   final bool? readOnly;
   final String? toolTip;
   final bool? disabled;
+  final bool? required;
 
   const InputsWidget({
     super.key,
@@ -30,6 +31,7 @@ class InputsWidget extends StatelessWidget {
     this.readOnly,
     this.toolTip,
     this.disabled,
+    this.required,
   });
 
   @override
@@ -41,15 +43,19 @@ class InputsWidget extends StatelessWidget {
       onChanged: (value) =>
           frmValues![property] = value, // Almacena lo ingresado en el form
       validator: (value) {
-        if (value == null) return 'Campo requerido';
-        return value.length < minLength! ? 'Minimo $minLength letras' : null;
+        if (required! && value == '') return 'Campo Obligatorio';
+        // if (value == '') return 'Completa este campo';
+        // if (value == null) return 'Campo requerido';
+        // print(value);
+        return value!.isNotEmpty ? null : value;
+        // return value.length < minLength! ? 'Minimo $minLength letras' : null;
       },
       autovalidateMode: AutovalidateMode.onUserInteraction,
       decoration: icon != null
           ? InputDecoration(
               labelText: labelText, hintText: hintText, prefixIcon: Icon(icon))
           : InputDecoration(
-              labelText: labelText,
+              labelText: required! ? '$labelText *' : labelText,
               hintText: hintText,
             ),
       enabled: disabled,

@@ -246,6 +246,7 @@ class FormBuilder {
       frmValues: frmValues,
       inputType: inputType[keyboardType],
       disabled: isDisabled(pxTextInput) ? false : true,
+      required: isRequired(pxTextInput),
     );
   }
 
@@ -368,6 +369,10 @@ class FormBuilder {
 
   bool isDisabled(Map<String, dynamic> component) {
     return component["disabled"];
+  }
+
+  bool isRequired(Map<String, dynamic> component) {
+    return component["required"];
   }
 
   bool haveParameters(Map<String, dynamic> component) {
