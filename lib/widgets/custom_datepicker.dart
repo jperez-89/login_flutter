@@ -44,8 +44,10 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
                 getLastDate(widget.useFutureDateRange, widget.futureDateRange)))
         .then((value) {
       setState(() {
-        fecha = getFecha(value!);
-        widget.frmValues[widget.property] = fecha;
+        if (value != null) {
+          fecha = getFecha(value);
+          widget.frmValues[widget.property] = fecha;
+        }
       });
     });
   }
