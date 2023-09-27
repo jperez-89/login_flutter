@@ -7,7 +7,8 @@ const Map<String, dynamic> loginBoxType = {
 
 const Map<String, dynamic> endpoints = {
   // Change this URL if you want to point the React application at another Pega server.
-  'PEGAURL': "https://w0tx92av.pegace.net/prweb", // local Pega server
+  'PEGAURL': "https://w0tx92av.pegace.net/prweb",
+  // 'PEGAURL': "https://xp7jgxpk.pegace.net/prweb",
 
   // Specify an appAlias to allow operators to access application when this application's access
   //  group is not the default access group specified within the operator record.
