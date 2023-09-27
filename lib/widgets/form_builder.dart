@@ -17,7 +17,7 @@ class FormBuilderWidget extends StatefulWidget {
 class _FormBuilderWidgetState extends State<FormBuilderWidget> {
   GlobalKey<FormState> myFormKey = GlobalKey<FormState>();
   List components = [];
-  bool _load = false;
+  //bool _load = false;
   final Map<String, dynamic> dataPagePrompt = {};
 
   void callback() {
@@ -27,9 +27,9 @@ class _FormBuilderWidgetState extends State<FormBuilderWidget> {
   // Obtenemos los campos del formulario del assignment
   void getAssiggnment(String pzInsKey) async {
     // Mostramos loader
-    setState(() {
+    /*setState(() {
       _load = true;
-    });
+    });*/
 
     await AssignmentActions().getAssignment(pzInsKey).then((value) {
       setState(() {
@@ -38,9 +38,9 @@ class _FormBuilderWidgetState extends State<FormBuilderWidget> {
     });
 
     // Ocultamos loader
-    setState(() {
+    /* setState(() {
       _load = false;
-    });
+    });*/
   }
 
   @override
@@ -51,17 +51,11 @@ class _FormBuilderWidgetState extends State<FormBuilderWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return _load
-        ? Container(
-            alignment: Alignment.center,
-            margin: const EdgeInsets.only(top: 100),
-            child: const CircularProgressIndicator.adaptive(),
-          )
-        : FormBuilder(
-                context: context,
-                callback: callback,
-                dataPagePrompt: dataPagePrompt)
-            .buildForm(components, myFormKey);
+    return FormBuilder(
+            context: context,
+            callback: callback,
+            dataPagePrompt: dataPagePrompt)
+        .buildForm(components, myFormKey);
   }
 }
 
