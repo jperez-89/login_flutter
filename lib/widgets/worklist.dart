@@ -99,7 +99,7 @@ class _WorklistWidgetState extends State<WorklistWidget> {
                       controller: controller,
                       decoration: const InputDecoration(
                           border: InputBorder.none,
-                          hintText: 'Search',
+                          hintText: 'Search case',
                           contentPadding: EdgeInsets.symmetric(horizontal: 10)),
                       onChanged: (value) {
                         if (value != '') {
