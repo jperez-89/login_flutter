@@ -2,8 +2,9 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:login_flutter/models/actions/assignment_actions.dart';
+import 'package:login_flutter/models/services/datapages_services.dart';
+import 'package:login_flutter/theme/app_theme.dart';
 import 'package:login_flutter/widgets/widgets.dart';
-import 'package:login_flutter/models/services/service.dart';
 
 class FormBuilderWidget extends StatefulWidget {
   final String pzInsKey;
@@ -17,7 +18,8 @@ class FormBuilderWidget extends StatefulWidget {
 class _FormBuilderWidgetState extends State<FormBuilderWidget> {
   GlobalKey<FormState> myFormKey = GlobalKey<FormState>();
   List components = [];
-  //bool _load = false;
+  String actionID = ''; // Map actionID = {};
+  // bool _load = false;
   final Map<String, dynamic> dataPagePrompt = {};
 
   void callback() {
@@ -25,22 +27,23 @@ class _FormBuilderWidgetState extends State<FormBuilderWidget> {
   }
 
   // Obtenemos los campos del formulario del assignment
-  void getAssiggnment(String pzInsKey) async {
+  getAssiggnment(String pzInsKey) async {
     // Mostramos loader
-    /*setState(() {
-      _load = true;
-    });*/
+    // setState(() {
+    //   _load = true;
+    // });
 
     await AssignmentActions().getAssignment(pzInsKey).then((value) {
       setState(() {
         components = value["components"];
+        actionID = value["actionID"];
       });
     });
 
     // Ocultamos loader
-    /* setState(() {
-      _load = false;
-    });*/
+    // setState(() {
+    //   _load = false;
+    // });
   }
 
   @override
@@ -55,7 +58,7 @@ class _FormBuilderWidgetState extends State<FormBuilderWidget> {
             context: context,
             callback: callback,
             dataPagePrompt: dataPagePrompt)
-        .buildForm(components, myFormKey);
+        .buildForm(components, myFormKey, widget.pzInsKey, actionID);
   }
 }
 
@@ -70,29 +73,55 @@ class FormBuilder {
       required this.callback,
       required this.dataPagePrompt});
 
-  Widget buildForm(List components, GlobalKey<FormState> myFormKey) {
+  Widget buildForm(List components, GlobalKey<FormState> myFormKey,
+      String assignmentID, String actionID) {
     List<Widget> childs = [];
+
     if (components.isNotEmpty) {
       for (var component in components) {
         childs.add(createWidgets(component) ?? const Text("vacio"));
       }
-      childs.add(getSaveButton(myFormKey));
+      childs.add(getSaveButton(myFormKey, assignmentID, actionID));
     }
-    return Form(key: myFormKey, child: Column(children: childs));
+
+    return Card(
+      shadowColor: AppTheme.black,
+      margin: const EdgeInsets.all(0),
+      elevation: 10,
+      child: Form(key: myFormKey, child: Column(children: childs)),
+    );
   }
 
-  /// ******  BORRAR ESTA MADRE O SACARLO A  OTRO LADO ***************
-  ElevatedButton getSaveButton(GlobalKey<FormState> myFormKey) {
-    return ElevatedButton(
-        onPressed: () {
-          if (!myFormKey.currentState!.validate()) {
-            showMessage('Error', 'Complete todos los campos');
-            return;
-          } else {
-            print(frmValues);
-          }
-        },
-        child: const Text("Guardar"));
+  getSaveButton(
+      GlobalKey<FormState> myFormKey, String assignmentID, String actionID) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        ElevatedButton(
+            style: const ButtonStyle(
+                backgroundColor:
+                    MaterialStatePropertyAll(AppTheme.secondaryColor)),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: const Text('Cancel')),
+        ElevatedButton(
+            onPressed: () {
+              if (!myFormKey.currentState!.validate()) {
+                showMessage('Error', 'Complete todos los campos');
+                return;
+              } else {
+                Navigator.pushNamed(context, 'newAssigment', arguments: {
+                  'option': 'saveData',
+                  'assignmentID': assignmentID,
+                  'actionID': actionID,
+                  'data': frmValues
+                });
+              }
+            },
+            child: const Text('Submit')),
+      ],
+    );
   }
 
   void showMessage(String title, String message) {
@@ -124,10 +153,9 @@ class FormBuilder {
         });
   }
 
-  /********* CREATORS  ******* */
-
+  /// ******* CREATORS  *******
   CustomCaption createCaption(Map<String, dynamic> caption) {
-    return CustomCaption(value: caption["value"], fontSize: 20);
+    return CustomCaption(value: caption["value"], fontSize: 18);
   }
 
   CustomAutoComplete createPxAutoComplete(Map<String, dynamic> pxAutoComplete) {
@@ -139,7 +167,7 @@ class FormBuilder {
         String dataPageID = getDataPageID(pxAutoComplete);
         String dataPageValue = getDataPageValue(pxAutoComplete);
         String urlToGet =
-            "$dataPageID?$parameterName=${dataPagePrompt['$parameterName']}";
+            "$dataPageID?$parameterName=${dataPagePrompt[parameterName]}";
         if (!dataPagePrompt.containsKey("$dataPagePromptName/list")) {
           Datapages().getDataPage(urlToGet).then((value) {
             Map<String, dynamic> json = jsonDecode(value.body);
@@ -289,10 +317,9 @@ class FormBuilder {
   DropdownMenuItem createMenuItem(Map<String, dynamic> item) {
     return DropdownMenuItem(value: item["value"], child: Text(item["key"]));
   }
-
   /********* END CREATORS  ******* */
-/***** FIELD ATTRIBUTES ********** */
 
+  /// *** FIELD ATTRIBUTES **********
   String getToolTip(Map<String, dynamic> pxTextInput) {
     return getModes(pxTextInput, 0)["tooltip"];
   }
@@ -406,17 +433,16 @@ class FormBuilder {
           };
   }
 
-/***** END FIELD ATTRIBUTES ********** */
+  /// *** END FIELD ATTRIBUTES **********
 
 /* ************* SWITCH ******************/
-
   Widget? createWidgets(Map<String, dynamic> component) {
     Widget widget;
     String typeComponent = getComponentType(component);
 
     switch (typeComponent) {
       case "visible false":
-        widget = Container(
+        widget = const SizedBox(
           width: 0,
           height: 0,
         );
@@ -458,7 +484,7 @@ class FormBuilder {
         widget = Text("Widget aun no soportado: $typeComponent");
     }
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      padding: const EdgeInsets.symmetric(vertical: 7.0, horizontal: 15),
       child: widget,
     );
   }
