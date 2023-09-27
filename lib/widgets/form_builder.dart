@@ -1,7 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:login_flutter/models/actions/assignment_actions.dart';
-import 'package:login_flutter/theme/app_theme.dart';
 import 'package:login_flutter/widgets/widgets.dart';
+import 'package:login_flutter/models/services/service.dart';
 
 class FormBuilderWidget extends StatefulWidget {
   final String pzInsKey;
@@ -15,27 +17,30 @@ class FormBuilderWidget extends StatefulWidget {
 class _FormBuilderWidgetState extends State<FormBuilderWidget> {
   GlobalKey<FormState> myFormKey = GlobalKey<FormState>();
   List components = [];
-  String actionID = ''; // Map actionID = {};
-  // bool _load = false;
+  //bool _load = false;
+  final Map<String, dynamic> dataPagePrompt = {};
+
+  void callback() {
+    setState(() {});
+  }
 
   // Obtenemos los campos del formulario del assignment
-  getAssiggnment(String pzInsKey) async {
+  void getAssiggnment(String pzInsKey) async {
     // Mostramos loader
-    // setState(() {
-    //   _load = true;
-    // });
+    /*setState(() {
+      _load = true;
+    });*/
 
     await AssignmentActions().getAssignment(pzInsKey).then((value) {
       setState(() {
         components = value["components"];
-        actionID = value["actionID"];
       });
     });
 
     // Ocultamos loader
-    // setState(() {
-    //   _load = false;
-    // });
+    /* setState(() {
+      _load = false;
+    });*/
   }
 
   @override
@@ -46,74 +51,48 @@ class _FormBuilderWidgetState extends State<FormBuilderWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return FormBuilder(context: context)
-        .buildForm(components, myFormKey, widget.pzInsKey, actionID);
-    // return _load
-    //     ? Container(
-    //         alignment: Alignment.center,
-    //         margin: const EdgeInsets.only(top: 100),
-    //         child: const CircularProgressIndicator.adaptive(),
-    //       )
-    //     : FormBuilder(context: context)
-    //         .buildForm(components, myFormKey, widget.pzInsKey, actionID);
+    return FormBuilder(
+            context: context,
+            callback: callback,
+            dataPagePrompt: dataPagePrompt)
+        .buildForm(components, myFormKey);
   }
 }
 
 class FormBuilder {
   final Map<String, String> frmValues = {};
   final BuildContext context;
+  final Function callback;
+  final Map<String, dynamic> dataPagePrompt;
 
-  FormBuilder({required this.context});
+  FormBuilder(
+      {required this.context,
+      required this.callback,
+      required this.dataPagePrompt});
 
-  Widget buildForm(List components, GlobalKey<FormState> myFormKey,
-      String assignmentID, String actionID) {
+  Widget buildForm(List components, GlobalKey<FormState> myFormKey) {
     List<Widget> childs = [];
-
     if (components.isNotEmpty) {
       for (var component in components) {
         childs.add(createWidgets(component) ?? const Text("vacio"));
       }
-      childs.add(getSaveButton(myFormKey, assignmentID, actionID));
+      childs.add(getSaveButton(myFormKey));
     }
-
-    return Card(
-      shadowColor: AppTheme.black,
-      margin: const EdgeInsets.all(0),
-      elevation: 10,
-      child: Form(key: myFormKey, child: Column(children: childs)),
-    );
+    return Form(key: myFormKey, child: Column(children: childs));
   }
 
-  getSaveButton(
-      GlobalKey<FormState> myFormKey, String assignmentID, String actionID) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: [
-        ElevatedButton(
-            style: const ButtonStyle(
-                backgroundColor:
-                    MaterialStatePropertyAll(AppTheme.secondaryColor)),
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: const Text('Cancel')),
-        ElevatedButton(
-            onPressed: () {
-              if (!myFormKey.currentState!.validate()) {
-                showMessage('Error', 'Complete todos los campos');
-                return;
-              } else {
-                Navigator.pushNamed(context, 'newAssigment', arguments: {
-                  'option': 'saveData',
-                  'assignmentID': assignmentID,
-                  'actionID': actionID,
-                  'data': frmValues
-                });
-              }
-            },
-            child: const Text('Submit')),
-      ],
-    );
+  /// ******  BORRAR ESTA MADRE O SACARLO A  OTRO LADO ***************
+  ElevatedButton getSaveButton(GlobalKey<FormState> myFormKey) {
+    return ElevatedButton(
+        onPressed: () {
+          if (!myFormKey.currentState!.validate()) {
+            showMessage('Error', 'Complete todos los campos');
+            return;
+          } else {
+            print(frmValues);
+          }
+        },
+        child: const Text("Guardar"));
   }
 
   void showMessage(String title, String message) {
@@ -145,16 +124,51 @@ class FormBuilder {
         });
   }
 
-  /// ******* CREATORS  *******
+  /********* CREATORS  ******* */
+
   CustomCaption createCaption(Map<String, dynamic> caption) {
-    return CustomCaption(value: caption["value"], fontSize: 18);
+    return CustomCaption(value: caption["value"], fontSize: 20);
   }
 
   CustomAutoComplete createPxAutoComplete(Map<String, dynamic> pxAutoComplete) {
+    List options = [];
+    String dataPagePromptName = getDataPagePromptName(pxAutoComplete);
+    if (haveParameters(pxAutoComplete)) {
+      String parameterName = getDataPageParams(pxAutoComplete);
+      if (dataPagePrompt.containsKey(parameterName)) {
+        String dataPageID = getDataPageID(pxAutoComplete);
+        String dataPageValue = getDataPageValue(pxAutoComplete);
+        String urlToGet =
+            "$dataPageID?$parameterName=${dataPagePrompt['$parameterName']}";
+        if (!dataPagePrompt.containsKey("$dataPagePromptName/list")) {
+          Datapages().getDataPage(urlToGet).then((value) {
+            Map<String, dynamic> json = jsonDecode(value.body);
+            for (var result in json["pxResults"]) {
+              options.add({
+                "key": result[dataPageValue],
+                "value": result[dataPagePromptName]
+              });
+            }
+            dataPagePrompt["$dataPagePromptName/list"] = options;
+            callback();
+          });
+        } else {
+          options = dataPagePrompt["$dataPagePromptName/list"];
+          dataPagePrompt.remove("$dataPagePromptName/list");
+        }
+      }
+    } else {
+      options = getModes(pxAutoComplete, 0)["options"];
+    }
     return CustomAutoComplete(
-        options: getModes(pxAutoComplete, 0)["options"],
-        property: getFieldID(pxAutoComplete),
-        frmValues: frmValues);
+      label: getFieldLabel(pxAutoComplete),
+      options: options,
+      property: getFieldID(pxAutoComplete),
+      frmValues: frmValues,
+      dataPagePrompt: dataPagePrompt,
+      dataPagePromptName: dataPagePromptName,
+      callback: callback,
+    );
   }
 
   Wrap createPxRadioButtom(Map<String, dynamic> pxRadioButton) {
@@ -275,15 +289,32 @@ class FormBuilder {
   DropdownMenuItem createMenuItem(Map<String, dynamic> item) {
     return DropdownMenuItem(value: item["value"], child: Text(item["key"]));
   }
-  /********* END CREATORS  ******* */
 
-  /// *** FIELD ATTRIBUTES **********
+  /********* END CREATORS  ******* */
+/***** FIELD ATTRIBUTES ********** */
+
   String getToolTip(Map<String, dynamic> pxTextInput) {
     return getModes(pxTextInput, 0)["tooltip"];
   }
 
   String getFieldID(Map<String, dynamic> component) {
     return component["fieldID"];
+  }
+
+  String getDataPageID(Map<String, dynamic> component) {
+    return getModes(component, 0)["dataPageID"];
+  }
+
+  String getDataPagePromptName(Map<String, dynamic> component) {
+    return getModes(component, 0)["dataPagePrompt"];
+  }
+
+  String getDataPageValue(Map<String, dynamic> component) {
+    return getModes(component, 0)["dataPageValue"];
+  }
+
+  String getDataPageParams(Map<String, dynamic> component) {
+    return getModes(component, 0)["dataPageParams"][0]["name"];
   }
 
   String getFieldLabel(Map<String, dynamic> component) {
@@ -306,6 +337,12 @@ class FormBuilder {
 
   bool isDisabled(Map<String, dynamic> component) {
     return component["disabled"];
+  }
+
+  bool haveParameters(Map<String, dynamic> component) {
+    return getModes(component, 0).containsKey("dataPageParams")
+        ? getModes(component, 0)["dataPageParams"].length > 0
+        : false;
   }
 
   bool isReadOnly(Map<String, dynamic> component) {
@@ -369,16 +406,17 @@ class FormBuilder {
           };
   }
 
-  /// *** END FIELD ATTRIBUTES **********
+/***** END FIELD ATTRIBUTES ********** */
 
 /* ************* SWITCH ******************/
+
   Widget? createWidgets(Map<String, dynamic> component) {
     Widget widget;
     String typeComponent = getComponentType(component);
 
     switch (typeComponent) {
       case "visible false":
-        widget = const SizedBox(
+        widget = Container(
           width: 0,
           height: 0,
         );
@@ -420,7 +458,7 @@ class FormBuilder {
         widget = Text("Widget aun no soportado: $typeComponent");
     }
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 7.0, horizontal: 15),
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: widget,
     );
   }
