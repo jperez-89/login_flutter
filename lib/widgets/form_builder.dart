@@ -1,6 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:login_flutter/models/actions/assignment_actions.dart';
 import 'package:login_flutter/widgets/widgets.dart';
+import 'package:login_flutter/models/services/service.dart';
 
 class FormBuilderWidget extends StatefulWidget {
   final String pzInsKey;
@@ -15,6 +18,11 @@ class _FormBuilderWidgetState extends State<FormBuilderWidget> {
   GlobalKey<FormState> myFormKey = GlobalKey<FormState>();
   List components = [];
   bool _load = false;
+  final Map<String, dynamic> dataPagePrompt = {};
+
+  void callback() {
+    setState(() {});
+  }
 
   // Obtenemos los campos del formulario del assignment
   void getAssiggnment(String pzInsKey) async {
@@ -49,15 +57,24 @@ class _FormBuilderWidgetState extends State<FormBuilderWidget> {
             margin: const EdgeInsets.only(top: 100),
             child: const CircularProgressIndicator.adaptive(),
           )
-        : FormBuilder(context: context).buildForm(components, myFormKey);
+        : FormBuilder(
+                context: context,
+                callback: callback,
+                dataPagePrompt: dataPagePrompt)
+            .buildForm(components, myFormKey);
   }
 }
 
 class FormBuilder {
   final Map<String, String> frmValues = {};
   final BuildContext context;
+  final Function callback;
+  final Map<String, dynamic> dataPagePrompt;
 
-  FormBuilder({required this.context});
+  FormBuilder(
+      {required this.context,
+      required this.callback,
+      required this.dataPagePrompt});
 
   Widget buildForm(List components, GlobalKey<FormState> myFormKey) {
     List<Widget> childs = [];
@@ -120,10 +137,44 @@ class FormBuilder {
   }
 
   CustomAutoComplete createPxAutoComplete(Map<String, dynamic> pxAutoComplete) {
+    List options = [];
+    String dataPagePromptName = getDataPagePromptName(pxAutoComplete);
+    if (haveParameters(pxAutoComplete)) {
+      String parameterName = getDataPageParams(pxAutoComplete);
+      if (dataPagePrompt.containsKey(parameterName)) {
+        String dataPageID = getDataPageID(pxAutoComplete);
+        String dataPageValue = getDataPageValue(pxAutoComplete);
+        String urlToGet =
+            "$dataPageID?$parameterName=${dataPagePrompt['$parameterName']}";
+        if (!dataPagePrompt.containsKey("$dataPagePromptName/list")) {
+          Datapages().getDataPage(urlToGet).then((value) {
+            Map<String, dynamic> json = jsonDecode(value.body);
+            for (var result in json["pxResults"]) {
+              options.add({
+                "key": result[dataPageValue],
+                "value": result[dataPagePromptName]
+              });
+            }
+            dataPagePrompt["$dataPagePromptName/list"] = options;
+            callback();
+          });
+        } else {
+          options = dataPagePrompt["$dataPagePromptName/list"];
+          dataPagePrompt.remove("$dataPagePromptName/list");
+        }
+      }
+    } else {
+      options = getModes(pxAutoComplete, 0)["options"];
+    }
     return CustomAutoComplete(
-        options: getModes(pxAutoComplete, 0)["options"],
-        property: getFieldID(pxAutoComplete),
-        frmValues: frmValues);
+      label: getFieldLabel(pxAutoComplete),
+      options: options,
+      property: getFieldID(pxAutoComplete),
+      frmValues: frmValues,
+      dataPagePrompt: dataPagePrompt,
+      dataPagePromptName: dataPagePromptName,
+      callback: callback,
+    );
   }
 
   Wrap createPxRadioButtom(Map<String, dynamic> pxRadioButton) {
@@ -256,6 +307,22 @@ class FormBuilder {
     return component["fieldID"];
   }
 
+  String getDataPageID(Map<String, dynamic> component) {
+    return getModes(component, 0)["dataPageID"];
+  }
+
+  String getDataPagePromptName(Map<String, dynamic> component) {
+    return getModes(component, 0)["dataPagePrompt"];
+  }
+
+  String getDataPageValue(Map<String, dynamic> component) {
+    return getModes(component, 0)["dataPageValue"];
+  }
+
+  String getDataPageParams(Map<String, dynamic> component) {
+    return getModes(component, 0)["dataPageParams"][0]["name"];
+  }
+
   String getFieldLabel(Map<String, dynamic> component) {
     return component["label"];
   }
@@ -276,6 +343,12 @@ class FormBuilder {
 
   bool isDisabled(Map<String, dynamic> component) {
     return component["disabled"];
+  }
+
+  bool haveParameters(Map<String, dynamic> component) {
+    return getModes(component, 0).containsKey("dataPageParams")
+        ? getModes(component, 0)["dataPageParams"].length > 0
+        : false;
   }
 
   bool isReadOnly(Map<String, dynamic> component) {

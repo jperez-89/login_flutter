@@ -72,15 +72,9 @@ class _TestScreenState extends State<TestScreen> {
       body: SingleChildScrollView(
         padding: EdgeInsets.all(20),
         child: Column(children: [
-          Text("null"),
           FormBuilderWidget(
               pzInsKey:
                   "ASSIGN-WORKLIST%20CF-FW-INTERPRE-WORK%20R-11001!CARDATA")
-          /*CustomAutoComplete(
-            options: opcionesAutoComplete,
-            frmValues: {},
-            property: "primer autocomplete",
-          )*/
         ]),
       ),
     );
