@@ -50,6 +50,16 @@ class _NewAssignmentScreenState extends State<NewAssignmentScreen> {
         nextAssignmentID = json['nextAssignmentID'];
 
         await refreshAssignment(nextAssignmentID, assignmentId);
+      } else if (value.statusCode == 400) {
+        print('ERRORES EN INPUTS');
+
+        json = jsonDecode(value.body);
+        print(json);
+
+        // final errors = json;
+        // final validationMessages = errors['ValidationMessages'];
+
+        // print(errors);
       } else {
         print('ERROR OBTENER POST INFORMACION');
         print(value.statusCode);
