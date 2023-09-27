@@ -11,7 +11,7 @@ class WorklistWidget extends StatefulWidget {
 }
 
 class _WorklistWidgetState extends State<WorklistWidget> {
-  List<dynamic> workList = [];
+  List<dynamic> workList = [], workListBackUp = [];
   int rowsPerPage = 10;
   bool _load = false;
   bool _service = true;
@@ -33,6 +33,7 @@ class _WorklistWidgetState extends State<WorklistWidget> {
 
         setState(() {
           workList = json['pxResults'];
+          workListBackUp = json['pxResults'];
           _load = false;
         });
       }
@@ -65,6 +66,8 @@ class _WorklistWidgetState extends State<WorklistWidget> {
     super.initState();
   }
 
+  final controller = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -87,10 +90,33 @@ class _WorklistWidgetState extends State<WorklistWidget> {
                   },
                   showFirstLastButtons: true,
                   showCheckboxColumn: false,
-                  header: const Row(
-                    children: [
-                      Text('WorkList'),
-                    ],
+                  header: Container(
+                    padding: EdgeInsets.zero,
+                    decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey),
+                        borderRadius: BorderRadius.circular(15)),
+                    child: TextField(
+                      controller: controller,
+                      decoration: const InputDecoration(
+                          border: InputBorder.none,
+                          hintText: 'Search',
+                          contentPadding: EdgeInsets.symmetric(horizontal: 10)),
+                      onChanged: (value) {
+                        if (value != '') {
+                          setState(() {
+                            workList = workList
+                                .where((element) =>
+                                    element['pxRefObjectInsName']
+                                        .contains(value))
+                                .toList();
+                          });
+                        } else {
+                          setState(() {
+                            workList = workListBackUp;
+                          });
+                        }
+                      },
+                    ),
                   ),
                   actions: [
                     ElevatedButton(
