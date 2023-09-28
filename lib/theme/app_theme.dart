@@ -4,6 +4,7 @@ class AppTheme {
   // Define el color primario para todo el sistema
   static const Color primaryColor = Colors.blue;
   static const Color secondaryColor = Colors.blueGrey;
+  static const Color cancel = Color.fromARGB(255, 157, 170, 177);
   static const Color white = Colors.white;
   static const Color black = Colors.black;
 
