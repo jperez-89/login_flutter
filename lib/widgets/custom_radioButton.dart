@@ -35,9 +35,7 @@ class _CustomRadioButtonState extends State<CustomRadioButton> {
       groupValue: widget.frmValues[widget.property],
       onChanged: (value) {
         widget.frmValues[widget.property] = value!;
-        setState(() {
-          print(widget.frmValues);
-        });
+        setState(() {});
       },
     );
   }

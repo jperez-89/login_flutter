@@ -87,7 +87,6 @@ class _CustomAutoCompleteState extends State<CustomAutoComplete> {
       onSelected: (String item) {
         widget.frmValues[widget.property] =
             valuesToSave[valuesToShow.indexOf(item)];
-        print(widget.frmValues);
 
         fillData(widget.frmValues[widget.property]);
         //widget.callback();
