@@ -191,6 +191,7 @@ class _DataSource extends DataTableSource {
       onSelectChanged: (value) {
         Navigator.pushNamed(context, 'newAssigment', arguments: {
           'option': 'getView',
+          'name': row.category,
           'assignmentId': row.cases,
           'pzInsKey': row.pzInsKey,
         });
