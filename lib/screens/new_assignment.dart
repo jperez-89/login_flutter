@@ -36,11 +36,13 @@ class _NewAssignmentScreenState extends State<NewAssignmentScreen> {
   }
 
   saveData(Map data) async {
-    setState(() {
-      frmData = data['data'];
-      assignmentId = data['assignmentID'];
-      actionID = data['actionID'];
-    });
+    // print('DATA IN SCREEN');
+    // print(data);
+    // setState(() {
+    assignmentId = data['assignmentID'];
+    actionID = data['actionID'];
+    frmData = data['data'];
+    // });
 
     await AssignmentActions()
         .saveAssignment(assignmentId, actionID, frmData)
@@ -70,13 +72,20 @@ class _NewAssignmentScreenState extends State<NewAssignmentScreen> {
 
   refreshAssignment(String nextAssignmentID, String? id) async {
     await AssignmentActions().getAssignment(nextAssignmentID).then((value) {
-      setState(() {
-        actionID = nextAssignmentID;
-        components = value["components"];
-        pzInsKey = nextAssignmentID;
-        name = value["components"][0]['caption']['value'];
-        assignmentId = id!;
-      });
+      actionID = nextAssignmentID;
+      components = value["components"];
+      pzInsKey = nextAssignmentID;
+      name = value["components"][0]['caption']['value'];
+      assignmentId = id!;
+      setState(() {});
+    });
+  }
+
+  getView(Map data) {
+    setState(() {
+      pzInsKey = data['pzInsKey'];
+      assignmentId = data['assignmentId'];
+      name = data['name'];
     });
   }
 
@@ -89,9 +98,9 @@ class _NewAssignmentScreenState extends State<NewAssignmentScreen> {
         createCase(args);
       }
     } else if (args['option'] == 'getView') {
-      if (actionID == '') {
+      if (pzInsKey == '') {
         print('getV');
-        refreshAssignment(args['pzInsKey'], args['assignmentId']);
+        getView(args);
       }
     } else if (args['option'] == 'saveData') {
       if (actionID == '') {
@@ -102,7 +111,7 @@ class _NewAssignmentScreenState extends State<NewAssignmentScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: pzInsKey != '' ? Text('$name $assignmentId') : const Text(''),
+        title: pzInsKey != '' ? Text('$name $assignmentId') : const Text(' '),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
