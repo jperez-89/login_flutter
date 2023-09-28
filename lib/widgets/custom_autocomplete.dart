@@ -1,10 +1,12 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:login_flutter/models/services/datapages_services.dart';
 
 class CustomAutoComplete extends StatefulWidget {
   final List options;
   final String property;
   final Map<String, dynamic> frmValues;
-  final Map<String, dynamic> dataPagePrompt;
+  final Map<String, dynamic> autoCompleteParamsList;
   final String dataPagePromptName;
   final Function callback;
   final String label;
@@ -13,7 +15,7 @@ class CustomAutoComplete extends StatefulWidget {
       required this.options,
       required this.property,
       required this.frmValues,
-      required this.dataPagePrompt,
+      required this.autoCompleteParamsList,
       required this.dataPagePromptName,
       required this.callback,
       required this.label});
@@ -23,8 +25,8 @@ class CustomAutoComplete extends StatefulWidget {
 }
 
 class _CustomAutoCompleteState extends State<CustomAutoComplete> {
-  List<String> valuesToShow = [];
-  List<String> valuesToSave = [];
+  late List<String> valuesToShow;
+  late List<String> valuesToSave;
 
   void extractValues() {
     valuesToShow = [];
@@ -32,6 +34,28 @@ class _CustomAutoCompleteState extends State<CustomAutoComplete> {
     for (var map in widget.options) {
       valuesToShow.add(map["key"]); //Honda, Nissan, Hyundai
       valuesToSave.add(map["value"]); //H, NS, HY
+    }
+  }
+
+  void fillData(String dataSelected) {
+    if (widget.autoCompleteParamsList.containsKey(widget.dataPagePromptName)) {
+      String myDataPromptName = widget.dataPagePromptName;
+      Map<String, dynamic> dependentChild =
+          widget.autoCompleteParamsList[myDataPromptName];
+      String urlToGet = dependentChild["Endpoint"] + dataSelected;
+      List options = [];
+      Datapages().getDataPage(urlToGet).then((value) {
+        Map<String, dynamic> json = jsonDecode(value.body);
+        for (var result in json["pxResults"]) {
+          options.add({
+            "key": result[dependentChild["dataPageValue"]],
+            "value": result[dependentChild["dataPagePromptName"]]
+          });
+        }
+        widget.autoCompleteParamsList["${widget.dataPagePromptName}/list"] =
+            options;
+        widget.callback();
+      });
     }
   }
 
@@ -63,10 +87,10 @@ class _CustomAutoCompleteState extends State<CustomAutoComplete> {
       onSelected: (String item) {
         widget.frmValues[widget.property] =
             valuesToSave[valuesToShow.indexOf(item)];
+        print(widget.frmValues);
 
-        widget.dataPagePrompt[widget.dataPagePromptName] =
-            widget.frmValues[widget.property];
-        widget.callback();
+        fillData(widget.frmValues[widget.property]);
+        //widget.callback();
       },
     );
   }
