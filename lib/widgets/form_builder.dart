@@ -232,6 +232,7 @@ class FormBuilder {
       property: getFieldID(pxTextInput),
       frmValues: frmValues,
       inputType: inputType[keyboardType],
+      disabled: isDisabled(pxTextInput) ? false : true,
     );
   }
 
@@ -244,6 +245,7 @@ class FormBuilder {
       toolTip: getToolTip(pxTextInput),
       property: getFieldID(pxTextInput),
       frmValues: frmValues,
+      disabled: isDisabled(pxTextInput),
     );
   }
 
@@ -257,6 +259,7 @@ class FormBuilder {
       property: getFieldID(pxTextInput),
       frmValues: frmValues,
       inputType: TextInputType.number,
+      disabled: isDisabled(pxTextInput),
     );
   }
 
@@ -270,6 +273,7 @@ class FormBuilder {
       property: getFieldID(pxTextInput),
       frmValues: frmValues,
       inputType: TextInputType.emailAddress,
+      disabled: isDisabled(pxTextInput),
     );
   }
 
