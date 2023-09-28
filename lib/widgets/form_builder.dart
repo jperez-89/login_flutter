@@ -18,9 +18,10 @@ class FormBuilderWidget extends StatefulWidget {
 class _FormBuilderWidgetState extends State<FormBuilderWidget> {
   GlobalKey<FormState> myFormKey = GlobalKey<FormState>();
   List components = [];
-  String actionID = ''; // Map actionID = {};
+  String actionID = '', btnSubmit = ''; // Map actionID = {};
   // bool _load = false;
   final Map<String, dynamic> dataPagePrompt = {};
+  Map actionsButtons = {}, buttons = {};
 
   void callback() {
     setState(() {});
@@ -37,6 +38,14 @@ class _FormBuilderWidgetState extends State<FormBuilderWidget> {
       setState(() {
         components = value["components"];
         actionID = value["actionID"];
+        actionsButtons = value["actionsButtons"];
+        // print(actionsButtons['secondary']);
+
+        buttons = {
+          'btnCancel': actionsButtons['secondary'][0]['name'],
+          'btnSave': actionsButtons['secondary'][1]['links']['open']['title'],
+          'btnSubmit': actionsButtons['main'][0]['name'],
+        };
       });
     });
 
@@ -58,7 +67,7 @@ class _FormBuilderWidgetState extends State<FormBuilderWidget> {
             context: context,
             callback: callback,
             dataPagePrompt: dataPagePrompt)
-        .buildForm(components, myFormKey, widget.pzInsKey, actionID);
+        .buildForm(components, myFormKey, widget.pzInsKey, actionID, buttons);
   }
 }
 
@@ -74,14 +83,14 @@ class FormBuilder {
       required this.dataPagePrompt});
 
   Widget buildForm(List components, GlobalKey<FormState> myFormKey,
-      String assignmentID, String actionID) {
+      String assignmentID, String actionID, Map buttons) {
     List<Widget> childs = [];
 
     if (components.isNotEmpty) {
       for (var component in components) {
         childs.add(createWidgets(component) ?? const Text("vacio"));
       }
-      childs.add(getSaveButton(myFormKey, assignmentID, actionID));
+      childs.add(getSaveButton(myFormKey, assignmentID, actionID, buttons));
     }
 
     return Card(
@@ -92,34 +101,62 @@ class FormBuilder {
     );
   }
 
-  getSaveButton(
-      GlobalKey<FormState> myFormKey, String assignmentID, String actionID) {
+  getSaveButton(GlobalKey<FormState> myFormKey, String assignmentID,
+      String actionID, Map buttons) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
+        // Boton Cancelar <=====
         ElevatedButton(
             style: const ButtonStyle(
-                backgroundColor:
-                    MaterialStatePropertyAll(AppTheme.secondaryColor)),
+                backgroundColor: MaterialStatePropertyAll(AppTheme.cancel)),
             onPressed: () {
               Navigator.pop(context);
             },
-            child: const Text('Cancel')),
-        ElevatedButton(
-            onPressed: () {
-              if (!myFormKey.currentState!.validate()) {
-                showMessage('Error', 'Complete todos los campos');
-                return;
-              } else {
-                Navigator.pushNamed(context, 'newAssigment', arguments: {
-                  'option': 'saveData',
-                  'assignmentID': assignmentID,
-                  'actionID': actionID,
-                  'data': frmValues
-                });
-              }
-            },
-            child: const Text('Submit')),
+            child: Text(buttons['btnCancel'])),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            // Boton Save <=====
+            ElevatedButton(
+                style: const ButtonStyle(
+                    backgroundColor:
+                        MaterialStatePropertyAll(AppTheme.secondaryColor)),
+                onPressed: () {
+                  if (!myFormKey.currentState!.validate()) {
+                    showMessage('Error', 'Complete todos los campos');
+                    return;
+                  } else {
+                    // Navigator.pushNamed(context, 'newAssigment', arguments: {
+                    //   'option': 'saveData',
+                    //   'assignmentID': assignmentID,
+                    //   'actionID': actionID,
+                    //   'data': frmValues
+                    // });
+                  }
+                },
+                child: Text(buttons['btnSave'])),
+            const SizedBox(
+              width: 10,
+            ),
+            // Boton Submit <=====
+            ElevatedButton(
+                onPressed: () {
+                  if (!myFormKey.currentState!.validate()) {
+                    showMessage('Error', 'Complete todos los campos');
+                    return;
+                  } else {
+                    Navigator.pushNamed(context, 'newAssigment', arguments: {
+                      'option': 'saveData',
+                      'assignmentID': assignmentID,
+                      'actionID': actionID,
+                      'data': frmValues
+                    });
+                  }
+                },
+                child: Text(buttons['btnSubmit'])),
+          ],
+        )
       ],
     );
   }

@@ -23,28 +23,29 @@ class AssignmentService {
         'authorization': basicAuth
       };
 
-      final url1 = Uri.parse(
+      final urlGetActions = Uri.parse(
           '${endpoints['PEGAURL'] + endpoints['VERSION'] + endpoints['ASSIGNMENTS']}/$pzInsKey');
 
-      final httpPackageResponse = await get(url1, headers: headers);
+      Response httpPackageResponse = await get(urlGetActions, headers: headers);
 
       Map<String, dynamic> json = jsonDecode(httpPackageResponse.body);
 
       final split = json['caseID'].split(' ');
-      final caseID = split[1];
+      final caseID = split[1]; // name = I-1001
 
-      String actionsID = json['actions'][0]['ID'];
+      String actionsID = json['actions'][0]['ID']; // action = interpreteflow
+      Map actionsButtons = json['actionButtons'];
 
-      final url2 = Uri.parse(
+      final urlGetFormView = Uri.parse(
           '${endpoints['PEGAURL'] + endpoints['VERSION'] + endpoints['ASSIGNMENTS']}/$pzInsKey${endpoints['ACTIONS']}/$actionsID');
-      //print(urlAssignmentActionID);
 
-      final httpPackageResponseData = await get(url2, headers: headers);
+      httpPackageResponse = await get(urlGetFormView, headers: headers);
 
       return {
-        "components": httpPackageResponseData,
+        "components": httpPackageResponse,
         "actionsID": actionsID,
-        'caseID': caseID
+        'caseID': caseID,
+        'actionsButtons': actionsButtons
       };
     }
   }
@@ -63,7 +64,6 @@ class AssignmentService {
       // });
     } else {
       String basicAuth = 'Basic ${base64Encode(utf8.encode('$user:$pass'))}';
-
       List pageInstructions = [];
 
       final Map<String, String> headers = {
@@ -72,6 +72,11 @@ class AssignmentService {
         'Accept': "*/*",
         'Authorization': basicAuth,
       };
+
+      // print('DATA IN SERVICES');
+      // print(assignmentID);
+      // print(actionID);
+      // print(body);
 
       final httpPackcageUrl = Uri.parse(
           '${endpoints['PEGAURL'] + endpoints['VERSION'] + endpoints['ASSIGNMENTS']}/$assignmentID?actionID=$actionID');

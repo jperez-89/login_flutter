@@ -12,7 +12,8 @@ class AssignmentActions {
       return {
         "components": componentes,
         "actionID": value["actionsID"],
-        'caseID': value["caseID"]
+        'caseID': value["caseID"],
+        'actionsButtons': value["actionsButtons"]
       };
     });
   }
