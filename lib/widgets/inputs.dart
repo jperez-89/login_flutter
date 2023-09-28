@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class InputsWidget extends StatelessWidget {
   final String? labelText;
   final String? hintText;
+  final List<TextInputFormatter>? inputFormatters;
   final IconData? icon;
+  final int? maxLines;
   final int? minLength;
   final int? maxLength;
   final TextInputType? inputType;
@@ -30,11 +33,15 @@ class InputsWidget extends StatelessWidget {
     this.readOnly,
     this.toolTip,
     this.disabled,
+    this.inputFormatters = const [],
+    this.maxLines = 1,
   });
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      maxLines: maxLines,
+      inputFormatters: inputFormatters,
       keyboardType: inputType,
       textCapitalization: TextCapitalization.words,
       obscureText: obscureText ?? false,

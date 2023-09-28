@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:login_flutter/models/actions/assignment_actions.dart';
 import 'package:login_flutter/theme/app_theme.dart';
 import 'package:login_flutter/widgets/widgets.dart';
+import 'package:currency_text_input_formatter/currency_text_input_formatter.dart';
 
 class FormBuilderWidget extends StatefulWidget {
   final String pzInsKey;
@@ -210,7 +211,7 @@ class FormBuilder {
   }
 
   InputsWidget createCustomInput(
-      Map<String, dynamic> pxTextInput, String keyboardType) {
+      Map<String, dynamic> pxInput, String keyboardType) {
     Map<String, TextInputType> inputType = {
       "TEXT": TextInputType.text,
       "EMAIL": TextInputType.emailAddress,
@@ -219,17 +220,20 @@ class FormBuilder {
       "STREET": TextInputType.streetAddress,
       "URL": TextInputType.url,
       "NONE": TextInputType.none,
+      "CURRENCY": TextInputType.number,
     };
     return InputsWidget(
-      labelText: getFieldLabel(pxTextInput),
-      textAlign: getTextAlign(pxTextInput),
-      readOnly: isReadOnly(pxTextInput),
-      maxLength: getMaxLenght(pxTextInput),
-      toolTip: getToolTip(pxTextInput),
-      property: getFieldID(pxTextInput),
+      inputFormatters:
+          (keyboardType == "CURRENCY") ? [getCurrencyData(pxInput)] : [],
+      labelText: getFieldLabel(pxInput),
+      textAlign: getTextAlign(pxInput),
+      readOnly: isReadOnly(pxInput),
+      maxLength: getMaxLenght(pxInput),
+      toolTip: getToolTip(pxInput),
+      property: getFieldID(pxInput),
       frmValues: frmValues,
       inputType: inputType[keyboardType],
-      disabled: isDisabled(pxTextInput) ? false : true,
+      disabled: isDisabled(pxInput) ? false : true,
     );
   }
 
@@ -407,7 +411,16 @@ class FormBuilder {
   }
 
   String getFieldType(Map<String, dynamic> component) {
-    return component["control"]["type"];
+    return getControl(component)["type"];
+  }
+
+  CurrencyTextInputFormatter getCurrencyData(Map<String, dynamic> component) {
+    return CurrencyTextInputFormatter(
+        decimalDigits: (getModes(component, 1)["decimalPlaces"] == "") ? 0 : 2,
+        enableNegative: false,
+        symbol: (getModes(component, 1)["symbolValue"] == "")
+            ? "CRC"
+            : getModes(component, 1)["symbolValue"]);
   }
 
   Map<String, dynamic> getModes(Map<String, dynamic> component, int index) {
@@ -455,6 +468,10 @@ class FormBuilder {
       case "pxInteger":
         //widget = createPxInteger(component["field"]);
         widget = createCustomInput(component["field"], "NUMBER");
+        break;
+      case "pxCurrency":
+        //widget = createPxInteger(component["field"]);
+        widget = createCustomInput(component["field"], "CURRENCY");
         break;
       case "pxPhone":
         //widget = createPxInteger(component["field"]);
