@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class InputsWidget extends StatelessWidget {
   final String? labelText;
   final String? hintText;
+  final List<TextInputFormatter>? inputFormatters;
   final IconData? icon;
+  final int? maxLines;
   final int? minLength;
   final int? maxLength;
   final TextInputType? inputType;
@@ -14,7 +17,7 @@ class InputsWidget extends StatelessWidget {
   final bool? readOnly;
   final String? toolTip;
   final bool? disabled;
-  final bool? required;
+  final bool? isRequired;
   final String? initialValue;
 
   const InputsWidget({
@@ -32,20 +35,24 @@ class InputsWidget extends StatelessWidget {
     this.readOnly,
     this.toolTip,
     this.disabled,
-    this.required,
+    this.isRequired,
     this.initialValue,
+    this.inputFormatters = const [],
+    this.maxLines = 1,
   });
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      maxLines: maxLines,
+      inputFormatters: inputFormatters,
       keyboardType: inputType,
       textCapitalization: TextCapitalization.words,
       obscureText: obscureText ?? false,
       onChanged: (value) =>
           frmValues![property] = value, // Almacena lo ingresado en el form
       validator: (value) {
-        if (required! && value == '') return 'Campo Obligatorio';
+        if (isRequired! && value == '') return 'Campo Obligatorio';
         // if (value == '') return 'Completa este campo';
         // if (value == null) return 'Campo requerido';
         // print(value);
@@ -57,7 +64,7 @@ class InputsWidget extends StatelessWidget {
           ? InputDecoration(
               labelText: labelText, hintText: hintText, prefixIcon: Icon(icon))
           : InputDecoration(
-              labelText: required! ? '$labelText *' : labelText,
+              labelText: isRequired! ? '$labelText *' : labelText,
               hintText: hintText,
             ),
       enabled: disabled,
