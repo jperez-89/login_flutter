@@ -18,6 +18,7 @@ class _FormBuilderWidgetState extends State<FormBuilderWidget> {
   List components = [];
   String actionID = '', btnSubmit = '';
   final Map<String, dynamic> dataPagePrompt = {};
+  final Map<String, String> frmValues = {};
   Map actionsButtons = {}, buttons = {}, data = {};
   bool hideButton = false;
 
@@ -68,6 +69,7 @@ class _FormBuilderWidgetState extends State<FormBuilderWidget> {
   Widget build(BuildContext context) {
     return FormBuilder(
             context: context,
+            frmValues: frmValues,
             callback: callback,
             autoCompleteParamsList: dataPagePrompt)
         .buildForm(
@@ -76,7 +78,7 @@ class _FormBuilderWidgetState extends State<FormBuilderWidget> {
 }
 
 class FormBuilder {
-  final Map<String, String> frmValues = {};
+  final Map<String, String> frmValues;
   final BuildContext context;
   final Function callback;
   final Map<String, dynamic> autoCompleteParamsList;
@@ -84,6 +86,7 @@ class FormBuilder {
   FormBuilder(
       {required this.context,
       required this.callback,
+      required this.frmValues,
       required this.autoCompleteParamsList});
 
   Widget buildForm(List components, GlobalKey<FormState> myFormKey,
@@ -203,7 +206,8 @@ class FormBuilder {
     return CustomCaption(value: caption["value"], fontSize: 18);
   }
 
-  CustomAutoComplete createPxAutoComplete(Map<String, dynamic> pxAutoComplete) {
+  CustomAutoComplete createPxAutoComplete(
+      Map<String, dynamic> pxAutoComplete, Map? data) {
     List options = getModes(pxAutoComplete, 0)["options"];
     String dataPagePromptName = getDataPagePromptName(pxAutoComplete);
     if (haveParameters(pxAutoComplete)) {
@@ -221,6 +225,7 @@ class FormBuilder {
       }
     }
     return CustomAutoComplete(
+      initialValue: (data != null) ? data[getFieldID(pxAutoComplete)] : null,
       label: getFieldLabel(pxAutoComplete),
       options: options,
       property: getFieldID(pxAutoComplete),
@@ -558,7 +563,7 @@ class FormBuilder {
         break;
       case "pxAutoComplete":
         // widget = createPxEmail(component["field"]);
-        widget = createPxAutoComplete(component["field"]);
+        widget = createPxAutoComplete(component["field"], data);
         break;
       default:
         widget = Text("Widget aun no soportado: $typeComponent");

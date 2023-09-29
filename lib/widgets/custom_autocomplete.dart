@@ -10,6 +10,8 @@ class CustomAutoComplete extends StatefulWidget {
   final String dataPagePromptName;
   final Function callback;
   final String label;
+  final String? initialValue;
+
   const CustomAutoComplete(
       {super.key,
       required this.options,
@@ -18,7 +20,8 @@ class CustomAutoComplete extends StatefulWidget {
       required this.autoCompleteParamsList,
       required this.dataPagePromptName,
       required this.callback,
-      required this.label});
+      required this.label,
+      this.initialValue});
 
   @override
   State<CustomAutoComplete> createState() => _CustomAutoCompleteState();
@@ -35,6 +38,16 @@ class _CustomAutoCompleteState extends State<CustomAutoComplete> {
       valuesToShow.add(map["key"]); //Honda, Nissan, Hyundai
       valuesToSave.add(map["value"]); //H, NS, HY
     }
+  }
+
+  String getInitialValue() {
+    String salida = "";
+    if (widget.initialValue != null) {
+      salida = (valuesToShow.isNotEmpty)
+          ? valuesToShow[valuesToSave.indexOf(widget.initialValue!)]
+          : "";
+    }
+    return salida;
   }
 
   void fillData(String dataSelected) {
@@ -63,6 +76,7 @@ class _CustomAutoCompleteState extends State<CustomAutoComplete> {
   Widget build(BuildContext context) {
     extractValues();
     return Autocomplete<String>(
+      initialValue: TextEditingValue(text: getInitialValue()),
       fieldViewBuilder:
           (context, textEditingController, focusNode, onFieldSubmitted) {
         return TextField(
