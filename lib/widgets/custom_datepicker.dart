@@ -11,6 +11,7 @@ class CustomDatePicker extends StatefulWidget {
   final int pastDateRange;
   final Map<String, dynamic> frmValues;
   final String property;
+  final String? initialValue;
 
   const CustomDatePicker(
       {super.key,
@@ -23,7 +24,8 @@ class CustomDatePicker extends StatefulWidget {
       this.useFutureDateRange = false,
       this.usePastDateRange = false,
       required this.frmValues,
-      required this.property});
+      required this.property,
+      this.initialValue});
 
   @override
   State<CustomDatePicker> createState() => _CustomDatePickerState();
@@ -31,7 +33,7 @@ class CustomDatePicker extends StatefulWidget {
 
 class _CustomDatePickerState extends State<CustomDatePicker> {
   // static DateTime fecha = DateTime.now();
-  String fecha = '';
+  String fecha = "";
 
   void _showDatePicker() {
     FocusScope.of(context).unfocus();
@@ -79,7 +81,8 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
         autofocus: false,
         keyboardType: TextInputType.none,
         // controller: TextEditingController(text: getFecha()),
-        controller: TextEditingController(text: fecha),
+        controller: TextEditingController(
+            text: (widget.initialValue != null) ? widget.initialValue : fecha),
         onTap: _showDatePicker,
         decoration: InputDecoration(labelText: widget.label),
         enabled: widget.enabled,

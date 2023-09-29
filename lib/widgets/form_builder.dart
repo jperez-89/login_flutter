@@ -134,6 +134,7 @@ class FormBuilder {
                     showMessage('Error', 'Complete todos los campos');
                     return;
                   } else {
+                    print(frmValues);
                     Navigator.pushNamed(context, 'newAssigment', arguments: {
                       'option': 'SaveData',
                       'assignmentID': assignmentID,
@@ -280,7 +281,7 @@ class FormBuilder {
             property: getFieldID(pxTextInput),
             frmValues: frmValues,
             inputType: inputType[keyboardType],
-            disabled: isDisabled(pxTextInput) ? false : true,
+            disabled: isDisabled(pxTextInput) ? true : true,
             isRequired: isRequired(pxTextInput),
             initialValue: data.containsKey(getFieldID(pxTextInput))
                 ? data[getFieldID(pxTextInput)]
@@ -344,8 +345,10 @@ class FormBuilder {
     );
   }
 
-  CustomDatePicker createPxDateTime(Map<String, dynamic> pxDateTime) {
+  CustomDatePicker createPxDateTime(
+      Map<String, dynamic> pxDateTime, Map? data) {
     return CustomDatePicker(
+      initialValue: (data != null) ? data[getFieldID(pxDateTime)] : null,
       label: getFieldLabel(pxDateTime),
       textAlign: TextAlign.left,
       enabled: !isDisabled(pxDateTime),
@@ -359,13 +362,14 @@ class FormBuilder {
     );
   }
 
-  CustomDropdown createPxDropDown(Map<String, dynamic> pxDropdown) {
+  CustomDropdown createPxDropDown(Map<String, dynamic> pxDropdown, Map? data) {
+    print(data);
     List<DropdownMenuItem<dynamic>> menuItems = [];
     for (var element in getModes(pxDropdown, 0)["options"]) {
       menuItems.add(createMenuItem(element));
     }
     return CustomDropdown(
-      initialValue: "",
+      initialValue: (data != null) ? data[getFieldID(pxDropdown)] : null,
       label: getFieldLabel(pxDropdown),
       menuItem: menuItems,
       property: getFieldID(pxDropdown),
@@ -523,14 +527,14 @@ class FormBuilder {
         widget = createCaption(component["caption"]);
         break;
       case "pxDateTime":
-        widget = createPxDateTime(component["field"]);
+        widget = createPxDateTime(component["field"], data);
         break;
       case "pxDropdown":
-        widget = createPxDropDown(component["field"]);
+        widget = createPxDropDown(component["field"], data);
         break;
       case "pxRadioButtons":
         //widget = createPxRadioButtom(component["field"]);
-        widget = createPxDropDown(component["field"]);
+        widget = createPxDropDown(component["field"], data);
         break;
       case "pxTextInput":
         //widget = createPxTextInput(component["field"]);
