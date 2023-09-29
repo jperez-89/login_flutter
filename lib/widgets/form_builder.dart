@@ -232,7 +232,6 @@ class FormBuilder {
   }
 
   Wrap createPxRadioButtom(Map<String, dynamic> pxRadioButton) {
-    /** SE REEMPLAZÓ POR LOS DROPDOWN */
     final size = MediaQuery.of(context).size;
     List radioButtons = [];
     int maxElementInRow = getModes(pxRadioButton, 0)["options"].length;

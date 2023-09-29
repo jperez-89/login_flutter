@@ -43,12 +43,11 @@ class _NewAssignmentScreenState extends State<NewAssignmentScreen> {
     await AssignmentActions()
         .saveAssignment(assignmentId, actionID, frmData)
         .then((value) {
+      List split = assignmentId.split(' ');
+      split = split[2].split('!');
+
       if (value.statusCode == 200) {
-        List split = assignmentId.split(' ');
-        split = split[2].split('!');
-
         showMessage('Success', 'Datos guardados');
-
         setState(() {
           pzInsKey = assignmentId;
           assignmentId = split[0];
@@ -73,6 +72,10 @@ class _NewAssignmentScreenState extends State<NewAssignmentScreen> {
             }
           }
           showMessage('Errors', errMessage.toString());
+          setState(() {
+            pzInsKey = assignmentId;
+            assignmentId = split[0];
+          });
         }
       } else {
         showMessage(value.statusCode, value.body);
