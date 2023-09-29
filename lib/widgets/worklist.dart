@@ -108,10 +108,6 @@ class _WorklistWidgetState extends State<WorklistWidget> {
                                   element['pxRefObjectInsName'].contains(value))
                               .toList();
                           setState(() {});
-                        } else {
-                          setState(() {
-                            workList = workListBackUp;
-                          });
                         }
                       },
                     ),
