@@ -103,7 +103,7 @@ class _WorklistWidgetState extends State<WorklistWidget> {
                           contentPadding: EdgeInsets.symmetric(horizontal: 10)),
                       onChanged: (value) {
                         if (value != '') {
-                          workList = workList
+                          workList = workListBackUp
                               .where((element) =>
                                   element['pxRefObjectInsName'].contains(value))
                               .toList();
