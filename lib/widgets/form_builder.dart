@@ -1,6 +1,5 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
+import 'dart:convert';
 import 'package:login_flutter/models/actions/assignment_actions.dart';
 import 'package:login_flutter/models/services/datapages_services.dart';
 import 'package:login_flutter/theme/app_theme.dart';
@@ -18,10 +17,10 @@ class FormBuilderWidget extends StatefulWidget {
 class _FormBuilderWidgetState extends State<FormBuilderWidget> {
   GlobalKey<FormState> myFormKey = GlobalKey<FormState>();
   List components = [];
-  String actionID = '', btnSubmit = ''; // Map actionID = {};
-  // bool _load = false;
+  String actionID = '', btnSubmit = '';
   final Map<String, dynamic> dataPagePrompt = {};
-  Map actionsButtons = {}, buttons = {};
+  Map actionsButtons = {}, buttons = {}, data = {};
+  bool hideButton = false;
 
   void callback() {
     setState(() {});
@@ -29,16 +28,26 @@ class _FormBuilderWidgetState extends State<FormBuilderWidget> {
 
   // Obtenemos los campos del formulario del assignment
   getAssiggnment(String pzInsKey) async {
-    // Mostramos loader
-    // setState(() {
-    //   _load = true;
-    // });
-
     await AssignmentActions().getAssignment(pzInsKey).then((value) {
       setState(() {
         components = value["components"];
         actionID = value["actionID"];
         actionsButtons = value["actionsButtons"];
+        data = value["data"]['content'];
+
+        /** VALIDAR LAS FECHAS PARA DESHABILITAR EL BOTON DE SAVE EN CASO QUE EL ASSIGNMETN TENGA DATOS ALMACENADOS */
+        // DateTime create = value["data"]['createTime'];
+        // DateTime update = value["data"]['lastUpdateTime'];
+
+        // print(create);
+        // print(update);
+
+        // value["data"]['createTime'] != value["data"]['lastUpdateTime']
+        //     ? hideButton = true
+        //     : null;
+        // print(hideButton);
+
+        // String edad = data['content']['Age'];
         // print(actionsButtons['secondary']);
 
         buttons = {
@@ -48,11 +57,6 @@ class _FormBuilderWidgetState extends State<FormBuilderWidget> {
         };
       });
     });
-
-    // Ocultamos loader
-    // setState(() {
-    //   _load = false;
-    // });
   }
 
   @override
@@ -67,7 +71,8 @@ class _FormBuilderWidgetState extends State<FormBuilderWidget> {
             context: context,
             callback: callback,
             dataPagePrompt: dataPagePrompt)
-        .buildForm(components, myFormKey, widget.pzInsKey, actionID, buttons);
+        .buildForm(
+            components, myFormKey, widget.pzInsKey, actionID, buttons, data);
   }
 }
 
@@ -83,12 +88,12 @@ class FormBuilder {
       required this.dataPagePrompt});
 
   Widget buildForm(List components, GlobalKey<FormState> myFormKey,
-      String assignmentID, String actionID, Map buttons) {
+      String assignmentID, String actionID, Map buttons, Map data) {
     List<Widget> childs = [];
 
     if (components.isNotEmpty) {
       for (var component in components) {
-        childs.add(createWidgets(component) ?? const Text("vacio"));
+        childs.add(createWidgets(component, data) ?? const Text("vacio"));
       }
       childs.add(getSaveButton(myFormKey, assignmentID, actionID, buttons));
     }
@@ -111,7 +116,10 @@ class FormBuilder {
             style: const ButtonStyle(
                 backgroundColor: MaterialStatePropertyAll(AppTheme.cancel)),
             onPressed: () {
-              Navigator.pop(context);
+              Navigator.popAndPushNamed(
+                context,
+                'dashboard',
+              );
             },
             child: Text(buttons['btnCancel'])),
         Row(
@@ -127,12 +135,12 @@ class FormBuilder {
                     showMessage('Error', 'Complete todos los campos');
                     return;
                   } else {
-                    // Navigator.pushNamed(context, 'newAssigment', arguments: {
-                    //   'option': 'saveData',
-                    //   'assignmentID': assignmentID,
-                    //   'actionID': actionID,
-                    //   'data': frmValues
-                    // });
+                    Navigator.pushNamed(context, 'newAssigment', arguments: {
+                      'option': 'SaveData',
+                      'assignmentID': assignmentID,
+                      'actionID': actionID,
+                      'data': frmValues
+                    });
                   }
                 },
                 child: Text(buttons['btnSave'])),
@@ -147,7 +155,7 @@ class FormBuilder {
                     return;
                   } else {
                     Navigator.pushNamed(context, 'newAssigment', arguments: {
-                      'option': 'saveData',
+                      'option': 'Submit',
                       'assignmentID': assignmentID,
                       'actionID': actionID,
                       'data': frmValues
@@ -263,7 +271,7 @@ class FormBuilder {
   }
 
   InputsWidget createCustomInput(
-      Map<String, dynamic> pxTextInput, String keyboardType) {
+      Map<String, dynamic> pxTextInput, String keyboardType, Map? data) {
     Map<String, TextInputType> inputType = {
       "TEXT": TextInputType.text,
       "EMAIL": TextInputType.emailAddress,
@@ -273,18 +281,34 @@ class FormBuilder {
       "URL": TextInputType.url,
       "NONE": TextInputType.none,
     };
-    return InputsWidget(
-      labelText: getFieldLabel(pxTextInput),
-      textAlign: getTextAlign(pxTextInput),
-      readOnly: isReadOnly(pxTextInput),
-      maxLength: getMaxLenght(pxTextInput),
-      toolTip: getToolTip(pxTextInput),
-      property: getFieldID(pxTextInput),
-      frmValues: frmValues,
-      inputType: inputType[keyboardType],
-      disabled: isDisabled(pxTextInput) ? false : true,
-      required: isRequired(pxTextInput),
-    );
+    return data != null
+        ? InputsWidget(
+            labelText: getFieldLabel(pxTextInput),
+            textAlign: getTextAlign(pxTextInput),
+            readOnly: isReadOnly(pxTextInput),
+            maxLength: getMaxLenght(pxTextInput),
+            toolTip: getToolTip(pxTextInput),
+            property: getFieldID(pxTextInput),
+            frmValues: frmValues,
+            inputType: inputType[keyboardType],
+            disabled: isDisabled(pxTextInput) ? false : true,
+            required: isRequired(pxTextInput),
+            initialValue: data.containsKey(getFieldID(pxTextInput))
+                ? data[getFieldID(pxTextInput)]
+                : null,
+          )
+        : InputsWidget(
+            labelText: getFieldLabel(pxTextInput),
+            textAlign: getTextAlign(pxTextInput),
+            readOnly: isReadOnly(pxTextInput),
+            maxLength: getMaxLenght(pxTextInput),
+            toolTip: getToolTip(pxTextInput),
+            property: getFieldID(pxTextInput),
+            frmValues: frmValues,
+            inputType: inputType[keyboardType],
+            disabled: isDisabled(pxTextInput) ? false : true,
+            required: isRequired(pxTextInput),
+          );
   }
 
   InputsWidget createPxTextInput(Map<String, dynamic> pxTextInput) {
@@ -482,7 +506,7 @@ class FormBuilder {
   /// *** END FIELD ATTRIBUTES **********
 
 /* ************* SWITCH ******************/
-  Widget? createWidgets(Map<String, dynamic> component) {
+  Widget? createWidgets(Map<String, dynamic> component, Map data) {
     Widget widget;
     String typeComponent = getComponentType(component);
 
@@ -508,19 +532,19 @@ class FormBuilder {
         break;
       case "pxTextInput":
         //widget = createPxTextInput(component["field"]);
-        widget = createCustomInput(component["field"], "TEXT");
+        widget = createCustomInput(component["field"], "TEXT", data);
         break;
       case "pxInteger":
         //widget = createPxInteger(component["field"]);
-        widget = createCustomInput(component["field"], "NUMBER");
+        widget = createCustomInput(component["field"], "NUMBER", data);
         break;
       case "pxPhone":
         //widget = createPxInteger(component["field"]);
-        widget = createCustomInput(component["field"], "PHONE");
+        widget = createCustomInput(component["field"], "PHONE", data);
         break;
       case "pxEmail":
         // widget = createPxEmail(component["field"]);
-        widget = createCustomInput(component["field"], "EMAIL");
+        widget = createCustomInput(component["field"], "EMAIL", data);
         break;
       case "pxAutoComplete":
         // widget = createPxEmail(component["field"]);

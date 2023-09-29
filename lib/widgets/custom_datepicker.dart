@@ -61,12 +61,14 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
   }
 
   String getFecha(DateTime fecha) {
-    /** REVISAR COMO PEGA GUARDA LAS FECHAS EN LA BASE DE DATOS */
-    widget.frmValues[widget.property] =
-        "${fecha.day}/${fecha.month}/${fecha.year}";
+    String month =
+        fecha.month < 10 ? "0${fecha.month}" : fecha.month.toString();
+
+    String day = fecha.day < 10 ? "0${fecha.day}" : fecha.day.toString();
+
+    widget.frmValues[widget.property] = "${fecha.year}-$month-$day";
 
     return widget.frmValues[widget.property];
-    // return "${fecha.day}/${fecha.month}/${fecha.year}";
   }
 
   @override

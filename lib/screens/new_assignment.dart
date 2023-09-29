@@ -36,6 +36,25 @@ class _NewAssignmentScreenState extends State<NewAssignmentScreen> {
   }
 
   saveData(Map data) async {
+    assignmentId = data['assignmentID'];
+    actionID = data['actionID'];
+    frmData = data['data'];
+
+    await AssignmentActions()
+        .saveAssignment(assignmentId, actionID, frmData)
+        .then((value) {
+      if (value.statusCode == 200) {
+        print('FUNCTION SCREE SUCCESS');
+        print(value.body);
+      } else {
+        print('FUNCTION SCREE ERROR');
+        print(value.statusCode);
+        print(value.body);
+      }
+    });
+  }
+
+  submitData(Map data) async {
     // print('DATA IN SCREEN');
     // print(data);
     // setState(() {
@@ -45,7 +64,7 @@ class _NewAssignmentScreenState extends State<NewAssignmentScreen> {
     // });
 
     await AssignmentActions()
-        .saveAssignment(assignmentId, actionID, frmData)
+        .submitAssignment(assignmentId, actionID, frmData)
         .then((value) async {
       if (value.statusCode == 200) {
         json = jsonDecode(value.body);
@@ -92,21 +111,31 @@ class _NewAssignmentScreenState extends State<NewAssignmentScreen> {
   @override
   Widget build(BuildContext context) {
     Map args = ModalRoute.of(context)!.settings.arguments as Map;
-    if (args['option'] == 'newCase') {
-      if (pzInsKey == '') {
-        print('new');
-        createCase(args);
-      }
-    } else if (args['option'] == 'getView') {
-      if (pzInsKey == '') {
-        print('getV');
-        getView(args);
-      }
-    } else if (args['option'] == 'saveData') {
-      if (actionID == '') {
-        print('save');
-        saveData(args);
-      }
+    switch (args['option']) {
+      case 'newCase':
+        if (pzInsKey == '') {
+          print('newCase');
+          createCase(args);
+        }
+        break;
+      case 'getView':
+        if (pzInsKey == '') {
+          print('getView');
+          getView(args);
+        }
+        break;
+      case 'SaveData':
+        if (actionID == '') {
+          print('SaveData');
+          saveData(args);
+        }
+        break;
+      case 'SubmitData':
+        if (actionID == '') {
+          print('SubmitData');
+          submitData(args);
+        }
+        break;
     }
 
     return Scaffold(

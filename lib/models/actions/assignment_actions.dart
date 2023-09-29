@@ -12,7 +12,7 @@ class AssignmentActions {
       return {
         "components": componentes,
         "actionID": value["actionsID"],
-        'caseID': value["caseID"],
+        'data': value['data'],
         'actionsButtons': value["actionsButtons"]
       };
     });
@@ -35,6 +35,15 @@ class AssignmentActions {
   }
 
   saveAssignment(
+      String assignmentID, String actionID, Map<String, String> body) {
+    return AssignmentService()
+        .saveAssignment(assignmentID, actionID, body)
+        .then((value) {
+      return value;
+    });
+  }
+
+  submitAssignment(
       String assignmentID, String actionID, Map<String, String> body) {
     return AssignmentService()
         .saveAssignment(assignmentID, actionID, body)

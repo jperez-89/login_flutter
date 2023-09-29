@@ -15,6 +15,7 @@ class InputsWidget extends StatelessWidget {
   final String? toolTip;
   final bool? disabled;
   final bool? required;
+  final String? initialValue;
 
   const InputsWidget({
     super.key,
@@ -32,6 +33,7 @@ class InputsWidget extends StatelessWidget {
     this.toolTip,
     this.disabled,
     this.required,
+    this.initialValue,
   });
 
   @override
@@ -59,6 +61,8 @@ class InputsWidget extends StatelessWidget {
               hintText: hintText,
             ),
       enabled: disabled,
+      // initialValue: initialValue,
+      controller: TextEditingController(text: initialValue),
     );
 
     // return Tooltip(
