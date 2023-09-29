@@ -70,7 +70,7 @@ class _FormBuilderWidgetState extends State<FormBuilderWidget> {
     return FormBuilder(
             context: context,
             callback: callback,
-            dataPagePrompt: dataPagePrompt)
+            autoCompleteParamsList: dataPagePrompt)
         .buildForm(
             components, myFormKey, widget.pzInsKey, actionID, buttons, data);
   }
@@ -80,12 +80,12 @@ class FormBuilder {
   final Map<String, String> frmValues = {};
   final BuildContext context;
   final Function callback;
-  final Map<String, dynamic> dataPagePrompt;
+  final Map<String, dynamic> autoCompleteParamsList;
 
   FormBuilder(
       {required this.context,
       required this.callback,
-      required this.dataPagePrompt});
+      required this.autoCompleteParamsList});
 
   Widget buildForm(List components, GlobalKey<FormState> myFormKey,
       String assignmentID, String actionID, Map buttons, Map data) {
@@ -204,41 +204,28 @@ class FormBuilder {
   }
 
   CustomAutoComplete createPxAutoComplete(Map<String, dynamic> pxAutoComplete) {
-    List options = [];
+    List options = getModes(pxAutoComplete, 0)["options"];
     String dataPagePromptName = getDataPagePromptName(pxAutoComplete);
     if (haveParameters(pxAutoComplete)) {
       String parameterName = getDataPageParams(pxAutoComplete);
-      if (dataPagePrompt.containsKey(parameterName)) {
-        String dataPageID = getDataPageID(pxAutoComplete);
-        String dataPageValue = getDataPageValue(pxAutoComplete);
-        String urlToGet =
-            "$dataPageID?$parameterName=${dataPagePrompt[parameterName]}";
-        if (!dataPagePrompt.containsKey("$dataPagePromptName/list")) {
-          Datapages().getDataPage(urlToGet).then((value) {
-            Map<String, dynamic> json = jsonDecode(value.body);
-            for (var result in json["pxResults"]) {
-              options.add({
-                "key": result[dataPageValue],
-                "value": result[dataPagePromptName]
-              });
-            }
-            dataPagePrompt["$dataPagePromptName/list"] = options;
-            callback();
-          });
-        } else {
-          options = dataPagePrompt["$dataPagePromptName/list"];
-          dataPagePrompt.remove("$dataPagePromptName/list");
-        }
+      String dataPageID = getDataPageID(pxAutoComplete);
+      String dataPageValue = getDataPageValue(pxAutoComplete);
+      String urlToGet = "$dataPageID?$parameterName=";
+      autoCompleteParamsList[parameterName] = {
+        "dataPagePromptName": dataPagePromptName,
+        "dataPageValue": dataPageValue,
+        "Endpoint": urlToGet
+      };
+      if (autoCompleteParamsList.containsKey("$parameterName/list")) {
+        options = autoCompleteParamsList["$parameterName/list"];
       }
-    } else {
-      options = getModes(pxAutoComplete, 0)["options"];
     }
     return CustomAutoComplete(
       label: getFieldLabel(pxAutoComplete),
       options: options,
       property: getFieldID(pxAutoComplete),
       frmValues: frmValues,
-      dataPagePrompt: dataPagePrompt,
+      autoCompleteParamsList: autoCompleteParamsList,
       dataPagePromptName: dataPagePromptName,
       callback: callback,
     );
