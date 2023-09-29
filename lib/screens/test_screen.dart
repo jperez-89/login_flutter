@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:currency_text_input_formatter/currency_text_input_formatter.dart';
 import 'package:login_flutter/widgets/widgets.dart';
 
 class TestScreen extends StatefulWidget {
@@ -10,6 +9,8 @@ class TestScreen extends StatefulWidget {
 }
 
 class _TestScreenState extends State<TestScreen> {
+  //QuillController _controller = QuillController.basic();
+
   Map<String, String> globalGroupValue = {};
   List<Map<String, String>> opcionesAutoComplete = [
     {"H": "Honda"},
@@ -36,23 +37,9 @@ class _TestScreenState extends State<TestScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
-        child: Column(children: [
-          CustomDropdown(
-              menuItem: const [
-                DropdownMenuItem(child: Text("Pedro")),
-                DropdownMenuItem(child: Text("Maria"))
-              ],
-              label: "hola",
-              property: "hola",
-              frmValues: opcionesAutoComplete[0])
-          /*FormBuilderWidget(
-              pzInsKey:
-                  "ASSIGN-WORKLIST%20CF-FW-INTERPRE-WORK%20R-11001!CARDATA")*/
-        ]),
-      ),
-    );
+    return const Scaffold(
+        body: Column(
+      children: [],
+    ));
   }
 }

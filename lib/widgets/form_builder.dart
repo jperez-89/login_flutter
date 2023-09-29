@@ -299,6 +299,7 @@ class FormBuilder {
       menuItems.add(createMenuItem(element));
     }
     return CustomDropdown(
+      initialValue: "",
       label: getFieldLabel(pxDropdown),
       menuItem: menuItems,
       property: getFieldID(pxDropdown),
