@@ -108,41 +108,26 @@ class AssignmentService {
       List pageInstructions = [];
 
       final Map<String, String> headers = {
+        'Accept': "application/json, text/plain, */*",
         'Content-type': 'application/json',
-        // 'content-type': 'text/plain',
-        'Accept': "*/*",
         'Authorization': basicAuth,
       };
-
-      // print('DATA IN SERVICES');
-      // print(assignmentID);
-      // print(actionID);
-      // print(body);
 
       final httpPackcageUrl = Uri.parse(
           '${endpoints['PEGAURL'] + endpoints['VERSION'] + endpoints['ASSIGNMENTS']}/$assignmentID?actionID=$actionID');
 
-      // print('httpPackcageUrl');
-      // print(body);
+      String jsonBody = jsonEncode(body);
 
       final bodyData =
-          '{"content": "$body", "pageInstructions": $pageInstructions}';
-
-      // final Map bodyData = {'content': body, 'pageInstructions': pageInstructions};
-
-      // print('bodyData');
-      // print(bodyData.toString());
-      // print(bodyData);
+          '{"content": $jsonBody, "pageInstructions": $pageInstructions}';
 
       final httpPackageResponse =
           await post(httpPackcageUrl, headers: headers, body: bodyData);
 
-      print('====> Save Assignment');
       print(httpPackageResponse.statusCode);
       print(httpPackageResponse.body);
-      print('====> Fin Assignment');
 
-      return httpPackageResponse;
+      // return httpPackageResponse;
     }
   }
 }

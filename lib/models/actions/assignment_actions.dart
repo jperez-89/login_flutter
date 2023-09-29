@@ -46,7 +46,7 @@ class AssignmentActions {
   submitAssignment(
       String assignmentID, String actionID, Map<String, String> body) {
     return AssignmentService()
-        .saveAssignment(assignmentID, actionID, body)
+        .submitAssignment(assignmentID, actionID, body)
         .then((value) {
       return value;
     });

@@ -155,7 +155,7 @@ class FormBuilder {
                     return;
                   } else {
                     Navigator.pushNamed(context, 'newAssigment', arguments: {
-                      'option': 'Submit',
+                      'option': 'SubmitData',
                       'assignmentID': assignmentID,
                       'actionID': actionID,
                       'data': frmValues
