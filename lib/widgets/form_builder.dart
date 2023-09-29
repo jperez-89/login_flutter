@@ -269,6 +269,9 @@ class FormBuilder {
     };
     return data != null
         ? InputsWidget(
+            inputFormatters: (keyboardType == "CURRENCY")
+                ? [getCurrencyData(pxTextInput)]
+                : [],
             labelText: getFieldLabel(pxTextInput),
             textAlign: getTextAlign(pxTextInput),
             readOnly: isReadOnly(pxTextInput),
@@ -284,6 +287,9 @@ class FormBuilder {
                 : null,
           )
         : InputsWidget(
+            inputFormatters: (keyboardType == "CURRENCY")
+                ? [getCurrencyData(pxTextInput)]
+                : [],
             labelText: getFieldLabel(pxTextInput),
             textAlign: getTextAlign(pxTextInput),
             readOnly: isReadOnly(pxTextInput),
