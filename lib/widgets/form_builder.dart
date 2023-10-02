@@ -383,7 +383,7 @@ class FormBuilder {
   }
 
   DropdownMenuItem createMenuItem(Map<String, dynamic> item) {
-    return DropdownMenuItem(value: item["value"], child: Text(item["key"]));
+    return DropdownMenuItem(value: item["key"], child: Text(item["value"]));
   }
   /********* END CREATORS  ******* */
 
