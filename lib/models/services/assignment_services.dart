@@ -124,10 +124,20 @@ class AssignmentService {
       final httpPackageResponse =
           await post(httpPackcageUrl, headers: headers, body: bodyData);
 
-      print(httpPackageResponse.statusCode);
-      print(httpPackageResponse.body);
+      // OBTENER CASE ID PARA OBTENER EL SIGUIENTE STEP ========================================
+      Map<String, dynamic> jsonData = {};
 
-      // return httpPackageResponse;
+      if (httpPackageResponse.statusCode == 200) {
+        final urlGetData = Uri.parse(
+            '${endpoints['PEGAURL'] + endpoints['VERSION'] + endpoints['CASES']}/$assignmentID');
+
+        Response getData = await get(urlGetData, headers: headers);
+
+        print(getData);
+        // jsonData = jsonDecode(getData.body);
+      }
+
+      // return jsonData;
     }
   }
 }

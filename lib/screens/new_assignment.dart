@@ -96,9 +96,9 @@ class _NewAssignmentScreenState extends State<NewAssignmentScreen> {
       if (value.statusCode == 200) {
         json = jsonDecode(value.body);
         nextAssignmentID = json['nextAssignmentID'];
-        showMessage('next ID', nextAssignmentID);
+        // showMessage('next ID', nextAssignmentID);
 
-        // await refreshAssignment(nextAssignmentID, assignmentId);
+        await refreshAssignment(nextAssignmentID, assignmentId);
       } else if (value.statusCode == 400) {
         print('ERRORES EN INPUTS');
 
