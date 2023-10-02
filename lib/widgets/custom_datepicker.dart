@@ -33,7 +33,8 @@ class CustomDatePicker extends StatefulWidget {
 
 class _CustomDatePickerState extends State<CustomDatePicker> {
   // static DateTime fecha = DateTime.now();
-  String fecha = "";
+  String date = "";
+  bool dateIsChanged = false;
 
   void _showDatePicker() {
     FocusScope.of(context).unfocus();
@@ -47,8 +48,9 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
         .then((value) {
       setState(() {
         if (value != null) {
-          fecha = getFecha(value);
-          widget.frmValues[widget.property] = fecha;
+          date = getFecha(value);
+          dateIsChanged = true;
+          widget.frmValues[widget.property] = date;
         }
       });
     });
@@ -82,7 +84,9 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
         keyboardType: TextInputType.none,
         // controller: TextEditingController(text: getFecha()),
         controller: TextEditingController(
-            text: (widget.initialValue != null) ? widget.initialValue : fecha),
+            text: (widget.initialValue != null && !dateIsChanged)
+                ? widget.initialValue
+                : date),
         onTap: _showDatePicker,
         decoration: InputDecoration(labelText: widget.label),
         enabled: widget.enabled,
