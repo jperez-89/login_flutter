@@ -310,6 +310,12 @@ class FormBuilder {
           );
   }
 
+  CustomDisplayText createPxDisplayText(Map<String, dynamic> pxDisplayText) {
+    return CustomDisplayText(
+        title: getFieldLabel(pxDisplayText),
+        value: getFieldValue(pxDisplayText));
+  }
+
   InputsWidget createPxTextInput(Map<String, dynamic> pxTextInput) {
     return InputsWidget(
       labelText: getFieldLabel(pxTextInput),
@@ -394,6 +400,10 @@ class FormBuilder {
 
   String getFieldID(Map<String, dynamic> component) {
     return component["fieldID"];
+  }
+
+  String getFieldValue(Map<String, dynamic> component) {
+    return component["value"];
   }
 
   String getDataPageID(Map<String, dynamic> component) {
@@ -523,6 +533,8 @@ class FormBuilder {
 
     switch (typeComponent) {
       case "visible false":
+      case 'pxRichTextEditor':
+      case 'pxButon':
         widget = const SizedBox(
           width: 0,
           height: 0,
@@ -565,6 +577,9 @@ class FormBuilder {
         break;
       case "pxTextArea":
         widget = createCustomInput(component["field"], "TEXTAREA", data);
+        break;
+      case "pxDisplayText":
+        widget = createPxDisplayText(component["field"]);
         break;
       default:
         widget = Text("Widget aun no soportado: $typeComponent");
