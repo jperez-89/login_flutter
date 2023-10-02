@@ -31,15 +31,29 @@ class _TestScreenState extends State<TestScreen> {
     );*/
     return TextFormField(
       keyboardType: TextInputType.multiline,
-      maxLines: 1,
+      maxLines: 5,
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return Scaffold(
         body: Column(
-      children: [],
+      children: [
+        currencyInput(),
+        const Text("HOL"),
+        RichText(
+            text: const TextSpan(
+                style: TextStyle(color: Colors.black),
+                children: [
+              TextSpan(
+                  text: "Titulo",
+                  style: TextStyle(fontWeight: FontWeight.bold)),
+              TextSpan(
+                text: "Dato",
+              )
+            ]))
+      ],
     ));
   }
 }
