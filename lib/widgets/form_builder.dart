@@ -310,6 +310,10 @@ class FormBuilder {
           );
   }
 
+  CustomParagraph createCustomParagraph(Map<String, dynamic> paragraph) {
+    return CustomParagraph(text: getFieldValue(paragraph));
+  }
+
   CustomDisplayText createPxDisplayText(Map<String, dynamic> pxDisplayText) {
     return CustomDisplayText(
         title: getFieldLabel(pxDisplayText),
@@ -591,6 +595,9 @@ class FormBuilder {
         widget = createCustomInput(component["field"], "TEXTAREA", data);
         break;
       case "pxDisplayText":
+        widget = createPxDisplayText(component["field"]);
+        break;
+      case "paragraph":
         widget = createPxDisplayText(component["field"]);
         break;
       default:
