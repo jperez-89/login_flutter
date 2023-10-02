@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:login_flutter/widgets/form_builder.dart';
 // import 'package:login_flutter/widgets/widgets.dart';
 
 class TestScreen extends StatefulWidget {
@@ -63,6 +65,7 @@ class _TestScreenState extends State<TestScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: Center(child: Text("data")));
+    return FormBuilderWidget(
+        pzInsKey: "ASSIGN-WORKLIST CF-FW-INTERPRE-WORK R-4017!TERMSCONDITIONS");
   }
 }
