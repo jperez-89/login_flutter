@@ -79,8 +79,6 @@ class _NewAssignmentScreenState extends State<NewAssignmentScreen> {
         }
       } else {
         showMessage(value.statusCode, value.body);
-        // print(value.statusCode);
-        // print(value.body);
       }
     });
   }
@@ -96,35 +94,27 @@ class _NewAssignmentScreenState extends State<NewAssignmentScreen> {
       if (value.statusCode == 200) {
         json = jsonDecode(value.body);
         nextAssignmentID = json['nextAssignmentID'];
-        showMessage('next ID', nextAssignmentID);
 
-        // await refreshAssignment(nextAssignmentID, assignmentId);
+        List split = assignmentId.split(' '); // CF-FW-INTERPRE-WORK
+        List split2 = split[2].split('!'); // I-2002
+
+        showMessage('Success', 'Datos guardados');
+        setState(() {
+          actionID = nextAssignmentID;
+          assignmentId = split2[0];
+          pzInsKey = nextAssignmentID;
+        });
       } else if (value.statusCode == 400) {
-        print('ERRORES EN INPUTS');
-
         json = jsonDecode(value.body);
-        print(json);
 
-        // final errors = json;
-        // final validationMessages = errors['ValidationMessages'];
+        final errors = json;
+        final validationMessages = errors['ValidationMessages'];
 
-        // print(errors);
+        showMessage('Errores', validationMessages);
       } else {
-        print('ERROR OBTENER POST INFORMACION');
-        print(value.statusCode);
+        showMessage('Revisar Consola', value.statusCode);
         print(value.body);
       }
-    });
-  }
-
-  refreshAssignment(String nextAssignmentID, String? id) async {
-    await AssignmentActions().getAssignment(nextAssignmentID).then((value) {
-      actionID = nextAssignmentID;
-      components = value["components"];
-      pzInsKey = nextAssignmentID;
-      name = value["components"][0]['caption']['value'];
-      assignmentId = id!;
-      setState(() {});
     });
   }
 
@@ -171,25 +161,21 @@ class _NewAssignmentScreenState extends State<NewAssignmentScreen> {
     switch (args['option']) {
       case 'newCase':
         if (pzInsKey == '') {
-          print('newCase');
           createCase(args);
         }
         break;
       case 'getView':
         if (pzInsKey == '') {
-          print('getView');
           getView(args);
         }
         break;
       case 'SaveData':
         if (actionID == '') {
-          print('SaveData');
           saveData(args);
         }
         break;
       case 'SubmitData':
         if (actionID == '') {
-          print('SubmitData');
           submitData(args);
         }
         break;
@@ -214,10 +200,7 @@ class _NewAssignmentScreenState extends State<NewAssignmentScreen> {
                 ],
               )
             : const Column(
-                children: [
-                  LinearProgressIndicator()
-                  // CircularProgressIndicator.adaptive()
-                ],
+                children: [LinearProgressIndicator()],
                 //       ),
               ),
       ),

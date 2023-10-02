@@ -124,10 +124,7 @@ class AssignmentService {
       final httpPackageResponse =
           await post(httpPackcageUrl, headers: headers, body: bodyData);
 
-      print(httpPackageResponse.statusCode);
-      print(httpPackageResponse.body);
-
-      // return httpPackageResponse;
+      return httpPackageResponse;
     }
   }
 }

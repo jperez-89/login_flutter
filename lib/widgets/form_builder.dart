@@ -137,7 +137,6 @@ class FormBuilder {
                     showMessage('Error', 'Complete todos los campos');
                     return;
                   } else {
-                    print(frmValues);
                     Navigator.pushNamed(context, 'newAssigment', arguments: {
                       'option': 'SaveData',
                       'assignmentID': assignmentID,
@@ -368,7 +367,6 @@ class FormBuilder {
   }
 
   CustomDropdown createPxDropDown(Map<String, dynamic> pxDropdown, Map? data) {
-    print(data);
     List<DropdownMenuItem<dynamic>> menuItems = [];
     for (var element in getModes(pxDropdown, 0)["options"]) {
       menuItems.add(createMenuItem(element));
