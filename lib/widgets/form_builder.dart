@@ -287,7 +287,7 @@ class FormBuilder {
             property: getFieldID(pxTextInput),
             frmValues: frmValues,
             inputType: inputType[keyboardType],
-            disabled: isDisabled(pxTextInput) ? true : true,
+            disabled: isDisabled(pxTextInput) ? false : true,
             isRequired: isRequired(pxTextInput),
             initialValue: data.containsKey(getFieldID(pxTextInput))
                 ? data[getFieldID(pxTextInput)]
@@ -380,6 +380,7 @@ class FormBuilder {
       menuItems.add(createMenuItem(element));
     }
     return CustomDropdown(
+      placeholder: getPlaceHolder(pxDropdown),
       initialValue: (data != null) ? data[getFieldID(pxDropdown)] : null,
       label: getFieldLabel(pxDropdown),
       menuItem: menuItems,
@@ -400,6 +401,17 @@ class FormBuilder {
 
   String getFieldID(Map<String, dynamic> component) {
     return component["fieldID"];
+  }
+
+  String getPlaceHolder(Map<String, dynamic> component) {
+    final String placeholder;
+    if (component["control"]['modes'][0].containsKey('placeholder')) {
+      placeholder = component["control"]['modes'][0]['placeholder'];
+    } else {
+      placeholder = 'Seleccione una opción';
+    }
+
+    return placeholder;
   }
 
   String getFieldValue(Map<String, dynamic> component) {
