@@ -6,6 +6,7 @@ class CustomDropdown extends StatelessWidget {
   final String property;
   final Map<String, dynamic> frmValues;
   final String? initialValue;
+  final String placeholder;
 
   const CustomDropdown(
       {Key? key,
@@ -13,12 +14,14 @@ class CustomDropdown extends StatelessWidget {
       required this.label,
       required this.property,
       required this.frmValues,
-      required this.initialValue})
+      required this.initialValue,
+      this.placeholder = ''})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return DropdownButtonFormField(
+      hint: Text(placeholder),
       value: initialValue,
       decoration: InputDecoration(labelText: label),
       items: menuItem,
