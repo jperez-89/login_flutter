@@ -271,9 +271,11 @@ class FormBuilder {
       "URL": TextInputType.url,
       "NONE": TextInputType.none,
       "CURRENCY": TextInputType.number,
+      "TEXTAREA": TextInputType.multiline,
     };
     return data != null
         ? InputsWidget(
+            maxLines: (keyboardType == "TEXTAREA") ? 5 : 1,
             inputFormatters: (keyboardType == "CURRENCY")
                 ? [getCurrencyData(pxTextInput)]
                 : [],
@@ -556,12 +558,13 @@ class FormBuilder {
         widget = createCustomInput(component["field"], "PHONE", data);
         break;
       case "pxEmail":
-        // widget = createPxEmail(component["field"]);
         widget = createCustomInput(component["field"], "EMAIL", data);
         break;
       case "pxAutoComplete":
-        // widget = createPxEmail(component["field"]);
         widget = createPxAutoComplete(component["field"], data);
+        break;
+      case "pxTextArea":
+        widget = createCustomInput(component["field"], "TEXTAREA", data);
         break;
       default:
         widget = Text("Widget aun no soportado: $typeComponent");
