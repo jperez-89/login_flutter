@@ -20,7 +20,7 @@ class _TestScreenState extends State<TestScreen> {
     {"TY": "Toyota"}
   ];
 
-  Widget currencyInput() {
+  Widget currencyInput(String titulo, String valor) {
     /*return TextField(
       inputFormatters: [CurrencyTextInputFormatter(decimalDigits: 5)],
       keyboardType: TextInputType.number,
@@ -29,31 +29,41 @@ class _TestScreenState extends State<TestScreen> {
         print(value);
       },
     );*/
-    return TextFormField(
+    /*return TextFormField(
       keyboardType: TextInputType.multiline,
       maxLines: 5,
+    );*/
+    return ConstrainedBox(
+      constraints: const BoxConstraints(),
+      child: Column(
+        children: [
+          Text(
+            "$titulo",
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          Text(
+            "$valor",
+          )
+        ],
+      ),
     );
+  }
+
+  List<Widget> x() {
+    List<Widget> output = [];
+    for (var i = 0; i < 10; i++) {
+      output.add(currencyInput("$i", "Laboris exercitation "));
+    }
+    return output;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Column(
-      children: [
-        currencyInput(),
-        const Text("HOL"),
-        RichText(
-            text: const TextSpan(
-                style: TextStyle(color: Colors.black),
-                children: [
-              TextSpan(
-                  text: "Titulo",
-                  style: TextStyle(fontWeight: FontWeight.bold)),
-              TextSpan(
-                text: "Dato",
-              )
-            ]))
-      ],
+        body: Center(
+      child: Wrap(
+        children: [...x()],
+      ),
     ));
   }
 }
