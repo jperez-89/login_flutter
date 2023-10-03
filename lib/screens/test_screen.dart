@@ -53,22 +53,53 @@ class _TestScreenState extends State<TestScreen> {
 
   List<Widget> x() {
     List<Widget> output = [];
-    for (var i = 0; i < 10; i++) {
-      print("$i");
-      output.add(SizedBox(
-        width: 0,
-        height: 0,
+    for (var i = 0; i < 100; i++) {
+      /* output.add(ListTile(
+        title: RichText(
+            text: TextSpan(style: TextStyle(color: Colors.black), children: [
+          const TextSpan(text: "\nNOMBRE: "),
+          const TextSpan(
+              text:
+                  "Est et quis mollit duis aliqua consequat pariatur excepteur aute amet cillum voluptate ipsum."),
+          const TextSpan(text: "\n"),
+          const TextSpan(text: "ID: "),
+          TextSpan(text: "$i"),
+        ])),
+      ));*/
+      output.add(Card(
+        clipBehavior: Clip.antiAlias,
+        color: Colors.amber,
+        margin: EdgeInsets.all(5),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [Text("Nombre"), Text("$i")],
+          ),
+        ),
       ));
     }
     return output;
   }
 
+  bool pressed = false;
+
   @override
   Widget build(BuildContext context) {
-    return const SingleChildScrollView(
+    /* return const SingleChildScrollView(
       child: FormBuilderWidget(
           pzInsKey:
               "ASSIGN-WORKLIST CF-FW-INTERPRE-WORK R-4017!TERMSCONDITIONS"),
-    );
+    );*/
+
+    return Scaffold(
+        body: Checkbox(
+      value: pressed,
+      onChanged: (value) {
+        setState(() {
+          pressed = !pressed;
+        });
+      },
+    ));
   }
 }
