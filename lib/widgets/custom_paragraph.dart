@@ -12,9 +12,10 @@ class CustomParagraph extends StatelessWidget {
           textAlign: TextAlign.justify,
           text: TextSpan(text: text, style: TextStyle(color: Colors.black))),
     );*/
-    return ConstrainedBox(
+    return Text(text);
+    /*return ConstrainedBox(
       constraints: BoxConstraints(maxWidth: 100),
       child: Markdown(data: text),
-    );
+    );*/
   }
 }
