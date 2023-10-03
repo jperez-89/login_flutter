@@ -551,15 +551,14 @@ class FormBuilder {
       case "visible false":
       case 'pxRichTextEditor':
       case 'pxButon':
-      case 'caption':
         widget = const SizedBox(
           width: 0,
           height: 0,
         );
         break;
-      /*case "caption":
+      case "caption":
         widget = createCaption(component["caption"]);
-        break;*/
+        break;
       case "pxDateTime":
         widget = createPxDateTime(component["field"], data);
         break;
