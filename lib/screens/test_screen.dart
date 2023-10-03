@@ -65,7 +65,10 @@ class _TestScreenState extends State<TestScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return FormBuilderWidget(
-        pzInsKey: "ASSIGN-WORKLIST CF-FW-INTERPRE-WORK R-4017!TERMSCONDITIONS");
+    return const SingleChildScrollView(
+      child: FormBuilderWidget(
+          pzInsKey:
+              "ASSIGN-WORKLIST CF-FW-INTERPRE-WORK R-4017!TERMSCONDITIONS"),
+    );
   }
 }

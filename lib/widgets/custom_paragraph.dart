@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:html2md/html2md.dart' as html2md;
 import 'package:flutter_markdown/flutter_markdown.dart';
 
 class CustomParagraph extends StatelessWidget {
@@ -7,15 +8,16 @@ class CustomParagraph extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    /*return SingleChildScrollView(
-      child: RichText(
-          textAlign: TextAlign.justify,
-          text: TextSpan(text: text, style: TextStyle(color: Colors.black))),
-    );*/
-    return Text(text);
-    /*return ConstrainedBox(
-      constraints: BoxConstraints(maxWidth: 100),
-      child: Markdown(data: text),
-    );*/
+    return MarkdownBody(
+      data: html2md.convert(text),
+      styleSheet:
+          MarkdownStyleSheet(h3: const TextStyle(fontWeight: FontWeight.bold)),
+      onTapLink: (text, href, title) {
+        print(text);
+        print(href);
+        print(title);
+      },
+    );
+    //return Text(text);
   }
 }
