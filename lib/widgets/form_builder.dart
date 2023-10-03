@@ -287,7 +287,7 @@ class FormBuilder {
             property: getFieldID(pxTextInput),
             frmValues: frmValues,
             inputType: inputType[keyboardType],
-            disabled: isDisabled(pxTextInput) ? false : true,
+            // disabled: isDisabled(pxTextInput),
             isRequired: isRequired(pxTextInput),
             initialValue: data.containsKey(getFieldID(pxTextInput))
                 ? data[getFieldID(pxTextInput)]
@@ -305,9 +305,13 @@ class FormBuilder {
             property: getFieldID(pxTextInput),
             frmValues: frmValues,
             inputType: inputType[keyboardType],
-            disabled: isDisabled(pxTextInput) ? false : true,
+            //disabled: isDisabled(pxTextInput),
             isRequired: isRequired(pxTextInput),
           );
+  }
+
+  CustomParagraph createCustomParagraph(Map<String, dynamic> paragraph) {
+    return CustomParagraph(text: getFieldValue(paragraph));
   }
 
   CustomDisplayText createPxDisplayText(Map<String, dynamic> pxDisplayText) {
@@ -405,8 +409,8 @@ class FormBuilder {
 
   String getPlaceHolder(Map<String, dynamic> component) {
     final String placeholder;
-    if (component["control"]['modes'][0].containsKey('placeholder')) {
-      placeholder = component["control"]['modes'][0]['placeholder'];
+    if (getModes(component, 0).containsKey('placeholder')) {
+      placeholder = getModes(component, 0)['placeholder'];
     } else {
       placeholder = 'Seleccione una opción';
     }
@@ -547,14 +551,15 @@ class FormBuilder {
       case "visible false":
       case 'pxRichTextEditor':
       case 'pxButon':
+      case 'caption':
         widget = const SizedBox(
           width: 0,
           height: 0,
         );
         break;
-      case "caption":
+      /*case "caption":
         widget = createCaption(component["caption"]);
-        break;
+        break;*/
       case "pxDateTime":
         widget = createPxDateTime(component["field"], data);
         break;
@@ -592,6 +597,9 @@ class FormBuilder {
         break;
       case "pxDisplayText":
         widget = createPxDisplayText(component["field"]);
+        break;
+      case "paragraph":
+        widget = createCustomParagraph(component["paragraph"]);
         break;
       default:
         widget = Text("Widget aun no soportado: $typeComponent");

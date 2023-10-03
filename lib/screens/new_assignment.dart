@@ -106,6 +106,7 @@ class _NewAssignmentScreenState extends State<NewAssignmentScreen> {
         });
       } else if (value.statusCode == 400) {
         json = jsonDecode(value.body);
+        print(json);
 
         final errors = json;
         final validationMessages = errors['ValidationMessages'];

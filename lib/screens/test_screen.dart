@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:login_flutter/widgets/form_builder.dart';
 // import 'package:login_flutter/widgets/widgets.dart';
 
 class TestScreen extends StatefulWidget {
@@ -52,18 +54,21 @@ class _TestScreenState extends State<TestScreen> {
   List<Widget> x() {
     List<Widget> output = [];
     for (var i = 0; i < 10; i++) {
-      output.add(currencyInput("$i", "Laboris exercitation "));
+      print("$i");
+      output.add(SizedBox(
+        width: 0,
+        height: 0,
+      ));
     }
     return output;
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        body: Center(
-      child: Wrap(
-        children: [...x()],
-      ),
-    ));
+    return const SingleChildScrollView(
+      child: FormBuilderWidget(
+          pzInsKey:
+              "ASSIGN-WORKLIST CF-FW-INTERPRE-WORK R-4017!TERMSCONDITIONS"),
+    );
   }
 }
