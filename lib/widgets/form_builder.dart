@@ -310,6 +310,15 @@ class FormBuilder {
           );
   }
 
+  CustomCheckBox createPxCheckbox(Map<String, dynamic> pxCheckbox, Map? data) {
+    return CustomCheckBox(
+      initialValue: (data != null),
+      label: getControl(pxCheckbox)["label"],
+      frmValues: frmValues,
+      property: getFieldID(pxCheckbox),
+    );
+  }
+
   CustomParagraph createCustomParagraph(Map<String, dynamic> paragraph) {
     return CustomParagraph(text: getFieldValue(paragraph));
   }
@@ -551,15 +560,14 @@ class FormBuilder {
       case "visible false":
       case 'pxRichTextEditor':
       case 'pxButon':
-      case 'caption':
         widget = const SizedBox(
           width: 0,
           height: 0,
         );
         break;
-      /*case "caption":
+      case "caption":
         widget = createCaption(component["caption"]);
-        break;*/
+        break;
       case "pxDateTime":
         widget = createPxDateTime(component["field"], data);
         break;
@@ -600,6 +608,9 @@ class FormBuilder {
         break;
       case "paragraph":
         widget = createCustomParagraph(component["paragraph"]);
+        break;
+      case "pxCheckbox":
+        widget = createPxCheckbox(component["field"], data);
         break;
       default:
         widget = Text("Widget aun no soportado: $typeComponent");
