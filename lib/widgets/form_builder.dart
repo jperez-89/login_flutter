@@ -71,7 +71,7 @@ class _FormBuilderWidgetState extends State<FormBuilderWidget> {
             context: context,
             frmValues: frmValues,
             callback: callback,
-            autoCompleteParamsList: dataPagePrompt)
+            commonParamsList: dataPagePrompt)
         .buildForm(
             components, myFormKey, widget.pzInsKey, actionID, buttons, data);
   }
@@ -81,13 +81,13 @@ class FormBuilder {
   final Map<String, String> frmValues;
   final BuildContext context;
   final Function callback;
-  final Map<String, dynamic> autoCompleteParamsList;
+  final Map<String, dynamic> commonParamsList;
 
   FormBuilder(
       {required this.context,
       required this.callback,
       required this.frmValues,
-      required this.autoCompleteParamsList});
+      required this.commonParamsList});
 
   Widget buildForm(List components, GlobalKey<FormState> myFormKey,
       String assignmentID, String actionID, Map buttons, Map data) {
@@ -214,13 +214,13 @@ class FormBuilder {
       String dataPageID = getDataPageID(pxAutoComplete);
       String dataPageValue = getDataPageValue(pxAutoComplete);
       String urlToGet = "$dataPageID?$parameterName=";
-      autoCompleteParamsList[parameterName] = {
+      commonParamsList[parameterName] = {
         "dataPagePromptName": dataPagePromptName,
         "dataPageValue": dataPageValue,
         "Endpoint": urlToGet
       };
-      if (autoCompleteParamsList.containsKey("$parameterName/list")) {
-        options = autoCompleteParamsList["$parameterName/list"];
+      if (commonParamsList.containsKey("$parameterName/list")) {
+        options = commonParamsList["$parameterName/list"];
       }
     }
     return CustomAutoComplete(
@@ -229,7 +229,7 @@ class FormBuilder {
       options: options,
       property: getFieldID(pxAutoComplete),
       frmValues: frmValues,
-      autoCompleteParamsList: autoCompleteParamsList,
+      autoCompleteParamsList: commonParamsList,
       dataPagePromptName: dataPagePromptName,
       callback: callback,
     );
@@ -387,11 +387,28 @@ class FormBuilder {
     );
   }
 
-  CustomDropdown createPxDropDown(Map<String, dynamic> pxDropdown, Map? data) {
+  CustomDropdown createPxDropDown(Map<String, dynamic> pxDropdown, Map data) {
     List<DropdownMenuItem<dynamic>> menuItems = [];
-    for (var element in getModes(pxDropdown, 0)["options"]) {
-      menuItems.add(createMenuItem(element));
+    String reference = getReference(pxDropdown);
+
+    if (haveParameters(pxDropdown) && data[getFieldID(pxDropdown)] == null) {
+      commonParamsList[getParameterReference(pxDropdown)] = {
+        "dataPagePromptName": getDataPagePromptName(pxDropdown),
+        "dataPageValue": getDataPageValue(pxDropdown),
+        "Endpoint":
+            "${getDataPageID(pxDropdown)}?${getDataPageParams(pxDropdown)}="
+      };
+      if (commonParamsList.containsKey("$reference/list")) {
+        for (var element in commonParamsList["$reference/list"]) {
+          menuItems.add(createMenuItem(element));
+        }
+      }
+    } else {
+      for (var element in getModes(pxDropdown, 0)["options"]) {
+        menuItems.add(createMenuItem(element));
+      }
     }
+
     return CustomDropdown(
       placeholder: getPlaceHolder(pxDropdown),
       initialValue: (data != null) ? data[getFieldID(pxDropdown)] : null,
@@ -399,6 +416,9 @@ class FormBuilder {
       menuItem: menuItems,
       property: getFieldID(pxDropdown),
       frmValues: frmValues,
+      dropdownParamsList: commonParamsList,
+      reference: reference,
+      callback: callback,
     );
   }
 
@@ -463,6 +483,19 @@ class FormBuilder {
     return component["maxLength"] > 0
         ? component["maxLength"]
         : TextField.noMaxLength;
+  }
+
+  String getReference(Map<String, dynamic> component) {
+    return component["reference"];
+  }
+
+  String getParameterReference(Map<String, dynamic> component) {
+    /*return getModes(component, 0)["dataPageParams"][0]["valueReference"]
+        ["reference"];*/
+    List dataPageParams = getModes(component, 0)["dataPageParams"];
+    String parameterReference =
+        dataPageParams[0]["valueReference"]["reference"];
+    return parameterReference.replaceAll(".", "");
   }
 
   bool isDisabled(Map<String, dynamic> component) {
