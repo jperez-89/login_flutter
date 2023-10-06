@@ -94,8 +94,27 @@ class _TestScreenState extends State<TestScreen> {
     );*/
 
     return Scaffold(
-        body: Column(
-      children: [ElevatedButton(onPressed: () {}, child: Text("test"))],
+        body: Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          DropdownButton(
+            hint: Text("asda"),
+            items: [
+              DropdownMenuItem(
+                child: Text("1"),
+                value: "x",
+              ),
+              DropdownMenuItem(child: Text("2"), value: "y"),
+            ],
+            value: "3",
+            onChanged: (value) {
+              print("x");
+            },
+          )
+        ],
+      ),
     ));
   }
 }

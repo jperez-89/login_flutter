@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:login_flutter/models/actions/assignment_actions.dart';
 import 'package:login_flutter/theme/app_theme.dart';
@@ -22,6 +24,11 @@ class _FormBuilderWidgetState extends State<FormBuilderWidget> {
   Map actionsButtons = {}, buttons = {}, data = {};
   bool hideButton = false;
 
+  /* void callback() {
+    dataPagePrompt["$name/list"] = options;
+    print(frmValues);
+    setState(() {});
+  }*/
   void callback() {
     setState(() {});
   }
@@ -390,20 +397,24 @@ class FormBuilder {
   CustomDropdown createPxDropDown(Map<String, dynamic> pxDropdown, Map data) {
     List<DropdownMenuItem<dynamic>> menuItems = [];
     String reference = getReference(pxDropdown);
+    // print("creando el dropdown $reference");
 
     if (haveParameters(pxDropdown) && data[getFieldID(pxDropdown)] == null) {
-      commonParamsList[getParameterReference(pxDropdown)] = {
-        "dataPagePromptName": getDataPagePromptName(pxDropdown),
-        "dataPageValue": getDataPageValue(pxDropdown),
-        "Endpoint":
-            "${getDataPageID(pxDropdown)}?${getDataPageParams(pxDropdown)}="
-      };
       if (commonParamsList.containsKey("$reference/list")) {
+        menuItems.clear();
         for (var element in commonParamsList["$reference/list"]) {
           menuItems.add(createMenuItem(element));
         }
+      } else if (!commonParamsList.containsKey(reference)) {
+        commonParamsList[reference] = {
+          "parameters": getParameters(pxDropdown),
+          "dataPageName": getDataPageID(pxDropdown),
+          "dataPagePromptName": getDataPagePromptName(pxDropdown),
+          "dataPageValue": getDataPageValue(pxDropdown),
+        };
       }
     } else {
+      menuItems.clear();
       for (var element in getModes(pxDropdown, 0)["options"]) {
         menuItems.add(createMenuItem(element));
       }
@@ -416,7 +427,7 @@ class FormBuilder {
       menuItem: menuItems,
       property: getFieldID(pxDropdown),
       frmValues: frmValues,
-      dropdownParamsList: commonParamsList,
+      dropdownList: commonParamsList,
       reference: reference,
       callback: callback,
     );
@@ -489,13 +500,26 @@ class FormBuilder {
     return component["reference"];
   }
 
-  String getParameterReference(Map<String, dynamic> component) {
-    /*return getModes(component, 0)["dataPageParams"][0]["valueReference"]
-        ["reference"];*/
-    List dataPageParams = getModes(component, 0)["dataPageParams"];
-    String parameterReference =
-        dataPageParams[0]["valueReference"]["reference"];
-    return parameterReference.replaceAll(".", "");
+  List getParameters(Map<String, dynamic> component) {
+    List parameters = [];
+    for (var i = 0; i < getModes(component, 0)["dataPageParams"].length; i++) {
+      parameters.add({
+        "name": getParameterName(component, i),
+        "reference": getParameterReference(component, i),
+        "data": ""
+      });
+    }
+    return parameters;
+  }
+
+  String getParameterName(Map<String, dynamic> component, int index) {
+    return getModes(component, 0)["dataPageParams"][index]["name"];
+  }
+
+  String getParameterReference(Map<String, dynamic> component, int index) {
+    return getModes(component, 0)["dataPageParams"][index]["valueReference"]
+            ["reference"]
+        .replaceAll(".", "");
   }
 
   bool isDisabled(Map<String, dynamic> component) {
