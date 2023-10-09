@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_markdown/flutter_markdown.dart';
-import 'package:login_flutter/widgets/form_builder.dart';
+// import 'package:flutter_markdown/flutter_markdown.dart';
+// import 'package:login_flutter/widgets/form_builder.dart';
 // import 'package:login_flutter/widgets/widgets.dart';
 
 class TestScreen extends StatefulWidget {
@@ -40,11 +40,11 @@ class _TestScreenState extends State<TestScreen> {
       child: Column(
         children: [
           Text(
-            "$titulo",
-            style: TextStyle(fontWeight: FontWeight.bold),
+            titulo,
+            style: const TextStyle(fontWeight: FontWeight.bold),
           ),
           Text(
-            "$valor",
+            valor,
           )
         ],
       ),
@@ -69,12 +69,12 @@ class _TestScreenState extends State<TestScreen> {
       output.add(Card(
         clipBehavior: Clip.antiAlias,
         color: Colors.amber,
-        margin: EdgeInsets.all(5),
+        margin: const EdgeInsets.all(5),
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: [Text("Nombre"), Text("$i")],
+            children: [const Text("Nombre"), Text("$i")],
           ),
         ),
       ));
@@ -86,7 +86,6 @@ class _TestScreenState extends State<TestScreen> {
 
   @override
   Widget build(BuildContext context) {
-<<<<<<< HEAD
     /* return const SingleChildScrollView(
       child: FormBuilderWidget(
           pzInsKey:
@@ -102,33 +101,5 @@ class _TestScreenState extends State<TestScreen> {
         });
       },
     ));
-=======
-    Map args = ModalRoute.of(context)!.settings.arguments as Map;
-
-    // return const SingleChildScrollView(
-    //   child: FormBuilderWidget(
-    //       pzInsKey:
-    //           "ASSIGN-WORKLIST CF-FW-INTERPRE-WORK R-4017!TERMSCONDITIONS"),
-    // );
-
-    return Scaffold(
-        appBar: AppBar(
-          centerTitle: true,
-          title: const Text(' '),
-        ),
-        body: Center(
-          child: Card(
-            // shadowColor: AppTheme.primaryColor.withOpacity(0.8),
-            margin: const EdgeInsets.all(0),
-            elevation: 10,
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-              child: Column(
-                children: [Text(args['body'])],
-              ),
-            ),
-          ),
-        ));
->>>>>>> PGFL-40_Tabla_Beneficiarios
   }
 }
