@@ -123,7 +123,7 @@ class _NewAssignmentScreenState extends State<NewAssignmentScreen> {
     setState(() {
       pzInsKey = data['pzInsKey'];
       assignmentId = data['assignmentId'];
-      name = data['name'];
+      // name = data['name'];
     });
   }
 

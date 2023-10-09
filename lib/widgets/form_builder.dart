@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:login_flutter/models/actions/assignment_actions.dart';
 import 'package:login_flutter/theme/app_theme.dart';
+import 'package:login_flutter/widgets/custom_card.dart';
 import 'package:login_flutter/widgets/widgets.dart';
 import 'package:currency_text_input_formatter/currency_text_input_formatter.dart';
 
 class FormBuilderWidget extends StatefulWidget {
   final String pzInsKey;
-
+  // final Map? body;
   const FormBuilderWidget({Key? key, required this.pzInsKey}) : super(key: key);
 
   @override
@@ -24,6 +25,13 @@ class _FormBuilderWidgetState extends State<FormBuilderWidget> {
 
   void callback() {
     setState(() {});
+  }
+
+  void update(List components) {
+    setState(() {
+      this.components = components;
+    });
+    // showMessage('mensage', components.toString(), context);
   }
 
   // Obtenemos los campos del formulario del assignment
@@ -62,6 +70,9 @@ class _FormBuilderWidgetState extends State<FormBuilderWidget> {
   @override
   void initState() {
     getAssiggnment(widget.pzInsKey);
+    // widget.body == null
+    //     ? getAssiggnment(widget.pzInsKey)
+    //     : setView(widget.body!);
     super.initState();
   }
 
@@ -71,7 +82,8 @@ class _FormBuilderWidgetState extends State<FormBuilderWidget> {
             context: context,
             frmValues: frmValues,
             callback: callback,
-            autoCompleteParamsList: dataPagePrompt)
+            autoCompleteParamsList: dataPagePrompt,
+            update: update)
         .buildForm(
             components, myFormKey, widget.pzInsKey, actionID, buttons, data);
   }
@@ -81,31 +93,48 @@ class FormBuilder {
   final Map<String, String> frmValues;
   final BuildContext context;
   final Function callback;
+  final Function update;
   final Map<String, dynamic> autoCompleteParamsList;
 
   FormBuilder(
-      {required this.context,
+      {required this.update,
+      required this.context,
       required this.callback,
       required this.frmValues,
       required this.autoCompleteParamsList});
 
   Widget buildForm(List components, GlobalKey<FormState> myFormKey,
       String assignmentID, String actionID, Map buttons, Map data) {
+    // print(components);
+    // print(assignmentID);
+
     List<Widget> childs = [];
 
     if (components.isNotEmpty) {
       for (var component in components) {
-        childs.add(createWidgets(component, data) ?? const Text("vacio"));
+        childs.add(
+            createWidgets(component, data, assignmentID, myFormKey, actionID) ??
+                const Text("vacio"));
       }
       childs.add(getSaveButton(myFormKey, assignmentID, actionID, buttons));
     }
 
-    return Card(
-      shadowColor: AppTheme.black,
+    return Container(
+      decoration: const BoxDecoration(
+        shape: BoxShape.circle,
+      ),
+      // shadowColor: AppTheme.primaryColor.withOpacity(0.8),
       margin: const EdgeInsets.all(0),
-      elevation: 10,
+      // elevation: 0,
       child: Form(key: myFormKey, child: Column(children: childs)),
     );
+    // Card(
+    //   // shape: BoxShape.circle,
+    //   shadowColor: AppTheme.primaryColor.withOpacity(0.8),
+    //   margin: const EdgeInsets.all(0),
+    //   elevation: 0,
+    //   child: Form(key: myFormKey, child: Column(children: childs)),
+    // );
   }
 
   getSaveButton(GlobalKey<FormState> myFormKey, String assignmentID,
@@ -134,7 +163,7 @@ class FormBuilder {
                         MaterialStatePropertyAll(AppTheme.secondaryColor)),
                 onPressed: () {
                   if (!myFormKey.currentState!.validate()) {
-                    showMessage('Error', 'Complete todos los campos');
+                    showMessage('Error', 'Complete todos los campos', context);
                     return;
                   } else {
                     Navigator.pushNamed(context, 'newAssigment', arguments: {
@@ -153,7 +182,7 @@ class FormBuilder {
             ElevatedButton(
                 onPressed: () {
                   if (!myFormKey.currentState!.validate()) {
-                    showMessage('Error', 'Complete todos los campos');
+                    showMessage('Error', 'Complete todos los campos', context);
                     return;
                   } else {
                     Navigator.pushNamed(context, 'newAssigment', arguments: {
@@ -171,7 +200,7 @@ class FormBuilder {
     );
   }
 
-  void showMessage(String title, String message) {
+  void showMessage(String title, String message, context) {
     showDialog(
         barrierDismissible: false,
         context: context,
@@ -405,6 +434,52 @@ class FormBuilder {
   DropdownMenuItem createMenuItem(Map<String, dynamic> item) {
     return DropdownMenuItem(value: item["key"], child: Text(item["value"]));
   }
+
+  CustomButton createButton(
+      GlobalKey<FormState> myFormKey,
+      Map<String, dynamic> pxButton,
+      Map<String, String> frmValues,
+      String pzInsKey,
+      String actionID) {
+    // Accion del boton
+    // print(pxButton['control']['actionSets'][0]['actions'][0]['refreshFor']);
+
+    return CustomButton(
+      pzInsKey: pzInsKey,
+      frmValues: frmValues,
+      label: getFieldLabel(pxButton['control']),
+      actionSets: pxButton['control']['actionSets'][0]['actions'],
+      myFormKey: myFormKey,
+      actionID: actionID,
+      update: update,
+    );
+  }
+
+  CustomDatatable createDataTable(Map<String, dynamic> table, Map? data) {
+    // print(table);
+    // Filas
+    // print(table['rows']);
+    // Headers
+    // print(table['header']['groups']);
+    return CustomDatatable(
+      rows: table['rows'],
+      header: table['header']['groups'],
+    );
+  }
+
+  CustomCard createCard(Map<String, dynamic> table, Map? data) {
+    // print(table);
+    // Filas
+    // print(table['rows']);
+    // Headers
+    // print(table['header']['groups']);
+    // return CustomDatatable(
+    //   rows: table['rows'],
+    //   header: table['header']['groups'],
+    // );
+    return CustomCard(rows: table['rows'], header: table['header']['groups']);
+  }
+
   /********* END CREATORS  ******* */
 
   /// *** FIELD ATTRIBUTES **********
@@ -552,18 +627,29 @@ class FormBuilder {
   /// *** END FIELD ATTRIBUTES **********
 
 /* ************* SWITCH ******************/
-  Widget? createWidgets(Map<String, dynamic> component, Map data) {
+  Widget? createWidgets(Map<String, dynamic> component, Map data,
+      String assignmentID, GlobalKey<FormState> myFormKey, String actinoID) {
     Widget widget;
     String typeComponent = getComponentType(component);
 
     switch (typeComponent) {
       case "visible false":
       case 'pxRichTextEditor':
-      case 'pxButon':
         widget = const SizedBox(
           width: 0,
           height: 0,
         );
+        break;
+      case 'pxTable':
+        widget = createCard(component["pxTable"], data);
+        // widget = Card(
+        //   elevation: 15,
+        //   child: createDataTable(component["pxTable"], data),
+        // );
+        break;
+      case 'pxButton':
+        widget = createButton(
+            myFormKey, component["field"], frmValues, assignmentID, actinoID);
         break;
       case "caption":
         widget = createCaption(component["caption"]);

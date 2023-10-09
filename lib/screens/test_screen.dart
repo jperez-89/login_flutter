@@ -86,6 +86,7 @@ class _TestScreenState extends State<TestScreen> {
 
   @override
   Widget build(BuildContext context) {
+<<<<<<< HEAD
     /* return const SingleChildScrollView(
       child: FormBuilderWidget(
           pzInsKey:
@@ -101,5 +102,33 @@ class _TestScreenState extends State<TestScreen> {
         });
       },
     ));
+=======
+    Map args = ModalRoute.of(context)!.settings.arguments as Map;
+
+    // return const SingleChildScrollView(
+    //   child: FormBuilderWidget(
+    //       pzInsKey:
+    //           "ASSIGN-WORKLIST CF-FW-INTERPRE-WORK R-4017!TERMSCONDITIONS"),
+    // );
+
+    return Scaffold(
+        appBar: AppBar(
+          centerTitle: true,
+          title: const Text(' '),
+        ),
+        body: Center(
+          child: Card(
+            // shadowColor: AppTheme.primaryColor.withOpacity(0.8),
+            margin: const EdgeInsets.all(0),
+            elevation: 10,
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+              child: Column(
+                children: [Text(args['body'])],
+              ),
+            ),
+          ),
+        ));
+>>>>>>> PGFL-40_Tabla_Beneficiarios
   }
 }

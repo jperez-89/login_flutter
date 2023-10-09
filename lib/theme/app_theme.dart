@@ -7,6 +7,7 @@ class AppTheme {
   static const Color cancel = Color.fromARGB(255, 157, 170, 177);
   static const Color white = Colors.white;
   static const Color black = Colors.black;
+  static const Color danger = Colors.red;
 
 /* ******* Configura el tema claro para la app **********************/
   static final ThemeData lightTheme = ThemeData.light().copyWith(
