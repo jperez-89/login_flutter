@@ -18,22 +18,6 @@ class AssignmentActions {
     });
   }
 
-  void extractComponents(List<dynamic> respuesta) {
-    for (var i = 0; i < respuesta.length; i++) {
-      getFields(respuesta[i]);
-    }
-  }
-
-  void getFields(Map<String, dynamic> fields) {
-    if (fields.containsKey("layout")) {
-      if (fields["layout"].containsKey("groups")) {
-        extractComponents(fields["layout"]["groups"]);
-      }
-    } else {
-      componentes.add(fields);
-    }
-  }
-
   saveAssignment(
       String assignmentID, String actionID, Map<String, String> body) {
     return AssignmentService()
@@ -50,5 +34,41 @@ class AssignmentActions {
         .then((value) {
       return value;
     });
+  }
+
+  refreshAssignment(String pzInskey, String actionID, List actionRefresh,
+      Map<String, String> body) async {
+    return await AssignmentService()
+        .refreshAssignment(pzInskey, actionID, actionRefresh, body)
+        .then((value) {
+      if (value.statusCode == 200) {
+        Map<String, dynamic> json = jsonDecode(value.body);
+        extractComponents(json["view"]["groups"] ?? []);
+      } else {
+        print('Error Codigo => ${value.statusCode}');
+      }
+
+      return {
+        "components": componentes,
+      };
+    });
+  }
+
+  void extractComponents(List<dynamic> respuesta) {
+    for (var i = 0; i < respuesta.length; i++) {
+      getFields(respuesta[i]);
+    }
+  }
+
+  void getFields(Map<String, dynamic> fields) {
+    if (fields.containsKey("layout")) {
+      if (fields["layout"].containsKey("groups")) {
+        extractComponents(fields["layout"]["groups"]);
+      } else if (fields["layout"].containsKey("header")) {
+        componentes.add({'pxTable': fields['layout']});
+      }
+    } else {
+      componentes.add(fields);
+    }
   }
 }

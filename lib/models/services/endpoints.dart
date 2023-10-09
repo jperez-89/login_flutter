@@ -8,7 +8,8 @@ const Map<String, dynamic> loginBoxType = {
 const Map<String, dynamic> endpoints = {
   // Change this URL if you want to point the React application at another Pega server.
   // 'PEGAURL': "https://w0tx92av.pegace.net/prweb", // local Pega server
-  'PEGAURL': "https://xp7jgxpk.pegace.net/prweb", // local Pega server
+  'PEGAURL': "https://xp7jgxpk.pegace.net", // local Pega server
+  'DOMAIN': "xp7jgxpk.pegace.net", // local Pega server
 
   // Specify an appAlias to allow operators to access application when this application's access
   //  group is not the default access group specified within the operator record.
@@ -55,7 +56,7 @@ const Map<String, dynamic> endpoints = {
   //   attachAction: true,
   // },
 
-  'VERSION': "/api/v1",
+  'VERSION': "/prweb/api/v1",
   'AUTHENTICATE': "/authenticate",
   'CASES': "/cases",
   'CASETYPES': "/casetypes",
@@ -65,9 +66,6 @@ const Map<String, dynamic> endpoints = {
   'PAGES': "/pages",
   'DATA': "/data",
   'REFRESH': "/refresh",
-  'STATIC':
-      "https://w0tx92av.pegace.net/prweb/api/v1/assignments/ASSIGN-WORKLIST%20CF-FW-INTERPRE-WORK%20I-12002!INTREPRETEPROCESS/actions/intrepreteflow",
-  // "https://w0tx92av.pegace.net/prweb/api/v1/assignments/ASSIGN-WORKLIST%20CF-FW-INTERPRE-WORK%20I-12002!PERSONALDATA/actions/PersonalData",
   // V2 endpoints
   'NAVIGATION_STEPS': "/navigation_steps"
 };
