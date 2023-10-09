@@ -46,7 +46,6 @@ class _CustomCardState extends State<CustomCard> {
           // ),
         ),
       );
-      //
     }
   }
 
