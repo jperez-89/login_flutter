@@ -16,8 +16,8 @@ class _DrawerWidgetState extends State<DrawerWidget> {
     return Drawer(
       child: Column(
         children: [
-          const UserAccountsDrawerHeader(
-            currentAccountPicture: CircleAvatar(
+          UserAccountsDrawerHeader(
+            currentAccountPicture: const CircleAvatar(
               child:
                   // Image.asset('image/avatar.jpg')
                   Image(
@@ -26,14 +26,14 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                 fit: BoxFit.cover,
               ),
             ),
-            accountName: Text(
+            accountName: const Text(
               'Case Types',
               style: TextStyle(
                   color: AppTheme.white,
                   fontSize: 18,
                   fontWeight: FontWeight.w600),
             ),
-            accountEmail: Text(
+            accountEmail: const Text(
               'Create new Asignments',
               style: TextStyle(
                   color: AppTheme.white,

@@ -23,7 +23,12 @@ class CustomDropdown extends StatelessWidget {
     return DropdownButtonFormField(
       hint: Text(placeholder),
       value: initialValue,
-      decoration: InputDecoration(labelText: label),
+      decoration: InputDecoration(
+        labelText: label,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+      ),
       items: menuItem,
       onChanged: (value) {
         frmValues[property] = value;

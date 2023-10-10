@@ -85,6 +85,9 @@ class _CustomAutoCompleteState extends State<CustomAutoComplete> {
           onEditingComplete: onFieldSubmitted,
           decoration: InputDecoration(
             label: Text(widget.label),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
           ),
         );
       },

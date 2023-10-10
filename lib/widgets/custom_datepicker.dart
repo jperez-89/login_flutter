@@ -88,7 +88,12 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
                 ? widget.initialValue
                 : date),
         onTap: _showDatePicker,
-        decoration: InputDecoration(labelText: widget.label),
+        decoration: InputDecoration(
+          labelText: widget.label,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+        ),
         enabled: widget.enabled,
         textAlign: widget.textAlign,
       ),
