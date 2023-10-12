@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:login_flutter/models/services/datapages_services.dart';
+import 'package:login_flutter/models/actions/datapage_actions.dart';
 
 /// crea un widget del tipo Autocomplete
 /// los valores a buscar se reciben en una lista de mapas
@@ -78,13 +78,16 @@ class _CustomAutoCompleteState extends State<CustomAutoComplete> {
   ///
   void fillData(String dataSelected) {
     if (widget.autoCompleteParamsList.containsKey(widget.dataPagePromptName)) {
+      List options = [];
       String myDataPromptName = widget.dataPagePromptName;
+
       Map<String, dynamic> dependentChild =
           widget.autoCompleteParamsList[myDataPromptName];
+
       String urlToGet = dependentChild["Endpoint"] + dataSelected;
-      List options = [];
-      Datapages().getDataPage(urlToGet).then((value) {
+      DataPageActions().getDataPage(urlToGet).then((value) {
         Map<String, dynamic> json = jsonDecode(value.body);
+
         for (var result in json["pxResults"]) {
           options.add({
             "key": result[dependentChild["dataPageValue"]],

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:login_flutter/models/actions/case_actions.dart';
 import 'package:login_flutter/theme/app_theme.dart';
-import 'package:login_flutter/widgets/drawer.dart';
+import 'package:login_flutter/widgets/custom_drawer.dart';
 import 'package:login_flutter/widgets/worklist.dart';
 
 class DashboardPegaScreen extends StatefulWidget {
@@ -47,27 +47,26 @@ class _DashboardPegaScreenState extends State<DashboardPegaScreen> {
             BottomNavigationBarItem(icon: Icon(Icons.home), label: ''),
             BottomNavigationBarItem(icon: Icon(Icons.person), label: ''),
           ]),
-      drawer: DrawerWidget(lst: lst, service: service),
-      appBar: AppBar(
-          backgroundColor: AppTheme.primaryColor,
-          title: const Text('Dashboard'),
-          actions: [
-            Container(
-                // color: AppTheme.primaryColor,
-                margin: const EdgeInsets.only(right: 10),
-                child: ElevatedButton(
-                    style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStatePropertyAll(AppTheme.primaryColor)),
-                    onPressed: () {
-                      // getCaseType();
-                    },
-                    child: const CircleAvatar(
-                      backgroundColor: AppTheme.secondaryColor,
-                      child: Text('I'),
-                    )))
-          ]),
-      body: const WorklistWidget(),
+      drawer: CustomDrawer(lst: lst, service: service),
+      appBar: AppBar(title: const Text('Dashboard'), actions: [
+        Container(
+          margin: const EdgeInsets.only(right: 10),
+          child: ElevatedButton(
+            style: const ButtonStyle(),
+            onPressed: () {},
+            child: const CircleAvatar(
+              backgroundColor: AppTheme.secondaryColor,
+              child: Text(
+                'I',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+              ),
+            ),
+          ),
+        )
+      ]),
+      body:
+          // Tabla de casos
+          const WorklistWidget(),
     );
   }
 }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
-import 'package:login_flutter/models/services/datapages_services.dart';
+import 'package:login_flutter/models/actions/datapage_actions.dart';
 
 /// crea un widget del tipo DropdownButtonFormField
 /// Variables
@@ -43,6 +43,7 @@ class CustomDropdown extends StatefulWidget {
 class _CustomDropdownState extends State<CustomDropdown> {
   void fillData(String dataSelected) {
     List keys = widget.dropdownList.keys.toList();
+
     for (var i = 0; i < keys.length; i++) {
       if (widget.dropdownList[keys[i]].runtimeType.toString().contains("Map") &&
           widget.dropdownList[keys[i]].containsKey("parameters")) {
@@ -61,6 +62,7 @@ class _CustomDropdownState extends State<CustomDropdown> {
               : isDataFill;
           if (!isDataFill) return;
         }
+
         if (isDataFill && keys[i] != widget.reference && isUpdated) {
           fetchData(widget.dropdownList[keys[i]], keys[i]);
         }
@@ -70,9 +72,11 @@ class _CustomDropdownState extends State<CustomDropdown> {
 
   void fetchData(Map dropdown, String name) async {
     List options = [];
-    await Datapages().getDataPage(makeEndpoint(dropdown)).then((value) {
+
+    await DataPageActions().getDataPage(makeEndpoint(dropdown)).then((value) {
       if (value.statusCode == 200) {
         Map<String, dynamic> json = jsonDecode(value.body);
+
         if (json["pxResults"].length > 0) {
           for (var result in json["pxResults"]) {
             options.add({
@@ -80,6 +84,7 @@ class _CustomDropdownState extends State<CustomDropdown> {
               "value": result[dropdown["dataPagePromptName"]]
             });
           }
+
           print("$name seteada");
           widget.dropdownList["$name/list"] = options;
           //callback(options, name);
@@ -91,11 +96,13 @@ class _CustomDropdownState extends State<CustomDropdown> {
 
   String makeEndpoint(Map dropdown) {
     String endpoint = "${dropdown['dataPageName']}?";
+
     for (var i = 0; i < dropdown["parameters"].length; i++) {
       endpoint += (i == 0)
           ? "${dropdown['parameters'][i]['name']}=${dropdown['parameters'][i]['data']}"
           : "&${dropdown['parameters'][i]['name']}=${dropdown['parameters'][i]['data']}";
     }
+
     return endpoint;
   }
 

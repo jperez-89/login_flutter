@@ -45,7 +45,6 @@ class CustomDatePicker extends StatefulWidget {
 }
 
 class _CustomDatePickerState extends State<CustomDatePicker> {
-  // static DateTime fecha = DateTime.now();
   String date = "";
   bool dateIsChanged = false;
 
@@ -99,7 +98,6 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
       child: TextFormField(
         autofocus: false,
         keyboardType: TextInputType.none,
-        // controller: TextEditingController(text: getFecha()),
         controller: TextEditingController(
             text: (widget.initialValue != null && !dateIsChanged)
                 ? widget.initialValue

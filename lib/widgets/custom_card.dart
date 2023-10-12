@@ -47,6 +47,10 @@ class _CustomCardState extends State<CustomCard> {
     }
   }
 
+  /// Metodo obtener la data del beneficiario.
+  /// Params
+  /// [header] -> Lista de encabezados
+  /// [groups] -> Lista de datos
   List<Widget> getData(List header, List groups) {
     List<Widget> containerListTile = [];
     List data = [];

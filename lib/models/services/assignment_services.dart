@@ -3,6 +3,9 @@ import 'package:login_flutter/models/services/endpoints.dart';
 import 'package:login_flutter/models/services/service.dart';
 
 class AssignmentService {
+  /// Envia los parametros al services de Pega y obtiene el json de los diferentes formularios desde pega por medio del pzInsKey
+  /// Params
+  /// #pzInsKey -> ID del caso, eje: ASSIGN-WORKLIST%20CF-FW-INTERPRE-WORK%20I-4!BENEFICIARIES
   Future getAssignment(String pzInsKey) async {
     String user = 'InterpreterOP';
     String pass = 'hyopJK77@';
@@ -40,7 +43,6 @@ class AssignmentService {
       Response getData = await get(urlGetData, headers: headers);
 
       Map<String, dynamic> jsonData = jsonDecode(getData.body);
-      // final caseID = jsonData['content']['pxInsName']; // name = I-1001
 
       /* ********* OBTENER FORMULARIO DEL STEP ACTUAL ********* */
       final urlGetFormView = Uri.parse(
@@ -57,8 +59,13 @@ class AssignmentService {
     }
   }
 
+  /// Envia los parametros al services de Pega para guarda la informacion actual del formulario en pega y retorna la vista con dicha informacion
+  /// Params
+  /// @pzInsKey
+  /// @actionID -> Flow del caso eje: CustomerBeneficiaries
+  /// @body -> datos a guardar
   Future saveAssignment(
-      String assignmentID, String actionID, Map<String, String> body) async {
+      String pzInsKey, String actionID, Map<String, String> body) async {
     String user = 'InterpreterOP';
     String pass = 'hyopJK77@';
 
@@ -79,7 +86,7 @@ class AssignmentService {
       };
 
       final httpPackcageUrl = Uri.parse(
-          '${endpoints['PEGAURL'] + endpoints['VERSION'] + endpoints['ASSIGNMENTS']}/$assignmentID?actionID=$actionID&saveOnly=true');
+          '${endpoints['PEGAURL'] + endpoints['VERSION'] + endpoints['ASSIGNMENTS']}/$pzInsKey?actionID=$actionID&saveOnly=true');
 
       String jsonBody = jsonEncode(body);
       final String bodyData = '{"content": $jsonBody}';
@@ -91,6 +98,11 @@ class AssignmentService {
     }
   }
 
+  /// Envia los parametros al services de Pega para guarda la informacion actual del formulario en pega, retorna el pzInsKey del siguiente Step para obtener la vista de dicho formulario
+  /// Params
+  /// @pzInsKey
+  /// @actionID -> Flow del caso eje: CustomerBeneficiaries
+  /// @body -> datos a guardar
   Future submitAssignment(
       String assignmentID, String actionID, Map<String, String> body) async {
     String user = 'InterpreterOP';
@@ -128,10 +140,12 @@ class AssignmentService {
     }
   }
 
-  /// Funcion para setear los beneficiarios
-  /// @param pzInsKey
-  /// @param actions
-  /// @param body
+  /// Envia los parametros al services para hacer una actualizacion de pantalla, se utiliza principalmente en el agregado de beneficiarios
+  /// Params
+  /// @pzInsKey
+  /// @actionID -> Flow del caso eje: CustomerBeneficiaries
+  /// @actionRefresh -> Codigo necesario para hacer el PUT
+  /// @body -> datos a guardar
   Future refreshAssignment(String pzInsKey, String actionID, List actionRefresh,
       Map<String, String> body) async {
     String user = 'InterpreterOP';
@@ -171,6 +185,7 @@ class AssignmentService {
       final httpPackageResponse =
           await put(httpPackcageUrl, headers: headers, body: bodyData);
 
+      // Posibles Impresiones que se pueden hacer
       // print(httpPackageResponse.statusCode);
       // print(httpPackageResponse.headers);
       // print(httpPackageResponse.request);

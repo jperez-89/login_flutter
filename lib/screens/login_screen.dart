@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-// import 'package:login_flutter/models/pega_conection.dart';
 import 'package:login_flutter/models/actions/user_actions.dart';
-import '../models/services/endpoints.dart';
-import '../widgets/widgets.dart';
+import 'package:login_flutter/models/services/endpoints.dart';
+import 'package:login_flutter/widgets/custom_inputs.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
@@ -10,12 +9,10 @@ class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final GlobalKey<FormState> myFormKey = GlobalKey<FormState>();
-
     final Map<String, String> frmValues = {};
 
     return Scaffold(
         appBar: AppBar(
-          // leading: const Icon(Icons.home_rounded),
           title: const Center(child: Text('Login')),
         ),
         body: SingleChildScrollView(
@@ -25,7 +22,7 @@ class LoginScreen extends StatelessWidget {
               key: myFormKey,
               child: Column(
                 children: [
-                  InputsWidget(
+                  CustomInputs(
                     labelText: 'User',
                     icon: Icons.group_rounded,
                     minLength: 5,
@@ -35,7 +32,7 @@ class LoginScreen extends StatelessWidget {
                   const SizedBox(
                     height: 10,
                   ),
-                  InputsWidget(
+                  CustomInputs(
                     labelText: 'Password',
                     minLength: 5,
                     obscureText: true,
@@ -101,49 +98,6 @@ class LoginScreen extends StatelessWidget {
                                 Navigator.pushNamed(context, 'dashboard');
                               }
                             });
-
-                            // final String url =
-                            //     '${endpoints['PEGAURL']}/api/v1/authenticate';
-
-                            // PegaConection()
-                            //     .conexion(url, frmValues['user'].toString(),
-                            //         frmValues['password'].toString())
-                            //     .then((value) {
-                            //   if (value.statusCode != 200) {
-                            //     showDialog(
-                            //         barrierDismissible:
-                            //             false, // Permite cerrar el modal cuando se hace clikc afuera
-                            //         context: context,
-                            //         builder: (context) {
-                            //           return AlertDialog(
-                            //             elevation: 5,
-                            //             shape: RoundedRectangleBorder(
-                            //                 borderRadius:
-                            //                     BorderRadius.circular(8)),
-                            //             title: const Text(
-                            //               'Error',
-                            //               textAlign: TextAlign.center,
-                            //             ), // Titulo de la card
-                            //             content: const Column(
-                            //               mainAxisSize: MainAxisSize
-                            //                   .min, // Ajusta la card al texto mas pequenho
-                            //               children: [
-                            //                 Text(
-                            //                     'Usuario o contraseña inválidos'),
-                            //               ],
-                            //             ),
-                            //             actions: [
-                            //               TextButton(
-                            //                   onPressed: () =>
-                            //                       Navigator.pop(context),
-                            //                   child: const Text('Ok'))
-                            //             ],
-                            //           );
-                            //         });
-                            //   } else {
-                            //     Navigator.pushNamed(context, 'dashboard');
-                            //   }
-                            // }); // Then
                           }
                         }
                       },

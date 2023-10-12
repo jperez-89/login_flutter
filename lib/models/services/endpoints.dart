@@ -5,6 +5,7 @@ const Map<String, dynamic> loginBoxType = {
   // Eventually support a visible Iframe/Inline Modal dialog variant as well
 };
 
+/// Contiene los diferentes parametros que necesita el proyecto para funcionar
 const Map<String, dynamic> endpoints = {
   // Change this URL if you want to point the React application at another Pega server.
   'PEGAURL': "https://hrqntruj.pegace.net", // local Pega server
@@ -65,6 +66,7 @@ const Map<String, dynamic> endpoints = {
   'PAGES': "/pages",
   'DATA': "/data",
   'REFRESH': "/refresh",
+
   // V2 endpoints
   'NAVIGATION_STEPS': "/navigation_steps"
 };

@@ -1,0 +1,7 @@
+{
+    "editor.fontFamily": "Jetbrains Mono",
+    "editor.renderWhitespace": "trailing",
+    "editor.wordWrap": "on",
+    "editor.accessibilityPageSize": 50,
+    "editor.bracketPairColorization.independentColorPoolPerBracketType": true
+}

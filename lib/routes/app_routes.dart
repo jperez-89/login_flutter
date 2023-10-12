@@ -3,12 +3,12 @@ import 'package:login_flutter/models/menu_option.dart';
 import 'package:login_flutter/screens/screen.dart';
 
 class AppRoutes {
-  // Cambiar la ruta a login
+  //La ruta principal es la de login
   static const initialRoute = 'dashboard';
   // static const initialRoute = 'login';
   // static const initialRoute = 'Test';
 
-// Crear un listado de menu
+// Crear un listado de menu dinamico
   static final menuOptions = <MenuOption>[
     MenuOption(
         route: 'login',
