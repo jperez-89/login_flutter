@@ -1,3 +1,4 @@
+/// Se pretendia utilizar para mostrar los beneficiarios, pero se decidio usar cards, por presentacion movil
 import 'package:flutter/material.dart';
 
 class CustomDatatable extends StatefulWidget {
@@ -136,7 +137,6 @@ class _DataSource extends DataTableSource {
       index: index,
       selected: row.selected,
       onSelectChanged: (value) {
-        print(value);
         // Navigator.pushNamed(context, 'newAssigment', arguments: {
         //   'option': 'getView',
         //   'name': row.category,

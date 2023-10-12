@@ -30,20 +30,8 @@ class CustomButton extends StatelessWidget {
       if (value["components"] != '') {
         List components = value["components"];
 
-        // Actualizamos la pantalla
+        // Actualizamos la pantalla con la informacion del beneficiario
         update(components);
-
-        // REVISAR COMO PINTAR LA CARD
-        // Map json = jsonDecode(value.body);
-        // List split = json['caseID'].split(' ');
-        // String assignmentID = split[1];
-
-        // Navigator.pushNamed(context, 'newAssigment', arguments: {
-        //   'option': 'setView',
-        //   'assignmentId': assignmentID,
-        //   'pzInsKey': pzInsKey,
-        //   'body': json
-        // });
       } else {
         showMessage('Error', 'Codigo ${value.statusCode} Mapa vacio', context);
       }

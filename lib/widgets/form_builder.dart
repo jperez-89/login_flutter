@@ -276,7 +276,7 @@ class FormBuilder {
     );
   }
 
-  InputsWidget createCustomInput(
+  CustomInputs createCustomInput(
       Map<String, dynamic> pxTextInput, String keyboardType, Map? data) {
     Map<String, TextInputType> inputType = {
       "TEXT": TextInputType.text,
@@ -290,7 +290,7 @@ class FormBuilder {
       "TEXTAREA": TextInputType.multiline,
     };
     return data != null
-        ? InputsWidget(
+        ? CustomInputs(
             maxLines: (keyboardType == "TEXTAREA") ? 5 : 1,
             inputFormatters: (keyboardType == "CURRENCY")
                 ? [getCurrencyData(pxTextInput)]
@@ -309,7 +309,7 @@ class FormBuilder {
                 ? data[getFieldID(pxTextInput)]
                 : null,
           )
-        : InputsWidget(
+        : CustomInputs(
             inputFormatters: (keyboardType == "CURRENCY")
                 ? [getCurrencyData(pxTextInput)]
                 : [],
@@ -345,8 +345,8 @@ class FormBuilder {
         value: getFieldValue(pxDisplayText));
   }
 
-  InputsWidget createPxTextInput(Map<String, dynamic> pxTextInput) {
-    return InputsWidget(
+  CustomInputs createPxTextInput(Map<String, dynamic> pxTextInput) {
+    return CustomInputs(
       labelText: getFieldLabel(pxTextInput),
       textAlign: getTextAlign(pxTextInput),
       readOnly: isReadOnly(pxTextInput),
@@ -358,8 +358,8 @@ class FormBuilder {
     );
   }
 
-  InputsWidget createPxInteger(Map<String, dynamic> pxTextInput) {
-    return InputsWidget(
+  CustomInputs createPxInteger(Map<String, dynamic> pxTextInput) {
+    return CustomInputs(
       labelText: getFieldLabel(pxTextInput),
       textAlign: getTextAlign(pxTextInput),
       readOnly: isReadOnly(pxTextInput),
@@ -372,8 +372,8 @@ class FormBuilder {
     );
   }
 
-  InputsWidget createPxEmail(Map<String, dynamic> pxTextInput) {
-    return InputsWidget(
+  CustomInputs createPxEmail(Map<String, dynamic> pxTextInput) {
+    return CustomInputs(
       labelText: getFieldLabel(pxTextInput),
       textAlign: getTextAlign(pxTextInput),
       readOnly: isReadOnly(pxTextInput),

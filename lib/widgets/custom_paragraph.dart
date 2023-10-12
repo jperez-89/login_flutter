@@ -22,6 +22,5 @@ class CustomParagraph extends StatelessWidget {
         openWeb(context, href!);
       },
     );
-    //return Text(text);
   }
 }

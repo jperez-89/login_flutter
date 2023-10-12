@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:convert';
-import 'package:login_flutter/models/actions/work_list_actions.dart';
 import 'package:login_flutter/theme/app_theme.dart';
+import 'package:login_flutter/models/actions/datapage_actions.dart';
 
 class WorklistWidget extends StatefulWidget {
   const WorklistWidget({Key? key}) : super(key: key);
@@ -24,7 +24,7 @@ class _WorklistWidgetState extends State<WorklistWidget> {
       _load = true;
     });
 
-    await WorkList().getWorkList().then((value) {
+    await DataPageActions().getDataPage('D_Worklist').then((value) {
       if (value.statusCode == 503) {
         setState(() {
           _load = false;
@@ -53,7 +53,7 @@ class _WorklistWidgetState extends State<WorklistWidget> {
 //  Refresca la lista de assignment cada 1 minuto
   void refreshWorkList() {
     Timer.periodic(const Duration(minutes: 10), (timer) async {
-      await WorkList().getWorkList().then((value) {
+      await DataPageActions().getDataPage('D_Worklist').then((value) {
         if (value.statusCode == 503) {
           _load = false;
           _service = false;
