@@ -20,6 +20,7 @@ class _CustomCheckBoxState extends State<CustomCheckBox> {
   bool pressed = false;
   bool valueChaned = false;
   void evaluateValue() {
+    // ignore: unnecessary_null_comparison
     pressed = valueChaned ? (widget.initialValue != null) : pressed;
   }
 

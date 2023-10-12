@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:login_flutter/models/actions/assignment_actions.dart';
 import 'package:login_flutter/theme/app_theme.dart';
@@ -39,7 +37,7 @@ class _FormBuilderWidgetState extends State<FormBuilderWidget> {
     });
   }
 
-  // Obtenemos los campos del formulario del assignment
+  // Obtenemos los campos del formulario del assignment **********
   getAssiggnment(String pzInsKey) async {
     await AssignmentActions().getAssignment(pzInsKey).then((value) {
       setState(() {
@@ -75,9 +73,6 @@ class _FormBuilderWidgetState extends State<FormBuilderWidget> {
   @override
   void initState() {
     getAssiggnment(widget.pzInsKey);
-    // widget.body == null
-    //     ? getAssiggnment(widget.pzInsKey)
-    //     : setView(widget.body!);
     super.initState();
   }
 
@@ -221,7 +216,7 @@ class FormBuilder {
         });
   }
 
-  /// ******* CREATORS  *******
+  /// Creacion de los diferentes campos *******
   CustomCaption createCaption(Map<String, dynamic> caption) {
     return CustomCaption(value: caption["value"], fontSize: 18);
   }
@@ -436,6 +431,7 @@ class FormBuilder {
 
     return CustomDropdown(
       placeholder: getPlaceHolder(pxDropdown),
+      // ignore: unnecessary_null_comparison
       initialValue: (data != null) ? data[getFieldID(pxDropdown)] : null,
       label: getFieldLabel(pxDropdown),
       menuItem: menuItems,
@@ -479,9 +475,9 @@ class FormBuilder {
     return CustomCard(rows: table['rows'], header: table['header']['groups']);
   }
 
-  /********* END CREATORS  ******* */
+  /// Fin
 
-  /// *** FIELD ATTRIBUTES **********
+  /// Obtencion de atributos **********
   String getToolTip(Map<String, dynamic> pxTextInput) {
     return getModes(pxTextInput, 0)["tooltip"];
   }
@@ -649,9 +645,9 @@ class FormBuilder {
           };
   }
 
-  /// *** END FIELD ATTRIBUTES **********
+  /// Fin
 
-/* ************* SWITCH ******************/
+  /// Metodo principal que genera el llamado de la creacion de los diferentes campos **********
   Widget? createWidgets(Map<String, dynamic> component, Map data,
       String assignmentID, GlobalKey<FormState> myFormKey, String actinoID) {
     Widget widget;
@@ -667,10 +663,6 @@ class FormBuilder {
         break;
       case 'pxTable':
         widget = createCard(component["pxTable"], data);
-        // widget = Card(
-        //   elevation: 15,
-        //   child: createDataTable(component["pxTable"], data),
-        // );
         break;
       case 'pxButton':
         widget = createButton(
@@ -686,23 +678,18 @@ class FormBuilder {
         widget = createPxDropDown(component["field"], data);
         break;
       case "pxRadioButtons":
-        //widget = createPxRadioButtom(component["field"]);
         widget = createPxDropDown(component["field"], data);
         break;
       case "pxTextInput":
-        //widget = createPxTextInput(component["field"]);
         widget = createCustomInput(component["field"], "TEXT", data);
         break;
       case "pxInteger":
-        //widget = createPxInteger(component["field"]);
         widget = createCustomInput(component["field"], "NUMBER", data);
         break;
       case "pxCurrency":
-        //widget = createPxInteger(component["field"]);
         widget = createCustomInput(component["field"], "CURRENCY", data);
         break;
       case "pxPhone":
-        //widget = createPxInteger(component["field"]);
         widget = createCustomInput(component["field"], "PHONE", data);
         break;
       case "pxEmail":
