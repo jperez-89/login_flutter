@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:login_flutter/models/actions/assignment_actions.dart';
 import 'package:login_flutter/theme/app_theme.dart';
-import 'package:login_flutter/widgets/custom_card.dart';
 import 'package:login_flutter/widgets/widgets.dart';
 import 'package:currency_text_input_formatter/currency_text_input_formatter.dart';
 
