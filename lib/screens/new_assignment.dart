@@ -13,7 +13,7 @@ class NewAssignmentScreen extends StatefulWidget {
 
 class _NewAssignmentScreenState extends State<NewAssignmentScreen> {
   String caseTypeID = '',
-      name = '.',
+      name = '',
       assignmentId = '',
       pzInsKey = '',
       actionID = '',
@@ -21,6 +21,8 @@ class _NewAssignmentScreenState extends State<NewAssignmentScreen> {
   List components = [];
   Map<String, String> frmData = {};
   Map<String, dynamic> json = {};
+  Map args = {};
+  bool load = false;
 
   /// Se accede a la accion que ejecuta el servicio para crear un nuevo caso
   /// Params
@@ -29,6 +31,8 @@ class _NewAssignmentScreenState extends State<NewAssignmentScreen> {
     caseTypeID = classID['classID'].toString();
     name = classID['name'].toString();
 
+    trueLoading();
+
     await CaseActions().createCase(caseTypeID).then((value) {
       setState(() {
         List split = value['ID'].split(' ');
@@ -36,6 +40,8 @@ class _NewAssignmentScreenState extends State<NewAssignmentScreen> {
         pzInsKey = value['nextAssignmentID'];
       });
     });
+
+    falseLoading();
   }
 
   /// Se accede a la accion que ejecuta el servicio para guardar informacion actual del caso
@@ -46,17 +52,21 @@ class _NewAssignmentScreenState extends State<NewAssignmentScreen> {
     actionID = data['actionID'];
     frmData = data['data'];
 
+    trueLoading();
+
     await AssignmentActions()
         .saveAssignment(assignmentId, actionID, frmData)
         .then((value) {
+      ///Esto es para sacar el titulo de la pantalla
       List split = assignmentId.split(' ');
       split = split[2].split('!');
 
       if (value.statusCode == 200) {
         showMessage('Success', 'Datos guardados');
+
         setState(() {
           pzInsKey = assignmentId;
-          assignmentId = split[0];
+          name = split[0]; //Titulo
         });
       } else if (value.statusCode == 400) {
         Map json = jsonDecode(value.body);
@@ -80,12 +90,14 @@ class _NewAssignmentScreenState extends State<NewAssignmentScreen> {
           showMessage('Errors', errMessage.toString());
           setState(() {
             pzInsKey = assignmentId;
-            assignmentId = split[0];
+            name = split[0];
           });
         }
       } else {
         showMessage(value.statusCode, value.body);
       }
+
+      falseLoading();
     });
   }
 
@@ -96,6 +108,8 @@ class _NewAssignmentScreenState extends State<NewAssignmentScreen> {
     assignmentId = data['assignmentID'];
     actionID = data['actionID'];
     frmData = data['data'];
+
+    trueLoading();
 
     await AssignmentActions()
         .submitAssignment(assignmentId, actionID, frmData)
@@ -110,32 +124,37 @@ class _NewAssignmentScreenState extends State<NewAssignmentScreen> {
         showMessage('Success', 'Datos guardados');
         setState(() {
           actionID = nextAssignmentID;
-          assignmentId = split2[0];
+          name = split2[0];
           pzInsKey = nextAssignmentID;
         });
       } else if (value.statusCode == 400) {
         json = jsonDecode(value.body);
-        print(json);
 
         final errors = json;
         final validationMessages = errors['ValidationMessages'];
 
         showMessage('Errores', validationMessages);
       } else {
-        showMessage('Revisar Consola', value.statusCode);
         print(value.body);
+        showMessage('Revisar Consola', value.statusCode.toString());
       }
+
+      falseLoading();
     });
   }
 
   /// Se actualiza el estado de los parametros para obtener la vista del caso
   /// Params
   /// @data - Mapa con pzInsKey y assignmentId
-  getView(Map data) {
+  getView(Map data) async {
+    trueLoading();
+
     setState(() {
       pzInsKey = data['pzInsKey'];
       assignmentId = data['assignmentId'];
     });
+
+    falseLoading();
   }
 
   /// Funcion para mostrar mensajes
@@ -171,12 +190,26 @@ class _NewAssignmentScreenState extends State<NewAssignmentScreen> {
         });
   }
 
+  trueLoading() {
+    // await Future.delayed(const Duration(seconds: 1));
+    setState(() {
+      load = true;
+    });
+  }
+
+  falseLoading() {
+    // await Future.delayed(const Duration(seconds: 1));
+    setState(() {
+      load = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     // Obtenemos los datos pasados por argumentos
-    Map args = ModalRoute.of(context)!.settings.arguments as Map;
+    args = ModalRoute.of(context)!.settings.arguments as Map;
 
-    /// Se validan las diferentes opciones para acceder a los metodos
+    // /// Se validan las diferentes opciones para acceder a los metodos
     switch (args['option']) {
       case 'newCase':
         if (pzInsKey == '') {
@@ -189,12 +222,12 @@ class _NewAssignmentScreenState extends State<NewAssignmentScreen> {
         }
         break;
       case 'SaveData':
-        if (actionID == '') {
+        if (pzInsKey == '') {
           saveData(args);
         }
         break;
       case 'SubmitData':
-        if (actionID == '') {
+        if (pzInsKey == '') {
           submitData(args);
         }
         break;
@@ -205,22 +238,23 @@ class _NewAssignmentScreenState extends State<NewAssignmentScreen> {
         centerTitle: true,
         title: (pzInsKey != '' || actionID != '')
             ? Text(
-                assignmentId,
+                name,
                 style: const TextStyle(fontWeight: FontWeight.w700),
               )
-            : const Text(' '),
+            : const Text(''),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-        child: (pzInsKey != '' || actionID != '')
-            ? Column(
+        child: (load)
+            ? Container(
+                alignment: Alignment.center,
+                margin: const EdgeInsets.only(top: 300),
+                child: const CircularProgressIndicator.adaptive(),
+              )
+            : Column(
                 children: [
                   FormBuilderWidget(pzInsKey: pzInsKey),
                 ],
-              )
-            : const Column(
-                children: [LinearProgressIndicator()],
-                //       ),
               ),
       ),
     );

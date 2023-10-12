@@ -16,11 +16,13 @@ class _FormBuilderWidgetState extends State<FormBuilderWidget> {
   GlobalKey<FormState> myFormKey = GlobalKey<FormState>();
   List components = [];
   String actionID = '';
+  String pzInsKey = '';
   final Map<String, dynamic> dataPagePrompt = {};
   final Map<String, String> frmValues = {};
   Map actionsButtons = {}, buttons = {}, data = {};
   List labelButtons = [];
   bool hideButton = false;
+  bool load = true;
 
   /* void callback() {
     dataPagePrompt["$name/list"] = options;
@@ -31,14 +33,24 @@ class _FormBuilderWidgetState extends State<FormBuilderWidget> {
     setState(() {});
   }
 
+  /// Metodo se utiliza principalmente a la hora de agregar beneficiarios
   void update(List components) {
     setState(() {
+      load = true;
+    });
+
+    setState(() {
       this.components = components;
+      load = false;
     });
   }
 
   // Obtenemos los campos del formulario del assignment **********
   getAssiggnment(String pzInsKey) async {
+    setState(() {
+      load = true;
+    });
+
     await AssignmentActions().getAssignment(pzInsKey).then((value) {
       setState(() {
         components = value["components"];
@@ -66,6 +78,8 @@ class _FormBuilderWidgetState extends State<FormBuilderWidget> {
           'labelBtn_Cancel': labelButtons[1],
           'labelBtn_Submit': labelButtons[2],
         };
+
+        load = false;
       });
     });
   }
@@ -78,14 +92,20 @@ class _FormBuilderWidgetState extends State<FormBuilderWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return FormBuilder(
-            context: context,
-            frmValues: frmValues,
-            callback: callback,
-            commonParamsList: dataPagePrompt,
-            update: update)
-        .buildForm(
-            components, myFormKey, widget.pzInsKey, actionID, buttons, data);
+    return (load)
+        ? Container(
+            alignment: Alignment.center,
+            margin: const EdgeInsets.only(top: 300),
+            child: const CircularProgressIndicator.adaptive(),
+          )
+        : FormBuilder(
+                context: context,
+                frmValues: frmValues,
+                callback: callback,
+                commonParamsList: dataPagePrompt,
+                update: update)
+            .buildForm(components, myFormKey, widget.pzInsKey, actionID,
+                buttons, data);
   }
 }
 

@@ -21,9 +21,9 @@ class CustomListViewSeparated extends StatelessWidget {
         return service
             ? ListTile(
                 title: Text(list[i]['name']),
-                trailing: Icon(
+                trailing: const Icon(
                   Icons.arrow_circle_right_outlined,
-                  color: Color(AppTheme.primaryColor as int),
+                  color: AppTheme.primaryColor,
                 ),
                 onTap: () {
                   String classID = list[i]['ID'];

@@ -15,6 +15,7 @@ class AppTheme {
 
 /* ******* Configura el tema claro para la app **********************/
   static ThemeData lightTheme = ThemeData.light().copyWith(
+      primaryColor: primaryColor,
       appBarTheme: const AppBarTheme(
           elevation: 10,
           foregroundColor: white,
@@ -24,7 +25,7 @@ class AppTheme {
 
       // text Button Theme
       textButtonTheme: TextButtonThemeData(
-          style: TextButton.styleFrom(foregroundColor: white)),
+          style: TextButton.styleFrom(foregroundColor: primaryColor)),
 
       //Floating Actions Buttons
       floatingActionButtonTheme: const FloatingActionButtonThemeData(

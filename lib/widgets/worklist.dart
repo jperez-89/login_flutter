@@ -102,15 +102,12 @@ class _WorklistWidgetState extends State<WorklistWidget> {
                   showCheckboxColumn: false,
                   header: Container(
                     padding: EdgeInsets.zero,
-                    decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey),
-                        borderRadius: BorderRadius.circular(15)),
                     child: TextField(
                       controller: controller,
                       decoration: const InputDecoration(
-                          border: InputBorder.none,
-                          hintText: 'Search case',
-                          contentPadding: EdgeInsets.symmetric(horizontal: 10)),
+                        hintText: 'Search case',
+                        contentPadding: EdgeInsets.symmetric(horizontal: 10),
+                      ),
                       onChanged: (value) {
                         if (value != '') {
                           workList = workListBackUp
@@ -124,9 +121,9 @@ class _WorklistWidgetState extends State<WorklistWidget> {
                   ),
                   actions: [
                     ElevatedButton(
-                      style: ButtonStyle(
+                      style: const ButtonStyle(
                           foregroundColor:
-                              const MaterialStatePropertyAll(AppTheme.white),
+                              MaterialStatePropertyAll(AppTheme.white),
                           backgroundColor:
                               MaterialStatePropertyAll(AppTheme.primaryColor)),
                       onPressed: () {
