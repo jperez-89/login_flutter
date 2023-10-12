@@ -2,6 +2,17 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:login_flutter/models/services/datapages_services.dart';
 
+/// crea un widget del tipo DropdownButtonFormField
+/// Variables
+/// @menuItem -> es la lista de opcione a mostrar
+/// @label -> la etiqueta del campo
+/// @property -> es el identificador de este campo dentro del frmValues
+/// @frmValues -> almacena todos los valores guardados en el formulario actual
+/// @initialValue -> valor inicial al renderizar el widget
+/// @placeholder -> texto a mostrar cuando no haya valor seleccionado
+/// @dropdownList -> lista de paramtros requeridos por los todo los dropdown del formulario
+/// @reference -> nombre del la property en PEGA donde se almacena el valor de este campo.
+/// @callback -> metodo que se utiliza para redibujar el frmbuilder
 class CustomDropdown extends StatefulWidget {
   final List<DropdownMenuItem> menuItem;
   final String label;

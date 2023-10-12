@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+/// crea RadioLitile
+/// *** se reemplazaron por dropdowns****
 class CustomRadioButton extends StatefulWidget {
   final String value;
   // final String groupValue;

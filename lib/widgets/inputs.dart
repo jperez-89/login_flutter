@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:login_flutter/theme/app_theme.dart';
 
+/// crea los inputs a partir de un textformffield
 class InputsWidget extends StatelessWidget {
   final String? labelText;
   final String? hintText;

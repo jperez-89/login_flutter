@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
+/// crea el navegador para motrar un link
+/// utiliza el paquete webiew_flutter
 class CustomWebView extends StatefulWidget {
   final String href;
   const CustomWebView({super.key, required this.href});

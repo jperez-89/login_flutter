@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+/// crea un widget parar mostrar 2 lineas de texto una sobre otra, la primera la dibuja en negrita
 class CustomDisplayText extends StatelessWidget {
   final String title;
   final String value;

@@ -1,5 +1,18 @@
 import 'package:flutter/material.dart';
 
+///crea un textfromfield que en su evento onTap muestra un modal con datepicker
+///Variables
+/// @label -> la etiqueta del campo
+/// @tolTip -> texto de ayuda al usuario
+/// @TextAlign -> alineacion del texto dentro del textformfield
+/// @enabled -> indica si el campo esta o no habilidado
+/// @useFutureDateRange -> validacion de PEGA para evitar que se seleccionen fechas futuras
+/// @usePastDateRange -> validacion de PEGA para evitar que se seleccionen fecha pasadas
+/// @futureDateRange -> cantidad de años futuros a partir de la fecha actual a mostrar en el calendario
+/// @pastDateRangeg -> cantidad de año pasado a partirr de la fehca actual a mostrar en el calendario
+/// @property -> es el identificador de este campo dentro del frmValues
+/// @frmValues -> almacena todos los valores guardados en el formulario actual
+/// @initialValue -> valor inicial al renderizar el widget
 class CustomDatePicker extends StatefulWidget {
   final String label;
   final String? toolTip;
@@ -36,6 +49,7 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
   String date = "";
   bool dateIsChanged = false;
 
+  /// abre el modal con el calendario
   void _showDatePicker() {
     FocusScope.of(context).unfocus();
     showDatePicker(
@@ -56,14 +70,17 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
     });
   }
 
+  /// setea la cantidad de año pasados a mostrar por defecto 10
   int getFristDate(bool usePastDays, int pastDateRange) {
     return (usePastDays) ? DateTime.now().year - pastDateRange : 10;
   }
 
+  /// setea la cantidad de año futuros a mostrar por defecto 10
   int getLastDate(bool useFutureDays, int futureDateRange) {
     return (useFutureDays) ? DateTime.now().year + futureDateRange : 10;
   }
 
+  /// setea la fecha seleccionada por el usuario
   String getFecha(DateTime fecha) {
     String month =
         fecha.month < 10 ? "0${fecha.month}" : fecha.month.toString();

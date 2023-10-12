@@ -1,5 +1,11 @@
 import 'package:flutter/material.dart';
 
+///Crea un widget de tipo CheckboxListTile
+///Variables
+///@label -> la etiqueta del checkbox
+///@initialValue -> valor inicial del checkbox
+///@property -> es el identificador de este campo dentro del frmValues
+///@frmValues -> almacena todos los valores guardados en el formulario actual
 class CustomCheckBox extends StatefulWidget {
   final String label;
   final bool initialValue;

@@ -2,6 +2,20 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:login_flutter/models/services/datapages_services.dart';
 
+/// crea un widget del tipo Autocomplete
+/// los valores a buscar se reciben en una lista de mapas
+/// Variables
+/// @options -> es la lista con los valores que deben de mostrarse, tambien contiene lo valores que deben almacenarse
+///             ejemplo: {key:Toyota,value:TY}
+/// @property -> es el identificador de este campo dentro del frmValues
+/// @frmValues -> almacena todos los valores guardados en el formulario actual
+/// @autoCompleteParamsList -> es una lista que almacena los parametros de todos los autocomplete del formulario actual
+/// @dataPagePromptName -> es el nombre que tiene la columna de la datapage donde se encuentra el valor para almacenar "value"
+/// @callback -> metodo que se utiliza para redibujar todo el frmbuilder
+/// @label -> La etiqueta del campo
+/// @initialValue -> valor inicial al renderizar el widget
+///
+///
 class CustomAutoComplete extends StatefulWidget {
   final List options;
   final String property;
@@ -28,6 +42,8 @@ class CustomAutoComplete extends StatefulWidget {
 }
 
 class _CustomAutoCompleteState extends State<CustomAutoComplete> {
+  ///@valuesToShow lista que almacena los valores que muestran al usuario "key"
+  ///@valuesToSave lista que almacena los valores que se almacenan "value"
   late List<String> valuesToShow;
   late List<String> valuesToSave;
 
@@ -35,12 +51,17 @@ class _CustomAutoCompleteState extends State<CustomAutoComplete> {
     valuesToShow = [];
     valuesToSave = [];
     for (var map in widget.options) {
-      valuesToShow.add(map["key"]); //Honda, Nissan, Hyundai
-      valuesToSave.add(map["value"]); //H, NS, HY
+      valuesToShow.add(map["key"]);
+
+      ///Honda, Nissan, Hyundai
+      valuesToSave.add(map["value"]);
+
+      ///H, NS, HY
     }
   }
 
   String getInitialValue() {
+    ///si se setea un valor inicial que no esta en la lista puede dar error
     String salida = "";
     if (widget.initialValue != null) {
       salida = (valuesToShow.isNotEmpty)
@@ -50,6 +71,11 @@ class _CustomAutoCompleteState extends State<CustomAutoComplete> {
     return salida;
   }
 
+  ///Se encarga de buscar cual o cuales autocomplete son dependientes (hijos) de este
+  ///y hacer obtene la lista de opciones del(os) hijo(s)
+  ///@dataSelected -> representa el valor seleccionado en el autocomplete
+  ///****SE DEBE MEJORA LA BUSQUEDA, RECOMIENDO UTILIZAR LA POPIEDAD REFERENCE DEL JSON */
+  ///
   void fillData(String dataSelected) {
     if (widget.autoCompleteParamsList.containsKey(widget.dataPagePromptName)) {
       String myDataPromptName = widget.dataPagePromptName;

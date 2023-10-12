@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+/// crea un textformField con parametros necesario para un campo tipo entero
+/// ***** NO SE USA****
 class CustomIntegerTypeScreen extends StatelessWidget {
   final String? labelText;
   final String? hintText;

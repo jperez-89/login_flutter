@@ -103,6 +103,7 @@ class FormBuilder {
       required this.frmValues,
       required this.commonParamsList});
 
+  /// crea el forrmulario a partir de la lista de componentes extraida del json de PEGA
   Widget buildForm(List components, GlobalKey<FormState> myFormKey,
       String assignmentID, String actionID, Map buttons, Map data) {
     List<Widget> childs = [];
