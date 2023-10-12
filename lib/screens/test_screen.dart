@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:login_flutter/widgets/form_builder.dart';
-// import 'package:login_flutter/widgets/widgets.dart';
 
 class TestScreen extends StatefulWidget {
   const TestScreen({Key? key}) : super(key: key);
@@ -41,11 +40,11 @@ class _TestScreenState extends State<TestScreen> {
       child: Column(
         children: [
           Text(
-            "$titulo",
-            style: TextStyle(fontWeight: FontWeight.bold),
+            titulo,
+            style: const TextStyle(fontWeight: FontWeight.bold),
           ),
           Text(
-            "$valor",
+            valor,
           )
         ],
       ),
@@ -70,12 +69,12 @@ class _TestScreenState extends State<TestScreen> {
       output.add(Card(
         clipBehavior: Clip.antiAlias,
         color: Colors.amber,
-        margin: EdgeInsets.all(5),
+        margin: const EdgeInsets.all(5),
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: [Text("Nombre"), Text("$i")],
+            children: [const Text("Nombre"), Text("$i")],
           ),
         ),
       ));

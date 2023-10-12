@@ -127,4 +127,56 @@ class AssignmentService {
       return httpPackageResponse;
     }
   }
+
+  /// Funcion para setear los beneficiarios
+  /// @param pzInsKey
+  /// @param actions
+  /// @param body
+  Future refreshAssignment(String pzInsKey, String actionID, List actionRefresh,
+      Map<String, String> body) async {
+    String user = 'InterpreterOP';
+    String pass = 'hyopJK77@';
+
+    if (endpoints['use_OAuth']) {
+      // return authLogin().then((token) => {
+      //   if (token) {
+      //     userService.setToken(token);
+      //     // Route to workarea as well if popup (callback only happens on popup scenario
+      //   }
+      // });
+    } else {
+      String basicAuth = 'Basic ${base64Encode(utf8.encode('$user:$pass'))}';
+      final List pageInstructions = [];
+
+      final Map<String, String> headers = {
+        'Accept': "application/json, text/plain, */*",
+        'Content-type': 'application/json',
+        'Authorization': basicAuth,
+      };
+
+      final Map<String, dynamic> params = {
+        'refreshFor': '${actionRefresh[0]["refreshFor"]}'
+      };
+
+      final httpPackcageUrl = Uri.https(
+          endpoints['DOMAIN'],
+          '${endpoints['VERSION'] + endpoints['ASSIGNMENTS']}/$pzInsKey${endpoints['ACTIONS']}/$actionID${endpoints['REFRESH']}',
+          params);
+
+      String jsonBody = jsonEncode(body);
+
+      final bodyData =
+          '{"content": $jsonBody, "pageInstructions": $pageInstructions}';
+
+      final httpPackageResponse =
+          await put(httpPackcageUrl, headers: headers, body: bodyData);
+
+      // print(httpPackageResponse.statusCode);
+      // print(httpPackageResponse.headers);
+      // print(httpPackageResponse.request);
+      // print(httpPackageResponse.body);
+
+      return httpPackageResponse;
+    }
+  }
 }

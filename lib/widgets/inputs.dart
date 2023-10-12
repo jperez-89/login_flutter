@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:login_flutter/theme/app_theme.dart';
 
 class InputsWidget extends StatelessWidget {
   final String? labelText;
@@ -62,10 +63,27 @@ class InputsWidget extends StatelessWidget {
       autovalidateMode: AutovalidateMode.onUserInteraction,
       decoration: icon != null
           ? InputDecoration(
-              labelText: labelText, hintText: hintText, prefixIcon: Icon(icon))
+              labelText: labelText,
+              hintText: hintText,
+              prefixIcon: Icon(icon),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderSide: const BorderSide(color: AppTheme.primaryColor),
+                borderRadius: BorderRadius.circular(20),
+              ),
+            )
           : InputDecoration(
               labelText: isRequired! ? '$labelText *' : labelText,
               hintText: hintText,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderSide: const BorderSide(color: AppTheme.primaryColor),
+                borderRadius: BorderRadius.circular(20),
+              ),
             ),
       enabled: disabled,
       // initialValue: initialValue,

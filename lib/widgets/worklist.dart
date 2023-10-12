@@ -220,7 +220,7 @@ class _DataSource extends DataTableSource {
           list[i]['pzInsKey'],
           list[i]['pxTaskLabel'],
           list[i]['pxRefObjectInsName'],
-          list[i]['pxAssignmentStatus'] ?? 'New',
+          list[i]['pyAssignmentStatus'],
           list[i]['pyLabel'],
           list[i]['pxUrgencyAssign'],
           list[i]['pxCreateDateTime'],
