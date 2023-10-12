@@ -17,9 +17,9 @@ class ListTileOptionsWidget extends StatelessWidget {
       itemBuilder: (context, i) => ListTile(
         title: Text(list[i]['name']),
         // title: const Text('options'),
-        trailing: const Icon(
+        trailing: Icon(
           Icons.arrow_circle_right_outlined,
-          color: AppTheme.primaryColor,
+          color: Color(AppTheme.primaryColor as int),
         ),
         onTap: () {
           // final game = options[i];

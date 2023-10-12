@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'package:login_flutter/models/actions/work_list_actions.dart';
+import 'package:login_flutter/theme/app_theme.dart';
 
 class WorklistWidget extends StatefulWidget {
   const WorklistWidget({Key? key}) : super(key: key);
@@ -15,6 +16,7 @@ class _WorklistWidgetState extends State<WorklistWidget> {
   int rowsPerPage = 10;
   bool _load = false;
   bool _service = true;
+  String msg = '';
 
   // Obtiene la lista de assignments
   void getWorkList() async {
@@ -27,8 +29,16 @@ class _WorklistWidgetState extends State<WorklistWidget> {
         setState(() {
           _load = false;
           _service = false;
+          msg = 'Servicio no disponible';
         });
-      } else {
+      }
+      if (value.statusCode == 404) {
+        setState(() {
+          _load = false;
+          _service = false;
+          msg = value.body;
+        });
+      } else if (value.statusCode == 200) {
         Map<String, dynamic> json = jsonDecode(value.body);
 
         setState(() {
@@ -114,6 +124,11 @@ class _WorklistWidgetState extends State<WorklistWidget> {
                   ),
                   actions: [
                     ElevatedButton(
+                      style: ButtonStyle(
+                          foregroundColor:
+                              const MaterialStatePropertyAll(AppTheme.white),
+                          backgroundColor:
+                              MaterialStatePropertyAll(AppTheme.primaryColor)),
                       onPressed: () {
                         getWorkList();
                       },
@@ -130,11 +145,11 @@ class _WorklistWidgetState extends State<WorklistWidget> {
                   ],
                   source: _DataSource(workList, context),
                 )
-              : const Center(
+              : Center(
                   child: Text(
-                    'Servicio no disponible',
+                    'Server Response: $msg',
                     textAlign: TextAlign.center,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.w500,
                     ),

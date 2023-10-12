@@ -3,13 +3,11 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:login_flutter/models/actions/assignment_actions.dart';
 import 'package:login_flutter/theme/app_theme.dart';
-import 'package:login_flutter/widgets/custom_card.dart';
 import 'package:login_flutter/widgets/widgets.dart';
 import 'package:currency_text_input_formatter/currency_text_input_formatter.dart';
 
 class FormBuilderWidget extends StatefulWidget {
   final String pzInsKey;
-  // final Map? body;
   const FormBuilderWidget({Key? key, required this.pzInsKey}) : super(key: key);
 
   @override
@@ -19,10 +17,11 @@ class FormBuilderWidget extends StatefulWidget {
 class _FormBuilderWidgetState extends State<FormBuilderWidget> {
   GlobalKey<FormState> myFormKey = GlobalKey<FormState>();
   List components = [];
-  String actionID = '', btnSubmit = '';
+  String actionID = '';
   final Map<String, dynamic> dataPagePrompt = {};
   final Map<String, String> frmValues = {};
   Map actionsButtons = {}, buttons = {}, data = {};
+  List labelButtons = [];
   bool hideButton = false;
 
   /* void callback() {
@@ -38,7 +37,6 @@ class _FormBuilderWidgetState extends State<FormBuilderWidget> {
     setState(() {
       this.components = components;
     });
-    // showMessage('mensage', components.toString(), context);
   }
 
   // Obtenemos los campos del formulario del assignment
@@ -47,7 +45,7 @@ class _FormBuilderWidgetState extends State<FormBuilderWidget> {
       setState(() {
         components = value["components"];
         actionID = value["actionID"];
-        actionsButtons = value["actionsButtons"];
+        labelButtons = value["labelButtons"];
         data = value["data"]['content'];
 
         /** VALIDAR LAS FECHAS PARA DESHABILITAR EL BOTON DE SAVE EN CASO QUE EL ASSIGNMETN TENGA DATOS ALMACENADOS */
@@ -66,9 +64,9 @@ class _FormBuilderWidgetState extends State<FormBuilderWidget> {
         // print(actionsButtons['secondary']);
 
         buttons = {
-          'btnCancel': actionsButtons['secondary'][0]['name'],
-          'btnSave': actionsButtons['secondary'][1]['links']['open']['title'],
-          'btnSubmit': actionsButtons['main'][0]['name'],
+          'labelBtn_Save': labelButtons[0],
+          'labelBtn_Cancel': labelButtons[1],
+          'labelBtn_Submit': labelButtons[2],
         };
       });
     });
@@ -89,7 +87,7 @@ class _FormBuilderWidgetState extends State<FormBuilderWidget> {
             context: context,
             frmValues: frmValues,
             callback: callback,
-            commonParamsList: dataPagePrompt)
+            commonParamsList: dataPagePrompt,
             update: update)
         .buildForm(
             components, myFormKey, widget.pzInsKey, actionID, buttons, data);
@@ -112,9 +110,6 @@ class FormBuilder {
 
   Widget buildForm(List components, GlobalKey<FormState> myFormKey,
       String assignmentID, String actionID, Map buttons, Map data) {
-    // print(components);
-    // print(assignmentID);
-
     List<Widget> childs = [];
 
     if (components.isNotEmpty) {
@@ -123,87 +118,77 @@ class FormBuilder {
             createWidgets(component, data, assignmentID, myFormKey, actionID) ??
                 const Text("vacio"));
       }
-      childs.add(getSaveButton(myFormKey, assignmentID, actionID, buttons));
+      childs.add(createFormButtons(myFormKey, assignmentID, actionID, buttons));
     }
 
-    return Container(
-      decoration: const BoxDecoration(
-        shape: BoxShape.circle,
-      ),
-      // shadowColor: AppTheme.primaryColor.withOpacity(0.8),
-      margin: const EdgeInsets.all(0),
-      // elevation: 0,
-      child: Form(key: myFormKey, child: Column(children: childs)),
-    );
-    // Card(
-    //   // shape: BoxShape.circle,
-    //   shadowColor: AppTheme.primaryColor.withOpacity(0.8),
-    //   margin: const EdgeInsets.all(0),
-    //   elevation: 0,
-    //   child: Form(key: myFormKey, child: Column(children: childs)),
-    // );
+    return Form(key: myFormKey, child: Column(children: childs));
   }
 
-  getSaveButton(GlobalKey<FormState> myFormKey, String assignmentID,
+  createFormButtons(GlobalKey<FormState> myFormKey, String assignmentID,
       String actionID, Map buttons) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: [
-        // Boton Cancelar <=====
-        ElevatedButton(
-            style: const ButtonStyle(
-                backgroundColor: MaterialStatePropertyAll(AppTheme.cancel)),
-            onPressed: () {
-              Navigator.popAndPushNamed(
-                context,
-                'dashboard',
-              );
-            },
-            child: Text(buttons['btnCancel'])),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            // Boton Save <=====
-            ElevatedButton(
-                style: const ButtonStyle(
-                    backgroundColor:
-                        MaterialStatePropertyAll(AppTheme.secondaryColor)),
-                onPressed: () {
-                  if (!myFormKey.currentState!.validate()) {
-                    showMessage('Error', 'Complete todos los campos', context);
-                    return;
-                  } else {
-                    Navigator.pushNamed(context, 'newAssigment', arguments: {
-                      'option': 'SaveData',
-                      'assignmentID': assignmentID,
-                      'actionID': actionID,
-                      'data': frmValues
-                    });
-                  }
-                },
-                child: Text(buttons['btnSave'])),
-            const SizedBox(
-              width: 10,
-            ),
-            // Boton Submit <=====
-            ElevatedButton(
-                onPressed: () {
-                  if (!myFormKey.currentState!.validate()) {
-                    showMessage('Error', 'Complete todos los campos', context);
-                    return;
-                  } else {
-                    Navigator.pushNamed(context, 'newAssigment', arguments: {
-                      'option': 'SubmitData',
-                      'assignmentID': assignmentID,
-                      'actionID': actionID,
-                      'data': frmValues
-                    });
-                  }
-                },
-                child: Text(buttons['btnSubmit'])),
-          ],
-        )
-      ],
+    return Padding(
+      padding: const EdgeInsets.only(top: 25),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          // Boton Cancelar <=====
+          ElevatedButton(
+              style: const ButtonStyle(
+                  backgroundColor: MaterialStatePropertyAll(AppTheme.cancel)),
+              onPressed: () {
+                Navigator.popAndPushNamed(
+                  context,
+                  'dashboard',
+                );
+              },
+              child: Text(buttons['labelBtn_Cancel'])),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              // Boton Save <=====
+              ElevatedButton(
+                  style: const ButtonStyle(
+                      backgroundColor:
+                          MaterialStatePropertyAll(AppTheme.secondaryColor)),
+                  onPressed: () {
+                    if (!myFormKey.currentState!.validate()) {
+                      showMessage(
+                          'Error', 'Complete todos los campos', context);
+                      return;
+                    } else {
+                      Navigator.pushNamed(context, 'newAssigment', arguments: {
+                        'option': 'SaveData',
+                        'assignmentID': assignmentID,
+                        'actionID': actionID,
+                        'data': frmValues
+                      });
+                    }
+                  },
+                  child: Text(buttons['labelBtn_Save'])),
+              const SizedBox(
+                width: 10,
+              ),
+              // Boton Submit <=====
+              ElevatedButton(
+                  onPressed: () {
+                    if (!myFormKey.currentState!.validate()) {
+                      showMessage(
+                          'Error', 'Complete todos los campos', context);
+                      return;
+                    } else {
+                      Navigator.pushNamed(context, 'newAssigment', arguments: {
+                        'option': 'SubmitData',
+                        'assignmentID': assignmentID,
+                        'actionID': actionID,
+                        'data': frmValues
+                      });
+                    }
+                  },
+                  child: Text(buttons['labelBtn_Submit'])),
+            ],
+          )
+        ],
+      ),
     );
   }
 
@@ -472,9 +457,6 @@ class FormBuilder {
       Map<String, String> frmValues,
       String pzInsKey,
       String actionID) {
-    // Accion del boton
-    // print(pxButton['control']['actionSets'][0]['actions'][0]['refreshFor']);
-
     return CustomButton(
       pzInsKey: pzInsKey,
       frmValues: frmValues,
@@ -487,11 +469,6 @@ class FormBuilder {
   }
 
   CustomDatatable createDataTable(Map<String, dynamic> table, Map? data) {
-    // print(table);
-    // Filas
-    // print(table['rows']);
-    // Headers
-    // print(table['header']['groups']);
     return CustomDatatable(
       rows: table['rows'],
       header: table['header']['groups'],
@@ -499,15 +476,6 @@ class FormBuilder {
   }
 
   CustomCard createCard(Map<String, dynamic> table, Map? data) {
-    // print(table);
-    // Filas
-    // print(table['rows']);
-    // Headers
-    // print(table['header']['groups']);
-    // return CustomDatatable(
-    //   rows: table['rows'],
-    //   header: table['header']['groups'],
-    // );
     return CustomCard(rows: table['rows'], header: table['header']['groups']);
   }
 

@@ -3,6 +3,7 @@ import 'package:login_flutter/models/services/assignment_services.dart';
 
 class AssignmentActions {
   List componentes = [];
+  List labelButtons = [];
 
   getAssignment(String pzInsKey) {
     return AssignmentService().getAssignment(pzInsKey).then((value) {
@@ -13,7 +14,7 @@ class AssignmentActions {
         "components": componentes,
         "actionID": value["actionsID"],
         'data': value['data'],
-        'actionsButtons': value["actionsButtons"]
+        'labelButtons': getLabelButton(value["actionsButtons"])
       };
     });
   }
@@ -70,5 +71,35 @@ class AssignmentActions {
     } else {
       componentes.add(fields);
     }
+  }
+
+// Obtener label para los botones
+  List getLabelButton(Map acttionButton) {
+    String save = '';
+    String submit = '';
+    String cancel = '';
+
+    if (acttionButton.containsKey("secondary")) {
+      for (var i = 0; i < acttionButton["secondary"].length; i++) {
+        if (acttionButton['secondary'][i]['actionID'] == 'cancel') {
+          cancel = acttionButton['secondary'][i]['actionID'];
+        } else if (acttionButton['secondary'][i]['actionID'] == 'save') {
+          save = acttionButton['secondary'][i]['actionID'];
+        }
+      }
+      labelButtons.add(save);
+      labelButtons.add(cancel);
+    }
+
+    if (acttionButton.containsKey("main")) {
+      for (var i = 0; i < acttionButton["main"].length; i++) {
+        if (acttionButton['main'][i]['actionID'] == 'submit') {
+          submit = acttionButton['main'][i]['name'];
+        }
+        labelButtons.add(submit);
+      }
+    }
+
+    return labelButtons;
   }
 }

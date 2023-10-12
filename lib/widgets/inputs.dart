@@ -36,7 +36,7 @@ class InputsWidget extends StatelessWidget {
     this.readOnly,
     this.toolTip,
     this.disabled,
-    this.isRequired,
+    this.isRequired = false,
     this.initialValue,
     this.inputFormatters = const [],
     this.maxLines = 1,
@@ -70,7 +70,7 @@ class InputsWidget extends StatelessWidget {
                 borderRadius: BorderRadius.circular(20),
               ),
               focusedBorder: OutlineInputBorder(
-                borderSide: const BorderSide(color: AppTheme.primaryColor),
+                borderSide: BorderSide(color: AppTheme.primaryColor),
                 borderRadius: BorderRadius.circular(20),
               ),
             )
@@ -81,7 +81,7 @@ class InputsWidget extends StatelessWidget {
                 borderRadius: BorderRadius.circular(20),
               ),
               focusedBorder: OutlineInputBorder(
-                borderSide: const BorderSide(color: AppTheme.primaryColor),
+                borderSide: BorderSide(color: AppTheme.primaryColor),
                 borderRadius: BorderRadius.circular(20),
               ),
             ),
