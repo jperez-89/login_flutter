@@ -5,7 +5,7 @@ import 'dart:convert';
 import 'package:login_flutter/models/services/datapages_services.dart';
 
 class CustomDropdown extends StatefulWidget {
-  final List<DropdownMenuItem> menuItem;
+  final List menuItem;
   final String label;
   final String property;
   final Map<String, dynamic> frmValues;
@@ -32,6 +32,15 @@ class CustomDropdown extends StatefulWidget {
 }
 
 class _CustomDropdownState extends State<CustomDropdown> {
+  List<DropdownMenuItem> createMenuItem(List itemList) {
+    List<DropdownMenuItem> menuItems = [];
+    for (var item in itemList) {
+      menuItems.add(
+          DropdownMenuItem(value: item["key"], child: Text(item["value"])));
+    }
+    return menuItems;
+  }
+
   void fillData(String dataSelected) {
     List keys = widget.dropdownList.keys.toList();
     for (var i = 0; i < keys.length; i++) {
@@ -96,7 +105,7 @@ class _CustomDropdownState extends State<CustomDropdown> {
       hint: Text(widget.placeholder),
       value: (widget.initialValue == null) ? null : widget.initialValue,
       decoration: InputDecoration(labelText: widget.label),
-      items: widget.menuItem,
+      items: createMenuItem(widget.menuItem),
       onChanged: (selected) {
         widget.frmValues[widget.property] = selected;
         fillData(selected);

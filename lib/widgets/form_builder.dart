@@ -395,28 +395,17 @@ class FormBuilder {
   }
 
   CustomDropdown createPxDropDown(Map<String, dynamic> pxDropdown, Map data) {
-    List<DropdownMenuItem<dynamic>> menuItems = [];
+    List menuItems = getModes(pxDropdown, 0)["options"];
     String reference = getReference(pxDropdown);
-    // print("creando el dropdown $reference");
 
     if (haveParameters(pxDropdown) && data[getFieldID(pxDropdown)] == null) {
-      if (commonParamsList.containsKey("$reference/list")) {
-        menuItems.clear();
-        for (var element in commonParamsList["$reference/list"]) {
-          menuItems.add(createMenuItem(element));
-        }
-      } else if (!commonParamsList.containsKey(reference)) {
+      if (!commonParamsList.containsKey(reference)) {
         commonParamsList[reference] = {
           "parameters": getParameters(pxDropdown),
           "dataPageName": getDataPageID(pxDropdown),
           "dataPagePromptName": getDataPagePromptName(pxDropdown),
           "dataPageValue": getDataPageValue(pxDropdown),
         };
-      }
-    } else {
-      menuItems.clear();
-      for (var element in getModes(pxDropdown, 0)["options"]) {
-        menuItems.add(createMenuItem(element));
       }
     }
 
@@ -433,9 +422,6 @@ class FormBuilder {
     );
   }
 
-  DropdownMenuItem createMenuItem(Map<String, dynamic> item) {
-    return DropdownMenuItem(value: item["key"], child: Text(item["value"]));
-  }
   /********* END CREATORS  ******* */
 
   /// *** FIELD ATTRIBUTES **********
@@ -506,7 +492,6 @@ class FormBuilder {
       parameters.add({
         "name": getParameterName(component, i),
         "reference": getParameterReference(component, i),
-        "data": ""
       });
     }
     return parameters;
