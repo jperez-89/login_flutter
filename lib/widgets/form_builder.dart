@@ -59,7 +59,7 @@ class _FormBuilderWidgetState extends State<FormBuilderWidget> {
 
         buttons = {
           'btnCancel': actionsButtons['secondary'][0]['name'],
-          'btnSave': actionsButtons['secondary'][1]['links']['open']['title'],
+          'btnSave': actionsButtons['secondary'][2]['links']['open']['title'],
           'btnSubmit': actionsButtons['main'][0]['name'],
         };
       });
@@ -492,6 +492,7 @@ class FormBuilder {
       parameters.add({
         "name": getParameterName(component, i),
         "reference": getParameterReference(component, i),
+        "data": "",
       });
     }
     return parameters;

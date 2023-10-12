@@ -43,27 +43,20 @@ class _CustomDropdownState extends State<CustomDropdown> {
 
   void fillData(String dataSelected) {
     List keys = widget.dropdownList.keys.toList();
-    for (var i = 0; i < keys.length; i++) {
-      if (widget.dropdownList[keys[i]].runtimeType.toString().contains("Map") &&
-          widget.dropdownList[keys[i]].containsKey("parameters")) {
-        List parameters = widget.dropdownList[keys[i]]["parameters"];
-        bool isDataFill = true;
-        bool isUpdated = false;
-
-        for (var j = 0; j < parameters.length; j++) {
-          if (parameters[j].containsValue(widget.reference)) {
-            parameters[j]["data"] = dataSelected;
-            isUpdated = true;
+    Map dropdownList = widget.dropdownList;
+    bool allParametersSet = true;
+    for (var key in keys) {
+      if (dropdownList[key].containsKey("parameters")) {
+        for (var i = 0; i < dropdownList[key]["parameters"].length; i++) {
+          if (dropdownList[key]["parameters"][i]
+              .containsValue(widget.reference)) {
+            dropdownList[key]["parameters"][i]["data"] = dataSelected;
           }
-
-          isDataFill = (isUpdated && isDataFill)
-              ? (parameters[j]["data"] != "")
-              : isDataFill;
-          if (!isDataFill) return;
+          allParametersSet = (allParametersSet)
+              ? (dropdownList[key]["parameters"][i]["data"] != "")
+              : allParametersSet;
         }
-        if (isDataFill && keys[i] != widget.reference && isUpdated) {
-          fetchData(widget.dropdownList[keys[i]], keys[i]);
-        }
+        print("$key  ${dropdownList[key]['parameters']}");
       }
     }
   }
@@ -109,7 +102,7 @@ class _CustomDropdownState extends State<CustomDropdown> {
       onChanged: (selected) {
         widget.frmValues[widget.property] = selected;
         fillData(selected);
-        setState(() {});
+        //setState(() {});
       },
     );
   }
