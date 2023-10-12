@@ -54,6 +54,7 @@ class Datapages {
 
       final httpPackageUrl = Uri.parse(
           '${endpoints['PEGAURL'] + endpoints['VERSION'] + endpoints['DATA'] + "/$dataPage"}');
+      print(httpPackageUrl);
 
       final httpPackageResponse = await get(httpPackageUrl, headers: headers);
 

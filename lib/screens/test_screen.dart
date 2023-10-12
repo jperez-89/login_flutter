@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-// import 'package:flutter_markdown/flutter_markdown.dart';
-// import 'package:login_flutter/widgets/form_builder.dart';
-// import 'package:login_flutter/widgets/widgets.dart';
+import 'dart:convert';
+import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:login_flutter/widgets/form_builder.dart';
 
 class TestScreen extends StatefulWidget {
   const TestScreen({Key? key}) : super(key: key);
@@ -93,13 +93,27 @@ class _TestScreenState extends State<TestScreen> {
     );*/
 
     return Scaffold(
-        body: Checkbox(
-      value: pressed,
-      onChanged: (value) {
-        setState(() {
-          pressed = !pressed;
-        });
-      },
+        body: Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          DropdownButton(
+            hint: Text("asda"),
+            items: [
+              DropdownMenuItem(
+                child: Text("1"),
+                value: "x",
+              ),
+              DropdownMenuItem(child: Text("2"), value: "y"),
+            ],
+            value: "3",
+            onChanged: (value) {
+              print("x");
+            },
+          )
+        ],
+      ),
     ));
   }
 }
