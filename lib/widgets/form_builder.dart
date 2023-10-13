@@ -2,9 +2,11 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:login_flutter/models/actions/assignment_actions.dart';
+import 'package:login_flutter/models/provider/dropdown_provider.dart';
 import 'package:login_flutter/theme/app_theme.dart';
 import 'package:login_flutter/widgets/widgets.dart';
 import 'package:currency_text_input_formatter/currency_text_input_formatter.dart';
+import 'package:provider/provider.dart';
 
 class FormBuilderWidget extends StatefulWidget {
   final String pzInsKey;
@@ -30,6 +32,7 @@ class _FormBuilderWidgetState extends State<FormBuilderWidget> {
     setState(() {});
   }*/
   void callback() {
+    print("dentro del callback");
     setState(() {});
   }
 
@@ -74,13 +77,23 @@ class _FormBuilderWidgetState extends State<FormBuilderWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return FormBuilder(
+    /*return FormBuilder(
             context: context,
             frmValues: frmValues,
             callback: callback,
             commonParamsList: dataPagePrompt)
         .buildForm(
-            components, myFormKey, widget.pzInsKey, actionID, buttons, data);
+            components, myFormKey, widget.pzInsKey, actionID, buttons, data);*/
+    return ChangeNotifierProvider(
+      create: (_) => DropdownProvider(),
+      child: FormBuilder(
+              context: context,
+              frmValues: frmValues,
+              callback: callback,
+              commonParamsList: dataPagePrompt)
+          .buildForm(
+              components, myFormKey, widget.pzInsKey, actionID, buttons, data),
+    );
   }
 }
 
@@ -406,6 +419,9 @@ class FormBuilder {
           "dataPagePromptName": getDataPagePromptName(pxDropdown),
           "dataPageValue": getDataPageValue(pxDropdown),
         };
+      }
+      if (commonParamsList.containsKey("$reference/list")) {
+        menuItems = commonParamsList["$reference/list"];
       }
     }
 

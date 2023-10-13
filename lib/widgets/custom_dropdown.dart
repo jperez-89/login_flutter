@@ -1,8 +1,10 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:login_flutter/models/provider/dropdown_provider.dart';
 import 'dart:convert';
 import 'package:login_flutter/models/services/datapages_services.dart';
+import 'package:provider/provider.dart';
 
 class CustomDropdown extends StatefulWidget {
   final List menuItem;
@@ -44,8 +46,8 @@ class _CustomDropdownState extends State<CustomDropdown> {
   void fillData(String dataSelected) {
     List keys = widget.dropdownList.keys.toList();
     Map dropdownList = widget.dropdownList;
-    bool allParametersSet = true;
     for (var key in keys) {
+      bool allParametersSet = true;
       if (dropdownList[key].containsKey("parameters")) {
         for (var i = 0; i < dropdownList[key]["parameters"].length; i++) {
           if (dropdownList[key]["parameters"][i]
@@ -56,7 +58,19 @@ class _CustomDropdownState extends State<CustomDropdown> {
               ? (dropdownList[key]["parameters"][i]["data"] != "")
               : allParametersSet;
         }
-        print("$key  ${dropdownList[key]['parameters']}");
+        if (allParametersSet && key != widget.reference) {
+          context.read<DropdownProvider>().addDropDownData(key, []);
+          fetchData(dropdownList[key], key);
+          cleanParameter(dropdownList[key]["parameters"]);
+        }
+      }
+    }
+  }
+
+  void cleanParameter(List parameters) {
+    for (var i = 0; i < parameters.length; i++) {
+      if (parameters[i].containsValue(widget.reference)) {
+        parameters[i]["data"] = "";
       }
     }
   }
@@ -73,10 +87,9 @@ class _CustomDropdownState extends State<CustomDropdown> {
               "value": result[dropdown["dataPagePromptName"]]
             });
           }
-          print("$name seteada");
-          widget.dropdownList["$name/list"] = options;
-          //callback(options, name);
-          widget.callback();
+          // widget.dropdownList["$name/list"] = options;
+          context.read<DropdownProvider>().addDropDownData(name, options);
+          // widget.callback();
         }
       }
     });
@@ -98,11 +111,16 @@ class _CustomDropdownState extends State<CustomDropdown> {
       hint: Text(widget.placeholder),
       value: (widget.initialValue == null) ? null : widget.initialValue,
       decoration: InputDecoration(labelText: widget.label),
-      items: createMenuItem(widget.menuItem),
+      /* items: createMenuItem((widget.menuItem != [])
+          ? widget.menuItem
+          : ),*/
+      items: (widget.reference != "Country")
+          ? createMenuItem(
+              context.watch<DropdownProvider>().getElement(widget.reference))
+          : createMenuItem(widget.menuItem),
       onChanged: (selected) {
         widget.frmValues[widget.property] = selected;
-        fillData(selected);
-        //setState(() {});
+        fillData(selected!);
       },
     );
   }
