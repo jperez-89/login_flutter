@@ -34,6 +34,7 @@ class CustomDropdown extends StatefulWidget {
 }
 
 class _CustomDropdownState extends State<CustomDropdown> {
+  List x = [];
   List<DropdownMenuItem> createMenuItem(List itemList) {
     List<DropdownMenuItem> menuItems = [];
     for (var item in itemList) {
@@ -41,6 +42,10 @@ class _CustomDropdownState extends State<CustomDropdown> {
           DropdownMenuItem(value: item["key"], child: Text(item["value"])));
     }
     return menuItems;
+  }
+
+  void setParameter(String dataSelected) {
+    context.read<DropdownProvider>().addParam(widget.reference, dataSelected);
   }
 
   void fillData(String dataSelected) {
@@ -114,12 +119,13 @@ class _CustomDropdownState extends State<CustomDropdown> {
       /* items: createMenuItem((widget.menuItem != [])
           ? widget.menuItem
           : ),*/
-      items: (widget.reference != "Country")
+      items: (widget.menuItem == [])
           ? createMenuItem(
               context.watch<DropdownProvider>().getElement(widget.reference))
           : createMenuItem(widget.menuItem),
       onChanged: (selected) {
         widget.frmValues[widget.property] = selected;
+        setParameter(selected);
         fillData(selected!);
       },
     );
