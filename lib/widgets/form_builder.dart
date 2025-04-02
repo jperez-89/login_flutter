@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:login_flutter/models/actions/assignment_actions.dart';
 import 'package:login_flutter/models/provider/dropdown_provider.dart';
@@ -10,7 +8,6 @@ import 'package:provider/provider.dart';
 
 class FormBuilderWidget extends StatefulWidget {
   final String pzInsKey;
-
   const FormBuilderWidget({Key? key, required this.pzInsKey}) : super(key: key);
 
   @override
@@ -20,11 +17,14 @@ class FormBuilderWidget extends StatefulWidget {
 class _FormBuilderWidgetState extends State<FormBuilderWidget> {
   GlobalKey<FormState> myFormKey = GlobalKey<FormState>();
   List components = [];
-  String actionID = '', btnSubmit = '';
+  String actionID = '';
+  String pzInsKey = '';
   final Map<String, dynamic> dataPagePrompt = {};
   final Map<String, String> frmValues = {};
   Map actionsButtons = {}, buttons = {}, data = {};
+  List labelButtons = [];
   bool hideButton = false;
+  bool load = true;
 
   /* void callback() {
     dataPagePrompt["$name/list"] = options;
@@ -36,13 +36,29 @@ class _FormBuilderWidgetState extends State<FormBuilderWidget> {
     setState(() {});
   }
 
-  // Obtenemos los campos del formulario del assignment
+  /// Metodo se utiliza principalmente a la hora de agregar beneficiarios
+  void update(List components) {
+    setState(() {
+      load = true;
+    });
+
+    setState(() {
+      this.components = components;
+      load = false;
+    });
+  }
+
+  // Obtenemos los campos del formulario del assignment **********
   getAssiggnment(String pzInsKey) async {
+    setState(() {
+      load = true;
+    });
+
     await AssignmentActions().getAssignment(pzInsKey).then((value) {
       setState(() {
         components = value["components"];
         actionID = value["actionID"];
-        actionsButtons = value["actionsButtons"];
+        labelButtons = value["labelButtons"];
         data = value["data"]['content'];
 
         /** VALIDAR LAS FECHAS PARA DESHABILITAR EL BOTON DE SAVE EN CASO QUE EL ASSIGNMETN TENGA DATOS ALMACENADOS */
@@ -61,10 +77,18 @@ class _FormBuilderWidgetState extends State<FormBuilderWidget> {
         // print(actionsButtons['secondary']);
 
         buttons = {
+// PGFL-32_Implementar_dropdown_anidados
           'btnCancel': actionsButtons['secondary'][0]['name'],
           'btnSave': actionsButtons['secondary'][2]['links']['open']['title'],
           'btnSubmit': actionsButtons['main'][0]['name'],
+
+  //        'labelBtn_Save': labelButtons[0],
+    //      'labelBtn_Cancel': labelButtons[1],
+      //    'labelBtn_Submit': labelButtons[2],
+
         };
+
+        load = false;
       });
     });
   }
@@ -77,6 +101,7 @@ class _FormBuilderWidgetState extends State<FormBuilderWidget> {
 
   @override
   Widget build(BuildContext context) {
+    // PGFL-32_Implementar_dropdown_anidados
     /*return FormBuilder(
             context: context,
             frmValues: frmValues,
@@ -94,6 +119,22 @@ class _FormBuilderWidgetState extends State<FormBuilderWidget> {
           .buildForm(
               components, myFormKey, widget.pzInsKey, actionID, buttons, data),
     );
+
+//    return (load)
+//        ? Container(
+//            alignment: Alignment.center,
+//            margin: const EdgeInsets.only(top: 300),
+//            child: const CircularProgressIndicator.adaptive(),
+//          )
+//        : FormBuilder(
+ //               context: context,
+  //              frmValues: frmValues,
+    //            callback: callback,
+      //          commonParamsList: dataPagePrompt,
+      //          update: update)
+       //     .buildForm(components, myFormKey, widget.pzInsKey, actionID,
+        //        buttons, data);
+
   }
 }
 
@@ -102,96 +143,101 @@ class FormBuilder {
   final BuildContext context;
   final Function callback;
   final Map<String, dynamic> commonParamsList;
+  final Function update;
 
   FormBuilder(
-      {required this.context,
+      {required this.update,
+      required this.context,
       required this.callback,
       required this.frmValues,
       required this.commonParamsList});
 
+  /// crea el forrmulario a partir de la lista de componentes extraida del json de PEGA
   Widget buildForm(List components, GlobalKey<FormState> myFormKey,
       String assignmentID, String actionID, Map buttons, Map data) {
     List<Widget> childs = [];
 
     if (components.isNotEmpty) {
       for (var component in components) {
-        childs.add(createWidgets(component, data) ?? const Text("vacio"));
+        childs.add(
+            createWidgets(component, data, assignmentID, myFormKey, actionID) ??
+                const Text("vacio"));
       }
-      childs.add(getSaveButton(myFormKey, assignmentID, actionID, buttons));
+      childs.add(createFormButtons(myFormKey, assignmentID, actionID, buttons));
     }
 
-    return Card(
-      shadowColor: AppTheme.black,
-      margin: const EdgeInsets.all(0),
-      elevation: 10,
-      child: Form(key: myFormKey, child: Column(children: childs)),
-    );
+    return Form(key: myFormKey, child: Column(children: childs));
   }
 
-  getSaveButton(GlobalKey<FormState> myFormKey, String assignmentID,
+  createFormButtons(GlobalKey<FormState> myFormKey, String assignmentID,
       String actionID, Map buttons) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: [
-        // Boton Cancelar <=====
-        ElevatedButton(
-            style: const ButtonStyle(
-                backgroundColor: MaterialStatePropertyAll(AppTheme.cancel)),
-            onPressed: () {
-              Navigator.popAndPushNamed(
-                context,
-                'dashboard',
-              );
-            },
-            child: Text(buttons['btnCancel'])),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            // Boton Save <=====
-            ElevatedButton(
-                style: const ButtonStyle(
-                    backgroundColor:
-                        MaterialStatePropertyAll(AppTheme.secondaryColor)),
-                onPressed: () {
-                  if (!myFormKey.currentState!.validate()) {
-                    showMessage('Error', 'Complete todos los campos');
-                    return;
-                  } else {
-                    Navigator.pushNamed(context, 'newAssigment', arguments: {
-                      'option': 'SaveData',
-                      'assignmentID': assignmentID,
-                      'actionID': actionID,
-                      'data': frmValues
-                    });
-                  }
-                },
-                child: Text(buttons['btnSave'])),
-            const SizedBox(
-              width: 10,
-            ),
-            // Boton Submit <=====
-            ElevatedButton(
-                onPressed: () {
-                  if (!myFormKey.currentState!.validate()) {
-                    showMessage('Error', 'Complete todos los campos');
-                    return;
-                  } else {
-                    Navigator.pushNamed(context, 'newAssigment', arguments: {
-                      'option': 'SubmitData',
-                      'assignmentID': assignmentID,
-                      'actionID': actionID,
-                      'data': frmValues
-                    });
-                  }
-                },
-                child: Text(buttons['btnSubmit'])),
-          ],
-        )
-      ],
+    return Padding(
+      padding: const EdgeInsets.only(top: 25),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          // Boton Cancelar <=====
+          ElevatedButton(
+              style: const ButtonStyle(
+                  backgroundColor: MaterialStatePropertyAll(AppTheme.cancel)),
+              onPressed: () {
+                Navigator.popAndPushNamed(
+                  context,
+                  'dashboard',
+                );
+              },
+              child: Text(buttons['labelBtn_Cancel'])),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              // Boton Save <=====
+              ElevatedButton(
+                  style: const ButtonStyle(
+                      backgroundColor:
+                          MaterialStatePropertyAll(AppTheme.secondaryColor)),
+                  onPressed: () {
+                    if (!myFormKey.currentState!.validate()) {
+                      showMessage(
+                          'Error', 'Complete todos los campos', context);
+                      return;
+                    } else {
+                      Navigator.pushNamed(context, 'newAssigment', arguments: {
+                        'option': 'SaveData',
+                        'assignmentID': assignmentID,
+                        'actionID': actionID,
+                        'data': frmValues
+                      });
+                    }
+                  },
+                  child: Text(buttons['labelBtn_Save'])),
+              const SizedBox(
+                width: 10,
+              ),
+              // Boton Submit <=====
+              ElevatedButton(
+                  onPressed: () {
+                    if (!myFormKey.currentState!.validate()) {
+                      showMessage(
+                          'Error', 'Complete todos los campos', context);
+                      return;
+                    } else {
+                      Navigator.pushNamed(context, 'newAssigment', arguments: {
+                        'option': 'SubmitData',
+                        'assignmentID': assignmentID,
+                        'actionID': actionID,
+                        'data': frmValues
+                      });
+                    }
+                  },
+                  child: Text(buttons['labelBtn_Submit'])),
+            ],
+          )
+        ],
+      ),
     );
   }
 
-  void showMessage(String title, String message) {
+  void showMessage(String title, String message, context) {
     showDialog(
         barrierDismissible: false,
         context: context,
@@ -220,7 +266,7 @@ class FormBuilder {
         });
   }
 
-  /// ******* CREATORS  *******
+  /// Creacion de los diferentes campos *******
   CustomCaption createCaption(Map<String, dynamic> caption) {
     return CustomCaption(value: caption["value"], fontSize: 18);
   }
@@ -280,7 +326,7 @@ class FormBuilder {
     );
   }
 
-  InputsWidget createCustomInput(
+  CustomInputs createCustomInput(
       Map<String, dynamic> pxTextInput, String keyboardType, Map? data) {
     Map<String, TextInputType> inputType = {
       "TEXT": TextInputType.text,
@@ -294,7 +340,7 @@ class FormBuilder {
       "TEXTAREA": TextInputType.multiline,
     };
     return data != null
-        ? InputsWidget(
+        ? CustomInputs(
             maxLines: (keyboardType == "TEXTAREA") ? 5 : 1,
             inputFormatters: (keyboardType == "CURRENCY")
                 ? [getCurrencyData(pxTextInput)]
@@ -313,7 +359,7 @@ class FormBuilder {
                 ? data[getFieldID(pxTextInput)]
                 : null,
           )
-        : InputsWidget(
+        : CustomInputs(
             inputFormatters: (keyboardType == "CURRENCY")
                 ? [getCurrencyData(pxTextInput)]
                 : [],
@@ -349,8 +395,8 @@ class FormBuilder {
         value: getFieldValue(pxDisplayText));
   }
 
-  InputsWidget createPxTextInput(Map<String, dynamic> pxTextInput) {
-    return InputsWidget(
+  CustomInputs createPxTextInput(Map<String, dynamic> pxTextInput) {
+    return CustomInputs(
       labelText: getFieldLabel(pxTextInput),
       textAlign: getTextAlign(pxTextInput),
       readOnly: isReadOnly(pxTextInput),
@@ -362,8 +408,8 @@ class FormBuilder {
     );
   }
 
-  InputsWidget createPxInteger(Map<String, dynamic> pxTextInput) {
-    return InputsWidget(
+  CustomInputs createPxInteger(Map<String, dynamic> pxTextInput) {
+    return CustomInputs(
       labelText: getFieldLabel(pxTextInput),
       textAlign: getTextAlign(pxTextInput),
       readOnly: isReadOnly(pxTextInput),
@@ -376,8 +422,8 @@ class FormBuilder {
     );
   }
 
-  InputsWidget createPxEmail(Map<String, dynamic> pxTextInput) {
-    return InputsWidget(
+  CustomInputs createPxEmail(Map<String, dynamic> pxTextInput) {
+    return CustomInputs(
       labelText: getFieldLabel(pxTextInput),
       textAlign: getTextAlign(pxTextInput),
       readOnly: isReadOnly(pxTextInput),
@@ -427,6 +473,7 @@ class FormBuilder {
 
     return CustomDropdown(
       placeholder: getPlaceHolder(pxDropdown),
+      // ignore: unnecessary_null_comparison
       initialValue: (data != null) ? data[getFieldID(pxDropdown)] : null,
       label: getFieldLabel(pxDropdown),
       menuItem: menuItems,
@@ -438,9 +485,45 @@ class FormBuilder {
     );
   }
 
+// PGFL-32_Implementar_dropdown_anidados
   /********* END CREATORS  ******* */
 
-  /// *** FIELD ATTRIBUTES **********
+   /* DropdownMenuItem createMenuItem(Map<String, dynamic> item) {
+    return DropdownMenuItem(value: item["key"], child: Text(item["value"])); */
+  }
+
+
+  CustomButton createButton(
+      GlobalKey<FormState> myFormKey,
+      Map<String, dynamic> pxButton,
+      Map<String, String> frmValues,
+      String pzInsKey,
+      String actionID) {
+    return CustomButton(
+      pzInsKey: pzInsKey,
+      frmValues: frmValues,
+      label: getFieldLabel(pxButton['control']),
+      actionSets: pxButton['control']['actionSets'][0]['actions'],
+      myFormKey: myFormKey,
+      actionID: actionID,
+      update: update,
+    );
+  }
+
+  CustomDatatable createDataTable(Map<String, dynamic> table, Map? data) {
+    return CustomDatatable(
+      rows: table['rows'],
+      header: table['header']['groups'],
+    );
+  }
+
+  CustomCard createCard(Map<String, dynamic> table, Map? data) {
+    return CustomCard(rows: table['rows'], header: table['header']['groups']);
+  }
+
+  /// Fin
+
+  /// Obtencion de atributos **********
   String getToolTip(Map<String, dynamic> pxTextInput) {
     return getModes(pxTextInput, 0)["tooltip"];
   }
@@ -608,21 +691,28 @@ class FormBuilder {
           };
   }
 
-  /// *** END FIELD ATTRIBUTES **********
+  /// Fin
 
-/* ************* SWITCH ******************/
-  Widget? createWidgets(Map<String, dynamic> component, Map data) {
+  /// Metodo principal que genera el llamado de la creacion de los diferentes campos **********
+  Widget? createWidgets(Map<String, dynamic> component, Map data,
+      String assignmentID, GlobalKey<FormState> myFormKey, String actinoID) {
     Widget widget;
     String typeComponent = getComponentType(component);
 
     switch (typeComponent) {
       case "visible false":
       case 'pxRichTextEditor':
-      case 'pxButon':
         widget = const SizedBox(
           width: 0,
           height: 0,
         );
+        break;
+      case 'pxTable':
+        widget = createCard(component["pxTable"], data);
+        break;
+      case 'pxButton':
+        widget = createButton(
+            myFormKey, component["field"], frmValues, assignmentID, actinoID);
         break;
       case "caption":
         widget = createCaption(component["caption"]);
@@ -634,23 +724,18 @@ class FormBuilder {
         widget = createPxDropDown(component["field"], data);
         break;
       case "pxRadioButtons":
-        //widget = createPxRadioButtom(component["field"]);
         widget = createPxDropDown(component["field"], data);
         break;
       case "pxTextInput":
-        //widget = createPxTextInput(component["field"]);
         widget = createCustomInput(component["field"], "TEXT", data);
         break;
       case "pxInteger":
-        //widget = createPxInteger(component["field"]);
         widget = createCustomInput(component["field"], "NUMBER", data);
         break;
       case "pxCurrency":
-        //widget = createPxInteger(component["field"]);
         widget = createCustomInput(component["field"], "CURRENCY", data);
         break;
       case "pxPhone":
-        //widget = createPxInteger(component["field"]);
         widget = createCustomInput(component["field"], "PHONE", data);
         break;
       case "pxEmail":

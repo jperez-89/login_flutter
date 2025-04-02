@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:login_flutter/theme/app_theme.dart';
 
-class InputsWidget extends StatelessWidget {
+class CustomInputs extends StatelessWidget {
   final String? labelText;
   final String? hintText;
   final List<TextInputFormatter>? inputFormatters;
@@ -20,7 +21,7 @@ class InputsWidget extends StatelessWidget {
   final bool? isRequired;
   final String? initialValue;
 
-  const InputsWidget({
+  const CustomInputs({
     super.key,
     this.labelText,
     this.hintText,
@@ -35,7 +36,7 @@ class InputsWidget extends StatelessWidget {
     this.readOnly,
     this.toolTip,
     this.disabled,
-    this.isRequired,
+    this.isRequired = false,
     this.initialValue,
     this.inputFormatters = const [],
     this.maxLines = 1,
@@ -50,7 +51,7 @@ class InputsWidget extends StatelessWidget {
       textCapitalization: TextCapitalization.words,
       obscureText: obscureText ?? false,
       onChanged: (value) =>
-          frmValues![property] = value, // Almacena lo ingresado en el form
+          frmValues![property] = value, // Almacena dato ingresado en el form
       validator: (value) {
         if (isRequired! && value == '') return 'Campo Obligatorio';
         // if (value == '') return 'Completa este campo';
@@ -62,35 +63,31 @@ class InputsWidget extends StatelessWidget {
       autovalidateMode: AutovalidateMode.onUserInteraction,
       decoration: icon != null
           ? InputDecoration(
-              labelText: labelText, hintText: hintText, prefixIcon: Icon(icon))
+              labelText: labelText,
+              hintText: hintText,
+              prefixIcon: Icon(icon),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderSide: const BorderSide(color: AppTheme.primaryColor),
+                borderRadius: BorderRadius.circular(20),
+              ),
+            )
           : InputDecoration(
               labelText: isRequired! ? '$labelText *' : labelText,
               hintText: hintText,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderSide: const BorderSide(color: AppTheme.primaryColor),
+                borderRadius: BorderRadius.circular(20),
+              ),
             ),
       enabled: disabled,
       // initialValue: initialValue,
       controller: TextEditingController(text: initialValue),
     );
-
-    // return Tooltip(
-    //   message: toolTip,
-    //   child: TextFormField(
-    //     keyboardType: inputType,
-    //     textCapitalization: TextCapitalization.words,
-    //     obscureText: obscureText ?? false,
-    //     onChanged: (value) =>
-    //         frmValues![property] = value, // Almacena lo ingresado en el form
-    //     validator: (value) {
-    //       if (value == null) return 'Campo requerido';
-    //       return value.length < minLength! ? 'Minimo $minLength letras' : null;
-    //     },
-    //     autovalidateMode: AutovalidateMode.onUserInteraction,
-    //     decoration: InputDecoration(
-    //       labelText: labelText,
-    //       hintText: hintText,
-    //       prefixIcon: Icon(icon),
-    //     ),
-    //   ),
-    // );
   }
 }

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+/// Crea un widget Text con padding vertical (top=20, buttom=20) que se utiliza como encabezado de seccion
+/// @value -> el texto a mostrar
+/// @fontSize -> el tamaño de la fuente
 class CustomCaption extends StatelessWidget {
   final String value;
   final double fontSize;

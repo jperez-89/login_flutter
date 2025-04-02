@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:convert';
-import 'package:login_flutter/models/actions/work_list_actions.dart';
+import 'package:login_flutter/theme/app_theme.dart';
+import 'package:login_flutter/models/actions/datapage_actions.dart';
 
 class WorklistWidget extends StatefulWidget {
   const WorklistWidget({Key? key}) : super(key: key);
@@ -15,6 +16,7 @@ class _WorklistWidgetState extends State<WorklistWidget> {
   int rowsPerPage = 10;
   bool _load = false;
   bool _service = true;
+  String msg = '';
 
   // Obtiene la lista de assignments
   void getWorkList() async {
@@ -22,13 +24,21 @@ class _WorklistWidgetState extends State<WorklistWidget> {
       _load = true;
     });
 
-    await WorkList().getWorkList().then((value) {
+    await DataPageActions().getDataPage('D_Worklist').then((value) {
       if (value.statusCode == 503) {
         setState(() {
           _load = false;
           _service = false;
+          msg = 'Servicio no disponible';
         });
-      } else {
+      }
+      if (value.statusCode == 404) {
+        setState(() {
+          _load = false;
+          _service = false;
+          msg = value.body;
+        });
+      } else if (value.statusCode == 200) {
         Map<String, dynamic> json = jsonDecode(value.body);
 
         setState(() {
@@ -43,7 +53,7 @@ class _WorklistWidgetState extends State<WorklistWidget> {
 //  Refresca la lista de assignment cada 1 minuto
   void refreshWorkList() {
     Timer.periodic(const Duration(minutes: 10), (timer) async {
-      await WorkList().getWorkList().then((value) {
+      await DataPageActions().getDataPage('D_Worklist').then((value) {
         if (value.statusCode == 503) {
           _load = false;
           _service = false;
@@ -92,15 +102,12 @@ class _WorklistWidgetState extends State<WorklistWidget> {
                   showCheckboxColumn: false,
                   header: Container(
                     padding: EdgeInsets.zero,
-                    decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey),
-                        borderRadius: BorderRadius.circular(15)),
                     child: TextField(
                       controller: controller,
                       decoration: const InputDecoration(
-                          border: InputBorder.none,
-                          hintText: 'Search case',
-                          contentPadding: EdgeInsets.symmetric(horizontal: 10)),
+                        hintText: 'Search case',
+                        contentPadding: EdgeInsets.symmetric(horizontal: 10),
+                      ),
                       onChanged: (value) {
                         if (value != '') {
                           workList = workListBackUp
@@ -114,6 +121,11 @@ class _WorklistWidgetState extends State<WorklistWidget> {
                   ),
                   actions: [
                     ElevatedButton(
+                      style: const ButtonStyle(
+                          foregroundColor:
+                              MaterialStatePropertyAll(AppTheme.white),
+                          backgroundColor:
+                              MaterialStatePropertyAll(AppTheme.primaryColor)),
                       onPressed: () {
                         getWorkList();
                       },
@@ -130,11 +142,11 @@ class _WorklistWidgetState extends State<WorklistWidget> {
                   ],
                   source: _DataSource(workList, context),
                 )
-              : const Center(
+              : Center(
                   child: Text(
-                    'Servicio no disponible',
+                    'Server Response: $msg',
                     textAlign: TextAlign.center,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.w500,
                     ),
@@ -220,7 +232,7 @@ class _DataSource extends DataTableSource {
           list[i]['pzInsKey'],
           list[i]['pxTaskLabel'],
           list[i]['pxRefObjectInsName'],
-          list[i]['pxAssignmentStatus'] ?? 'New',
+          list[i]['pyAssignmentStatus'],
           list[i]['pyLabel'],
           list[i]['pxUrgencyAssign'],
           list[i]['pxCreateDateTime'],

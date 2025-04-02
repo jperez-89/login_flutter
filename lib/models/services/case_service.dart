@@ -3,6 +3,7 @@ import 'package:login_flutter/models/services/endpoints.dart';
 import 'package:login_flutter/models/services/service.dart';
 
 class CaseService {
+  /// Obtiene de Pega los diferentes caseTypes.
   Future getCaseType() async {
     String user = 'InterpreterOP';
     String pass = 'hyopJK77@';
@@ -32,6 +33,9 @@ class CaseService {
     }
   }
 
+  /// Crea un nuevo caso dependiendo del caseType que se le pase en el parametro.
+  /// Params
+  /// @caseTypeID -> Interpreter
   Future createCase(String caseTypeID) async {
     String user = 'InterpreterOP';
     String pass = 'hyopJK77@';
@@ -62,28 +66,13 @@ class CaseService {
         body: bodyData,
       );
 
-      // final httpPackcageUrl = Uri.parse(
-      //     '${endpoints['PEGAURL'] + endpoints['VERSION'] + endpoints['CASES']}?caseTypeID=$caseTypeID&content=""');
-
-      // final Map<String, String> headersData = {
-      //   'content-type': 'application/json',
-      //   // 'X-Requested-With': 'XMLHttpRequest',
-      //   // 'content-type': 'application/x-www-form-urlencoded',
-      //   // 'content-type': 'text/plain',
-      //   'accept': '*/*',
-      //   'authorization': basicAuth
-      // };
-
-      // final httpPackageResponse =
-      //     await post(httpPackcageUrl, headers: headersData);
-
-      // print(httpPackageResponse.statusCode);
-      // print(httpPackageResponse.body);
-
       return httpPackageResponse;
     }
   }
 
+  /// Otiene la informacion de un caso.
+  /// Params
+  /// @caseID -> CF-FW-INTERPRE-WORK%20I-4
   Future getCase(String caseID) async {
     String user = 'InterpreterOP';
     String pass = 'hyopJK77@';

@@ -1,3 +1,5 @@
+/// Aqui se hace uso del paquete, importado, ch_color_ab
+
 import 'package:flutter/material.dart';
 import 'package:ch_color_ab/ch_color_ab.dart';
 
