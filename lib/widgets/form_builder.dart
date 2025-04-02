@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:login_flutter/models/actions/assignment_actions.dart';
+import 'package:login_flutter/models/provider/dropdown_provider.dart';
 import 'package:login_flutter/theme/app_theme.dart';
 import 'package:login_flutter/widgets/widgets.dart';
 import 'package:currency_text_input_formatter/currency_text_input_formatter.dart';
+import 'package:provider/provider.dart';
 
 class FormBuilderWidget extends StatefulWidget {
   final String pzInsKey;
@@ -30,6 +32,7 @@ class _FormBuilderWidgetState extends State<FormBuilderWidget> {
     setState(() {});
   }*/
   void callback() {
+    print("dentro del callback");
     setState(() {});
   }
 
@@ -74,9 +77,15 @@ class _FormBuilderWidgetState extends State<FormBuilderWidget> {
         // print(actionsButtons['secondary']);
 
         buttons = {
-          'labelBtn_Save': labelButtons[0],
-          'labelBtn_Cancel': labelButtons[1],
-          'labelBtn_Submit': labelButtons[2],
+// PGFL-32_Implementar_dropdown_anidados
+          'btnCancel': actionsButtons['secondary'][0]['name'],
+          'btnSave': actionsButtons['secondary'][2]['links']['open']['title'],
+          'btnSubmit': actionsButtons['main'][0]['name'],
+
+  //        'labelBtn_Save': labelButtons[0],
+    //      'labelBtn_Cancel': labelButtons[1],
+      //    'labelBtn_Submit': labelButtons[2],
+
         };
 
         load = false;
@@ -92,20 +101,40 @@ class _FormBuilderWidgetState extends State<FormBuilderWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return (load)
-        ? Container(
-            alignment: Alignment.center,
-            margin: const EdgeInsets.only(top: 300),
-            child: const CircularProgressIndicator.adaptive(),
-          )
-        : FormBuilder(
-                context: context,
-                frmValues: frmValues,
-                callback: callback,
-                commonParamsList: dataPagePrompt,
-                update: update)
-            .buildForm(components, myFormKey, widget.pzInsKey, actionID,
-                buttons, data);
+    // PGFL-32_Implementar_dropdown_anidados
+    /*return FormBuilder(
+            context: context,
+            frmValues: frmValues,
+            callback: callback,
+            commonParamsList: dataPagePrompt)
+        .buildForm(
+            components, myFormKey, widget.pzInsKey, actionID, buttons, data);*/
+    return ChangeNotifierProvider(
+      create: (_) => DropdownProvider(),
+      child: FormBuilder(
+              context: context,
+              frmValues: frmValues,
+              callback: callback,
+              commonParamsList: dataPagePrompt)
+          .buildForm(
+              components, myFormKey, widget.pzInsKey, actionID, buttons, data),
+    );
+
+//    return (load)
+//        ? Container(
+//            alignment: Alignment.center,
+//            margin: const EdgeInsets.only(top: 300),
+//            child: const CircularProgressIndicator.adaptive(),
+//          )
+//        : FormBuilder(
+ //               context: context,
+  //              frmValues: frmValues,
+    //            callback: callback,
+      //          commonParamsList: dataPagePrompt,
+      //          update: update)
+       //     .buildForm(components, myFormKey, widget.pzInsKey, actionID,
+        //        buttons, data);
+
   }
 }
 
@@ -425,17 +454,11 @@ class FormBuilder {
   }
 
   CustomDropdown createPxDropDown(Map<String, dynamic> pxDropdown, Map data) {
-    List<DropdownMenuItem<dynamic>> menuItems = [];
+    List menuItems = getModes(pxDropdown, 0)["options"];
     String reference = getReference(pxDropdown);
-    // print("creando el dropdown $reference");
 
     if (haveParameters(pxDropdown) && data[getFieldID(pxDropdown)] == null) {
-      if (commonParamsList.containsKey("$reference/list")) {
-        menuItems.clear();
-        for (var element in commonParamsList["$reference/list"]) {
-          menuItems.add(createMenuItem(element));
-        }
-      } else if (!commonParamsList.containsKey(reference)) {
+      if (!commonParamsList.containsKey(reference)) {
         commonParamsList[reference] = {
           "parameters": getParameters(pxDropdown),
           "dataPageName": getDataPageID(pxDropdown),
@@ -443,10 +466,8 @@ class FormBuilder {
           "dataPageValue": getDataPageValue(pxDropdown),
         };
       }
-    } else {
-      menuItems.clear();
-      for (var element in getModes(pxDropdown, 0)["options"]) {
-        menuItems.add(createMenuItem(element));
+      if (commonParamsList.containsKey("$reference/list")) {
+        menuItems = commonParamsList["$reference/list"];
       }
     }
 
@@ -464,9 +485,13 @@ class FormBuilder {
     );
   }
 
-  DropdownMenuItem createMenuItem(Map<String, dynamic> item) {
-    return DropdownMenuItem(value: item["key"], child: Text(item["value"]));
+// PGFL-32_Implementar_dropdown_anidados
+  /********* END CREATORS  ******* */
+
+   /* DropdownMenuItem createMenuItem(Map<String, dynamic> item) {
+    return DropdownMenuItem(value: item["key"], child: Text(item["value"])); */
   }
+
 
   CustomButton createButton(
       GlobalKey<FormState> myFormKey,
@@ -566,7 +591,7 @@ class FormBuilder {
       parameters.add({
         "name": getParameterName(component, i),
         "reference": getParameterReference(component, i),
-        "data": ""
+        "data": "",
       });
     }
     return parameters;

@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:login_flutter/models/provider/dropdown_provider.dart';
 import 'dart:convert';
+// PGFL-32_Implementar_dropdown_anidados
+import 'package:login_flutter/models/services/datapages_services.dart';
+import 'package:provider/provider.dart';
 import 'package:login_flutter/models/actions/datapage_actions.dart';
+
 
 /// crea un widget del tipo DropdownButtonFormField
 /// Variables
@@ -14,7 +19,7 @@ import 'package:login_flutter/models/actions/datapage_actions.dart';
 /// @reference -> nombre del la property en PEGA donde se almacena el valor de este campo.
 /// @callback -> metodo que se utiliza para redibujar el frmbuilder
 class CustomDropdown extends StatefulWidget {
-  final List<DropdownMenuItem> menuItem;
+  final List menuItem;
   final String label;
   final String property;
   final Map<String, dynamic> frmValues;
@@ -41,31 +46,66 @@ class CustomDropdown extends StatefulWidget {
 }
 
 class _CustomDropdownState extends State<CustomDropdown> {
+  List x = [];
+  List<DropdownMenuItem> createMenuItem(List itemList) {
+    List<DropdownMenuItem> menuItems = [];
+    for (var item in itemList) {
+      menuItems.add(
+          DropdownMenuItem(value: item["key"], child: Text(item["value"])));
+    }
+    return menuItems;
+  }
+
+  void setParameter(String dataSelected) {
+    context.read<DropdownProvider>().addParam(widget.reference, dataSelected);
+  }
+
   void fillData(String dataSelected) {
     List keys = widget.dropdownList.keys.toList();
+/ PGFL-32_Implementar_dropdown_anidados
+    Map dropdownList = widget.dropdownList;
+    for (var key in keys) {
+      bool allParametersSet = true;
+      if (dropdownList[key].containsKey("parameters")) {
+        for (var i = 0; i < dropdownList[key]["parameters"].length; i++) {
+          if (dropdownList[key]["parameters"][i]
+              .containsValue(widget.reference)) {
+            dropdownList[key]["parameters"][i]["data"] = dataSelected;
 
-    for (var i = 0; i < keys.length; i++) {
-      if (widget.dropdownList[keys[i]].runtimeType.toString().contains("Map") &&
-          widget.dropdownList[keys[i]].containsKey("parameters")) {
-        List parameters = widget.dropdownList[keys[i]]["parameters"];
-        bool isDataFill = true;
-        bool isUpdated = false;
+//    for (var i = 0; i < keys.length; i++) {
+  //    if (widget.dropdownList[keys[i]].runtimeType.toString().contains("Map") &&
+    //      widget.dropdownList[keys[i]].containsKey("parameters")) {
+     //   List parameters = widget.dropdownList[keys[i]]["parameters"];
+      //  bool isDataFill = true;
+       // bool isUpdated = false;
 
-        for (var j = 0; j < parameters.length; j++) {
-          if (parameters[j].containsValue(widget.reference)) {
-            parameters[j]["data"] = dataSelected;
-            isUpdated = true;
+  //      for (var j = 0; j < parameters.length; j++) {
+  //        if (parameters[j].containsValue(widget.reference)) {
+  //          parameters[j]["data"] = dataSelected;
+  //          isUpdated = true;
+
           }
-
-          isDataFill = (isUpdated && isDataFill)
-              ? (parameters[j]["data"] != "")
-              : isDataFill;
-          if (!isDataFill) return;
+          allParametersSet = (allParametersSet)
+              ? (dropdownList[key]["parameters"][i]["data"] != "")
+              : allParametersSet;
         }
+// PGFL-32_Implementar_dropdown_anidados
+        if (allParametersSet && key != widget.reference) {
+          context.read<DropdownProvider>().addDropDownData(key, []);
+          fetchData(dropdownList[key], key);
+          cleanParameter(dropdownList[key]["parameters"]);
 
-        if (isDataFill && keys[i] != widget.reference && isUpdated) {
-          fetchData(widget.dropdownList[keys[i]], keys[i]);
-        }
+    //    if (isDataFill && keys[i] != widget.reference && isUpdated) {
+    //      fetchData(widget.dropdownList[keys[i]], keys[i]);
+    //    }
+      }
+    }
+  }
+
+  void cleanParameter(List parameters) {
+    for (var i = 0; i < parameters.length; i++) {
+      if (parameters[i].containsValue(widget.reference)) {
+        parameters[i]["data"] = "";
       }
     }
   }
@@ -84,11 +124,16 @@ class _CustomDropdownState extends State<CustomDropdown> {
               "value": result[dropdown["dataPagePromptName"]]
             });
           }
+// PGFL-32_Implementar_dropdown_anidados
+          // widget.dropdownList["$name/list"] = options;
+          context.read<DropdownProvider>().addDropDownData(name, options);
+          // widget.callback();
 
-          print("$name seteada");
-          widget.dropdownList["$name/list"] = options;
+//          print("$name seteada");
+ //         widget.dropdownList["$name/list"] = options;
           //callback(options, name);
-          widget.callback();
+ //         widget.callback();
+
         }
       }
     });
@@ -112,11 +157,17 @@ class _CustomDropdownState extends State<CustomDropdown> {
       hint: Text(widget.placeholder),
       value: (widget.initialValue == null) ? null : widget.initialValue,
       decoration: InputDecoration(labelText: widget.label),
-      items: widget.menuItem,
+      /* items: createMenuItem((widget.menuItem != [])
+          ? widget.menuItem
+          : ),*/
+      items: (widget.menuItem == [])
+          ? createMenuItem(
+              context.watch<DropdownProvider>().getElement(widget.reference))
+          : createMenuItem(widget.menuItem),
       onChanged: (selected) {
         widget.frmValues[widget.property] = selected;
-        fillData(selected);
-        setState(() {});
+        setParameter(selected);
+        fillData(selected!);
       },
     );
   }
